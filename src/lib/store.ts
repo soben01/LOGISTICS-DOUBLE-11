@@ -478,6 +478,98 @@ export function updateShipmentStatus(
   return updatedShipment;
 }
 
+export function deleteShipment(id: string): boolean {
+  const current = getShipments();
+  const filtered = current.filter(s => s.id.toUpperCase() !== id.toUpperCase());
+  if (filtered.length === current.length) return false;
+
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+  }
+  return true;
+}
+
+export function assignShipmentVehicle(id: string, vehicle: string, route?: string): boolean {
+  const current = getShipments();
+  const index = current.findIndex(s => s.id.toUpperCase() === id.toUpperCase());
+  if (index === -1) return false;
+
+  current[index].telemetry.transportVehicle = vehicle;
+  if (route) current[index].telemetry.trackingRoute = route;
+
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
+  }
+  return true;
+}
+
+export function addCustomCheckpoint(
+  id: string,
+  data: { status: Checkpoint['status']; location: string; description: string }
+): boolean {
+  const current = getShipments();
+  const index = current.findIndex(s => s.id.toUpperCase() === id.toUpperCase());
+  if (index === -1) return false;
+
+  const now = new Date().toLocaleString('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  const newCheckpoint: Checkpoint = {
+    id: `cp-adm-${Date.now()}`,
+    timestamp: now,
+    status: data.status,
+    location: data.location,
+    description: data.description,
+    isCompleted: true,
+  };
+
+  current[index].checkpoints = [newCheckpoint, ...current[index].checkpoints];
+
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
+  }
+  return true;
+}
+
+const WAITLIST_STORAGE_KEY = 'double11_intl_waitlist_v1';
+const DEFAULT_WAITLIST = [
+  'apex.export@nepaltrading.com',
+  'himalayan.cashmere@crafts.np',
+  'tea.organic@ilamestate.com'
+];
+
+export function getWaitlistSubscribers(): string[] {
+  if (typeof window === 'undefined') return DEFAULT_WAITLIST;
+  try {
+    const raw = localStorage.getItem(WAITLIST_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(WAITLIST_STORAGE_KEY, JSON.stringify(DEFAULT_WAITLIST));
+      return DEFAULT_WAITLIST;
+    }
+    return JSON.parse(raw);
+  } catch {
+    return DEFAULT_WAITLIST;
+  }
+}
+
+export function addWaitlistSubscriber(email: string): boolean {
+  if (!email || !email.includes('@')) return false;
+  const current = getWaitlistSubscribers();
+  const clean = email.trim().toLowerCase();
+  if (current.includes(clean)) return true;
+
+  const updated = [clean, ...current];
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(WAITLIST_STORAGE_KEY, JSON.stringify(updated));
+  }
+  return true;
+}
+
 export interface QuoteRequest {
   originCity: string;
   destCity: string;

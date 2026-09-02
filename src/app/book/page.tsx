@@ -1076,9 +1076,15 @@ function BookContent() {
                       <ArrowRight size={16} />
                     </Link>
 
-                    <Link href="/operations" className="btn btn-secondary btn-lg">
-                      <span>View in Control Tower</span>
-                    </Link>
+                    {currentUser?.role === 'admin' ? (
+                      <Link href="/admin" className="btn btn-secondary btn-lg">
+                        <span>View in Admin Panel</span>
+                      </Link>
+                    ) : (
+                      <Link href="/merchant" className="btn btn-secondary btn-lg">
+                        <span>Back to Merchant Portal</span>
+                      </Link>
+                    )}
 
                     <button
                       type="button"

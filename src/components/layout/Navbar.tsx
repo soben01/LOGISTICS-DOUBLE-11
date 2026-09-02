@@ -16,7 +16,8 @@ import {
   Cpu,
   User as UserIcon,
   LogOut,
-  Lock
+  Lock,
+  Building
 } from 'lucide-react';
 import { getCurrentUser, logoutUser, User } from '../../lib/auth';
 
@@ -208,6 +209,53 @@ export default function Navbar() {
           <Link href="/operations" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--brand-amber)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', whiteSpace: 'nowrap' }}>
             <Cpu size={15} /> Control Tower
           </Link>
+
+          {/* Conditional Role Links */}
+          {currentUser?.role === 'admin' && (
+            <Link
+              href="/admin"
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                color: '#ffffff',
+                background: 'linear-gradient(135deg, rgba(255, 102, 0, 0.25), rgba(245, 158, 11, 0.15))',
+                border: '1px solid rgba(255, 102, 0, 0.5)',
+                padding: '0.25rem 0.65rem',
+                borderRadius: '6px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 0 12px rgba(255, 102, 0, 0.25)'
+              }}
+            >
+              <ShieldCheck size={14} color="var(--brand-orange)" />
+              <span>Admin Panel</span>
+            </Link>
+          )}
+
+          {currentUser?.role === 'merchant' && (
+            <Link
+              href="/merchant"
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                color: '#ffffff',
+                background: 'rgba(6, 182, 212, 0.15)',
+                border: '1px solid rgba(6, 182, 212, 0.4)',
+                padding: '0.25rem 0.65rem',
+                borderRadius: '6px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              <Building size={14} color="var(--brand-cyan)" />
+              <span>Merchant Portal</span>
+            </Link>
+          )}
+
           <Link href="/about" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
             About &amp; Founder
           </Link>
@@ -270,22 +318,26 @@ export default function Navbar() {
           {/* User Auth Display */}
           {currentUser ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, whiteSpace: 'nowrap' }}>
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                borderRadius: '8px',
-                padding: '0.35rem 0.65rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                flexShrink: 0,
-                whiteSpace: 'nowrap'
-              }}>
+              <Link
+                href={currentUser.role === 'admin' ? '/admin' : '/merchant'}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: currentUser.role === 'admin' ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(6, 182, 212, 0.4)',
+                  borderRadius: '8px',
+                  padding: '0.35rem 0.65rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
+                  textDecoration: 'none'
+                }}
+              >
                 <div style={{
                   width: '24px',
                   height: '24px',
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #ff6600 0%, #06b6d4 100%)',
+                  background: currentUser.role === 'admin' ? 'linear-gradient(135deg, #ff6600 0%, #d97706 100%)' : 'linear-gradient(135deg, #06b6d4 0%, #10b981 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -294,13 +346,20 @@ export default function Navbar() {
                   color: '#ffffff',
                   flexShrink: 0
                 }}>
-                  {currentUser.name.charAt(0).toUpperCase()}
+                  {currentUser.role === 'admin' ? 'A' : 'M'}
                 </div>
                 <div className="nav-user-details" style={{ fontSize: '0.8rem', lineHeight: '1.2', whiteSpace: 'nowrap' }}>
-                  <div style={{ fontWeight: 600, color: '#ffffff' }}>{currentUser.name}</div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--brand-cyan)' }}>{currentUser.company}</div>
+                  <div style={{ fontWeight: 600, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <span>{currentUser.name}</span>
+                    <span className={currentUser.role === 'admin' ? 'badge badge-orange' : 'badge badge-cyan'} style={{ fontSize: '0.62rem', padding: '0.08rem 0.35rem' }}>
+                      {currentUser.role === 'admin' ? 'ADMIN' : 'MERCHANT'}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: currentUser.role === 'admin' ? 'var(--brand-orange)' : 'var(--brand-cyan)' }}>
+                    {currentUser.company}
+                  </div>
                 </div>
-              </div>
+              </Link>
 
               <button
                 type="button"
@@ -404,6 +463,26 @@ export default function Navbar() {
           </form>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingTop: '0.25rem' }}>
+            {currentUser?.role === 'admin' && (
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ padding: '0.6rem 0', color: 'var(--brand-orange)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+              >
+                <ShieldCheck size={16} /> Admin Control Tower
+              </Link>
+            )}
+
+            {currentUser?.role === 'merchant' && (
+              <Link
+                href="/merchant"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ padding: '0.6rem 0', color: 'var(--brand-cyan)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+              >
+                <Building size={16} /> Merchant Portal (COD Ledger)
+              </Link>
+            )}
+
             <Link
               href="/track"
               onClick={() => setMobileMenuOpen(false)}
