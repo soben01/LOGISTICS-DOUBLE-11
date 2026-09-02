@@ -90,12 +90,12 @@ export default function HomePage() {
                 }}>Global E-Commerce</span> Era.
               </h1>
 
-              <p style={{ fontSize: '1.12rem', color: 'var(--text-secondary)', marginBottom: '2.5rem', maxWidth: '560px' }}>
+              <p style={{ fontSize: '1.12rem', color: 'var(--text-secondary)', marginBottom: '2.5rem', maxWidth: '750px' }}>
                 Built for peak-surge volumes, international air express, and precision cross-border supply chains. Experience sub-second telemetry, automated customs clearance, and dedicated freight charters.
               </p>
 
               {/* Instant Tracking Box */}
-              <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem', maxWidth: '580px' }}>
+              <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem', width: '100%' }}>
                 <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <Search size={15} color="var(--brand-orange)" />
                   <span>TRACK CONSIGNMENT OR AIRWAY BILL (AWB)</span>
@@ -261,7 +261,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="glass-panel" style={{ padding: '2rem 2.5rem', maxWidth: '1080px', margin: '0 auto' }}>
+          <div className="glass-panel" style={{ padding: '2rem 2.5rem', width: '100%', maxWidth: '1300px', margin: '0 auto' }}>
             <form onSubmit={handleCalculateRate} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1.25rem', alignItems: 'flex-end' }} className="calc-grid">
               {/* Origin */}
               <div className="input-group">

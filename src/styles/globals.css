@@ -92,19 +92,24 @@ a {
   transition: color var(--transition-fast);
 }
 
-/* Layout Utilities */
+/* Layout Utilities - Fluid Flex Sizing */
 .container {
-  width: 100%;
-  max-width: 1400px;
+  width: 94%;
+  max-width: 1920px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 clamp(1rem, 2vw, 2.5rem);
 }
 
 .container-narrow {
-  width: 100%;
-  max-width: 960px;
+  width: 92%;
+  max-width: 1380px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 clamp(1rem, 2vw, 2rem);
+}
+
+.container-fluid {
+  width: 100%;
+  padding: 0 clamp(1rem, 3vw, 3rem);
 }
 
 /* Grid Utilities */
