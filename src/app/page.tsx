@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -15,34 +15,29 @@ import {
   CheckCircle2,
   Clock,
   TrendingUp,
-  Globe,
   Globe2,
-  Sliders,
-  Cpu,
   ChevronRight,
   Sparkles,
   Layers,
-  BarChart3,
-  MapPin,
   Banknote,
-  Navigation
+  Building
 } from 'lucide-react';
-import { calculateDomesticFreightRate, DomesticRateOption } from '../lib/store';
+import { getCurrentUser, User } from '../lib/auth';
+import { addWaitlistSubscriber } from '../lib/store';
 
 export default function HomePage() {
   const router = useRouter();
   const [trackingId, setTrackingId] = useState('');
-
-  // Quick Rate Calculator state
-  const [originCity, setOriginCity] = useState('Kathmandu');
-  const [destCity, setDestCity] = useState('Pokhara');
-  const [weightKg, setWeightKg] = useState<number>(3.5);
-  const [lengthCm, setLengthCm] = useState<number>(30);
-  const [widthCm, setWidthCm] = useState<number>(20);
-  const [heightCm, setHeightCm] = useState<number>(15);
-  const [calculatedRates, setCalculatedRates] = useState<DomesticRateOption[] | null>(null);
   const [waitlistEmail, setWaitlistEmail] = useState('');
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    setCurrentUser(getCurrentUser());
+    const handleAuth = () => setCurrentUser(getCurrentUser());
+    window.addEventListener('auth-change', handleAuth);
+    return () => window.removeEventListener('auth-change', handleAuth);
+  }, []);
 
   const handleTrackSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,23 +49,10 @@ export default function HomePage() {
     router.push(`/track?id=${id}`);
   };
 
-  const handleCalculateRate = (e: React.FormEvent) => {
-    e.preventDefault();
-    const rates = calculateDomesticFreightRate({
-      originCity,
-      destCity,
-      weightKg: Number(weightKg),
-      lengthCm: Number(lengthCm),
-      widthCm: Number(widthCm),
-      heightCm: Number(heightCm),
-      isInternational: destCity === 'International',
-    });
-    setCalculatedRates(rates);
-  };
-
   const handleWaitlistSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!waitlistEmail.trim()) return;
+    addWaitlistSubscriber(waitlistEmail.trim());
     setWaitlistSuccess(true);
   };
 
@@ -280,228 +262,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ================= INTERACTIVE INSTANT RATE ESTIMATOR ================= */}
-      <section style={{ padding: '5rem 0', borderBottom: '1px solid var(--border-subtle)' }} id="calculator">
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <div className="badge badge-cyan" style={{ marginBottom: '0.75rem' }}>
-              <Sliders size={13} /> Transparent Pricing
-            </div>
-            <h2>Instant Domestic Freight Rate Estimator</h2>
-            <p style={{ maxWidth: '650px', margin: '0.5rem auto 0 auto' }}>
-              Calculate exact shipping rates, dimensional weight, and estimated transit times across our dedicated Nepal network. International cargo coming soon.
-            </p>
-          </div>
-
-          <div className="glass-panel" style={{ padding: '2rem 2.5rem', width: '100%', maxWidth: '1300px', margin: '0 auto' }}>
-            <form onSubmit={handleCalculateRate} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1.25rem', alignItems: 'flex-end' }} className="calc-grid">
-              {/* Origin */}
-              <div className="input-group">
-                <label className="input-label">Origin City / Hub</label>
-                <select
-                  value={originCity}
-                  onChange={(e) => setOriginCity(e.target.value)}
-                  className="select-field"
-                >
-                  <option value="Kathmandu">Kathmandu (Central Hub)</option>
-                  <option value="Lalitpur">Lalitpur (Patan Hub)</option>
-                  <option value="Bhaktapur">Bhaktapur (East Valley)</option>
-                  <option value="Pokhara">Pokhara (Gandaki Hub)</option>
-                  <option value="Birgunj">Birgunj (Dry Port Terminal)</option>
-                  <option value="Biratnagar">Biratnagar (Koshi Hub)</option>
-                  <option value="Chitwan">Chitwan (Bharatpur Hub)</option>
-                  <option value="Butwal">Butwal (Lumbini Hub)</option>
-                </select>
-              </div>
-
-              {/* Destination */}
-              <div className="input-group">
-                <label className="input-label">Destination Area</label>
-                <select
-                  value={destCity}
-                  onChange={(e) => setDestCity(e.target.value)}
-                  className="select-field"
-                >
-                  <option value="Pokhara">Pokhara (Gandaki)</option>
-                  <option value="Kathmandu">Kathmandu Valley</option>
-                  <option value="Biratnagar">Biratnagar (Koshi)</option>
-                  <option value="Birgunj">Birgunj (Madhesh)</option>
-                  <option value="Chitwan">Chitwan / Narayangarh</option>
-                  <option value="Butwal">Butwal / Bhairahawa</option>
-                  <option value="Dharan">Dharan / Itahari</option>
-                  <option value="Nepalgunj">Nepalgunj (Banke)</option>
-                  <option value="Dhangadhi">Dhangadhi (Kailali)</option>
-                  <option value="Nationwide">Rest of Nepal (77 Districts)</option>
-                  <option value="International">&bull; International (Coming Soon)</option>
-                </select>
-              </div>
-
-              {/* Weight */}
-              <div className="input-group">
-                <label className="input-label">Weight (KG)</label>
-                <input
-                  type="number"
-                  step="0.5"
-                  min="0.5"
-                  max="1000"
-                  value={weightKg}
-                  onChange={(e) => setWeightKg(parseFloat(e.target.value) || 1)}
-                  className="input-field"
-                />
-              </div>
-
-              {/* Dimensions */}
-              <div className="input-group">
-                <label className="input-label">Dimensions (L&times;W&times;H cm)</label>
-                <div style={{ display: 'flex', gap: '0.3rem' }}>
-                  <input
-                    type="number"
-                    placeholder="L"
-                    value={lengthCm}
-                    onChange={(e) => setLengthCm(parseInt(e.target.value) || 1)}
-                    className="input-field"
-                    style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}
-                  />
-                  <input
-                    type="number"
-                    placeholder="W"
-                    value={widthCm}
-                    onChange={(e) => setWidthCm(parseInt(e.target.value) || 1)}
-                    className="input-field"
-                    style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}
-                  />
-                  <input
-                    type="number"
-                    placeholder="H"
-                    value={heightCm}
-                    onChange={(e) => setHeightCm(parseInt(e.target.value) || 1)}
-                    className="input-field"
-                    style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}
-                  />
-                </div>
-              </div>
-
-              {/* Action Button */}
-              <div>
-                <button type="submit" className="btn btn-primary" style={{ width: '100%', height: '44px' }}>
-                  <span>Calculate Quotes</span>
-                  <ArrowRight size={15} />
-                </button>
-              </div>
-            </form>
-
-            {/* Results Grid */}
-            {calculatedRates && (
-              <div style={{ marginTop: '2.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '2rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <h3 style={{ fontSize: '1.25rem' }}>Available Service Tiers ({originCity} &rarr; {destCity})</h3>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Chargeable Wt: <strong>{Math.max(weightKg, (lengthCm * widthCm * heightCm) / 5000).toFixed(1)} KG</strong> (Volumetric 1:5000)
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-4 gap-4">
-                  {calculatedRates.map((rate, i) => (
-                    <div
-                      key={i}
-                      className="card"
-                      style={{
-                        position: 'relative',
-                        border: rate.isComingSoon
-                          ? '1px dashed rgba(245, 158, 11, 0.4)'
-                          : rate.recommended
-                          ? '1px solid var(--brand-orange)'
-                          : undefined,
-                        background: rate.isComingSoon
-                          ? 'rgba(245, 158, 11, 0.03)'
-                          : rate.recommended
-                          ? 'rgba(255, 102, 0, 0.04)'
-                          : undefined
-                      }}
-                    >
-                      {rate.isComingSoon ? (
-                        <div style={{
-                          position: 'absolute',
-                          top: '-10px',
-                          right: '15px',
-                          background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                          color: '#000',
-                          fontSize: '0.68rem',
-                          fontWeight: 800,
-                          padding: '0.2rem 0.6rem',
-                          borderRadius: '10px',
-                          letterSpacing: '0.05em'
-                        }}>
-                          COMING SOON
-                        </div>
-                      ) : rate.recommended && (
-                        <div style={{
-                          position: 'absolute',
-                          top: '-10px',
-                          right: '15px',
-                          background: 'var(--brand-orange)',
-                          color: '#fff',
-                          fontSize: '0.68rem',
-                          fontWeight: 700,
-                          padding: '0.2rem 0.6rem',
-                          borderRadius: '10px',
-                          letterSpacing: '0.05em'
-                        }}>
-                          RECOMMENDED
-                        </div>
-                      )}
-
-                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-                        {rate.serviceCode}
-                      </div>
-                      <h4 style={{ fontSize: '1.05rem', margin: '0.25rem 0 0.75rem 0' }}>{rate.serviceName}</h4>
-
-                      <div style={{ marginBottom: '1rem' }}>
-                        {rate.isComingSoon ? (
-                          <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--brand-amber)' }}>
-                            Coming Soon
-                          </div>
-                        ) : (
-                          <>
-                            <span style={{ fontSize: '1.65rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
-                              Rs. {rate.estimatedCostNpr}
-                            </span>
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}> NPR (incl. tax)</span>
-                          </>
-                        )}
-                      </div>
-
-                      <div style={{ fontSize: '0.82rem', color: rate.isComingSoon ? 'var(--brand-amber)' : 'var(--brand-emerald)', fontWeight: 600, marginBottom: '0.75rem' }}>
-                        {rate.transitDays}
-                      </div>
-
-                      <ul style={{ listStyle: 'none', fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1.25rem' }}>
-                        {rate.features.map((f, idx) => (
-                          <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            <CheckCircle2 size={13} color={rate.isComingSoon ? 'var(--brand-amber)' : 'var(--brand-orange)'} />
-                            <span>{f}</span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      {rate.isComingSoon ? (
-                        <a href="#international-waitlist" className="btn btn-outline btn-sm" style={{ width: '100%', marginTop: 'auto', textAlign: 'center' }}>
-                          Join Waitlist &rarr;
-                        </a>
-                      ) : (
-                        <Link href={`/book?service=${rate.serviceCode}`} className="btn btn-secondary btn-sm" style={{ width: '100%', marginTop: 'auto', textAlign: 'center' }}>
-                          Book Shipment &rarr;
-                        </Link>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* ================= CORE SERVICES SECTION ================= */}
       <section style={{ padding: '5.5rem 0', borderBottom: '1px solid var(--border-subtle)' }} id="services">
         <div className="container">
@@ -552,8 +312,12 @@ export default function HomePage() {
                   <CheckCircle2 size={15} color="var(--brand-orange)" /> Free Doorstep Merchant Pickup
                 </li>
               </ul>
-              <Link href="/book?service=EXP" className="btn btn-secondary btn-sm" style={{ marginTop: 'auto' }}>
-                Book Express &rarr;
+              <Link
+                href={currentUser ? "/book?service=EXP" : "/login?redirect=/book"}
+                className="btn btn-secondary btn-sm"
+                style={{ marginTop: 'auto' }}
+              >
+                {currentUser ? "Book Express \u2192" : "Login to Dispatch \u2192"}
               </Link>
             </div>
 
@@ -590,8 +354,12 @@ export default function HomePage() {
                   <CheckCircle2 size={15} color="var(--brand-cyan)" /> Barcoded Warehouse Cross-Docking
                 </li>
               </ul>
-              <Link href="/book?service=CARGO" className="btn btn-secondary btn-sm" style={{ marginTop: 'auto' }}>
-                Book Cargo &rarr;
+              <Link
+                href={currentUser ? "/book?service=CARGO" : "/login?redirect=/book"}
+                className="btn btn-secondary btn-sm"
+                style={{ marginTop: 'auto' }}
+              >
+                {currentUser ? "Book Cargo \u2192" : "Login to Dispatch \u2192"}
               </Link>
             </div>
 
@@ -628,8 +396,12 @@ export default function HomePage() {
                   <CheckCircle2 size={15} color="var(--brand-emerald)" /> Return &amp; Exchange Handling
                 </li>
               </ul>
-              <Link href="/book" className="btn btn-secondary btn-sm" style={{ marginTop: 'auto' }}>
-                Setup COD &rarr;
+              <Link
+                href={currentUser ? "/merchant" : "/login?redirect=/merchant"}
+                className="btn btn-secondary btn-sm"
+                style={{ marginTop: 'auto' }}
+              >
+                {currentUser ? "Merchant COD Portal \u2192" : "Merchant Sign In \u2192"}
               </Link>
             </div>
 
@@ -722,7 +494,7 @@ export default function HomePage() {
             </div>
 
             <h2 style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>
-              Expanding Nepal's Exporters to Global Gateways
+              Expanding Nepal&apos;s Exporters to Global Gateways
             </h2>
 
             <p style={{ maxWidth: '640px', margin: '0 auto 2rem auto', color: 'var(--text-secondary)', fontSize: '1rem' }}>
@@ -763,49 +535,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ================= VISUAL INFRASTRUCTURE SPOTLIGHT ================= */}
-      <section style={{ padding: '5.5rem 0', borderBottom: '1px solid var(--border-subtle)' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3.5rem', alignItems: 'center' }} className="spotlight-grid">
-            <div style={{ borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border-medium)', boxShadow: 'var(--shadow-lg)' }}>
-              <img
-                src="/images/warehouse.jpg"
-                alt="Automated Robotics Sorting Facility in Kathmandu"
-                style={{ width: '100%', height: 'auto', display: 'block' }}
-              />
-            </div>
-
-            <div>
-              <div className="badge badge-cyan" style={{ marginBottom: '0.75rem' }}>
-                <Cpu size={13} /> High-Tech Domestic Sorting
-              </div>
-              <h2 style={{ marginBottom: '1.25rem' }}>
-                Kathmandu Valley &amp; Regional Super-Hubs
-              </h2>
-              <p style={{ marginBottom: '1.5rem', fontSize: '1.02rem', lineHeight: '1.7' }}>
-                Our automated cross-dock distribution center in Kathmandu processes up to 12,000 parcels per hour with optical dimensional scanners, ensuring parcels bound for Pokhara, Biratnagar, Chitwan, or Butwal depart on the morning linehaul without delays.
-              </p>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '2rem' }}>
-                <div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>18 MIN</div>
-                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Hub Intake to Linehaul Loading</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--brand-orange)', fontFamily: 'var(--font-mono)' }}>99.98%</div>
-                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Automated Barcode Sort Accuracy</div>
-                </div>
-              </div>
-
-              <Link href="/operations" className="btn btn-secondary">
-                <span>View Live Operations Tower</span>
-                <ChevronRight size={16} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ================= FINAL CALL TO ACTION ================= */}
       <section style={{ padding: '6rem 0' }}>
         <div className="container-narrow">
@@ -827,18 +556,21 @@ export default function HomePage() {
               Ready to Accelerate Your Domestic Logistics?
             </h2>
 
-            <p style={{ maxWidth: '580px', margin: '0 auto 2rem auto', fontSize: '1.05rem' }}>
-              Book an urgent consignment anywhere across Nepal in under 2 minutes, get instant transparent waybills, and experience why modern merchants trust Double 11.
+            <p style={{ maxWidth: '580px', margin: '0 auto 2rem auto', fontSize: '1.05rem', color: 'var(--text-secondary)' }}>
+              Sign in to your verified Nepal merchant portal to book consignments across all 7 provinces, generate instant waybills, and automate Cash on Delivery remittance.
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-              <Link href="/book" className="btn btn-primary btn-lg">
-                <span>Book Domestic Shipment</span>
+              <Link
+                href={currentUser ? "/book" : "/login?redirect=/book"}
+                className="btn btn-primary btn-lg"
+              >
+                <span>{currentUser ? "Book New Consignment" : "Sign In to Book Shipment"}</span>
                 <ArrowRight size={16} />
               </Link>
-              <Link href="/operations" className="btn btn-secondary btn-lg">
-                <Cpu size={16} />
-                <span>Visit Operations Tower</span>
+              <Link href="/track" className="btn btn-secondary btn-lg">
+                <Search size={16} />
+                <span>Track Existing Consignment</span>
               </Link>
             </div>
           </div>
@@ -850,18 +582,6 @@ export default function HomePage() {
           .hero-grid {
             grid-template-columns: 1fr !important;
             gap: 2.5rem !important;
-          }
-          .spotlight-grid {
-            grid-template-columns: 1fr !important;
-            gap: 2.5rem !important;
-          }
-          .calc-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-        }
-        @media (max-width: 640px) {
-          .calc-grid {
-            grid-template-columns: 1fr !important;
           }
         }
       `}</style>

@@ -108,7 +108,7 @@ export default function Navbar() {
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', color: 'var(--brand-orange)', fontWeight: 600, fontSize: '0.72rem' }} className="ticker-hide-sm">
               <Radio size={12} className="animate-pulse" /> 24/7 Dispatch Control
             </span>
-            <Link href="/operations" style={{
+            <Link href={currentUser?.role === 'admin' ? '/admin' : currentUser ? '/merchant' : '/login'} style={{
               fontSize: '0.7rem',
               background: 'rgba(255, 102, 0, 0.15)',
               color: '#ff8533',
@@ -121,7 +121,7 @@ export default function Navbar() {
               gap: '0.3rem',
               whiteSpace: 'nowrap'
             }}>
-              <Cpu size={12} /> Control Tower
+              <Cpu size={12} /> {currentUser?.role === 'admin' ? 'Admin Tower' : currentUser ? 'Merchant Portal' : 'Portal Sign In'}
             </Link>
           </div>
         </div>
@@ -200,14 +200,14 @@ export default function Navbar() {
           <Link href="/track" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
             Tracking Center
           </Link>
-          <Link href="/book" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+          <Link
+            href={currentUser ? "/book" : "/login?redirect=/book"}
+            style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}
+          >
             Book Cargo
           </Link>
           <Link href="/rates" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
             Rates &amp; Tariffs
-          </Link>
-          <Link href="/operations" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--brand-amber)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', whiteSpace: 'nowrap' }}>
-            <Cpu size={15} /> Control Tower
           </Link>
 
           {/* Conditional Role Links */}
@@ -382,8 +382,12 @@ export default function Navbar() {
             </Link>
           )}
 
-          <Link href="/book" className="btn btn-primary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0, whiteSpace: 'nowrap' }}>
-            <span>Ship Now</span>
+          <Link
+            href={currentUser ? "/book" : "/login?redirect=/book"}
+            className="btn btn-primary btn-sm"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0, whiteSpace: 'nowrap' }}
+          >
+            <span>{currentUser ? "New Shipment" : "Ship Now"}</span>
             <ArrowRight size={14} />
           </Link>
 
@@ -491,7 +495,7 @@ export default function Navbar() {
               Tracking Center
             </Link>
             <Link
-              href="/book"
+              href={currentUser ? "/book" : "/login?redirect=/book"}
               onClick={() => setMobileMenuOpen(false)}
               style={{ padding: '0.6rem 0', color: 'var(--text-primary)', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
             >
@@ -503,13 +507,6 @@ export default function Navbar() {
               style={{ padding: '0.6rem 0', color: 'var(--text-primary)', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
             >
               Rates &amp; Tariffs
-            </Link>
-            <Link
-              href="/operations"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ padding: '0.6rem 0', color: 'var(--brand-amber)', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-            >
-              <Cpu size={15} /> Control Tower (Operations)
             </Link>
             <Link
               href="/about"

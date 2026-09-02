@@ -82,29 +82,33 @@ function BookContent() {
   // Created Shipment confirmation state
   const [createdShipment, setCreatedShipment] = useState<Shipment | null>(null);
 
-  // Load and sync user auth state
+  // Load and sync user auth state: STRICTLY REQUIRE LOGIN FOR BOOKING
   useEffect(() => {
     const user = getCurrentUser();
-    if (user) {
-      setCurrentUser(user);
-      setSenderName(user.name);
-      setSenderCompany(user.company);
-      setSenderPhone(user.phone);
+    if (!user) {
+      router.push('/login?redirect=/book');
+      return;
     }
+    setCurrentUser(user);
+    setSenderName(user.name);
+    setSenderCompany(user.company);
+    setSenderPhone(user.phone);
 
     const handleAuthChange = () => {
       const u = getCurrentUser();
-      setCurrentUser(u);
-      if (u) {
-        setSenderName(u.name);
-        setSenderCompany(u.company);
-        setSenderPhone(u.phone);
+      if (!u) {
+        router.push('/login?redirect=/book');
+        return;
       }
+      setCurrentUser(u);
+      setSenderName(u.name);
+      setSenderCompany(u.company);
+      setSenderPhone(u.phone);
     };
 
     window.addEventListener('auth-change', handleAuthChange);
     return () => window.removeEventListener('auth-change', handleAuthChange);
-  }, []);
+  }, [router]);
 
   const handleInlineLogin = (e: React.FormEvent) => {
     e.preventDefault();

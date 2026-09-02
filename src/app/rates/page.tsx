@@ -17,8 +17,15 @@ import {
   Clock
 } from 'lucide-react';
 import { calculateDomesticFreightRate, DomesticRateOption } from '../../lib/store';
+import { getCurrentUser, User } from '../../lib/auth';
 
 export default function RatesPage() {
+  const [currentUser, setCurrentUser] = React.useState<User | null>(null);
+
+  React.useEffect(() => {
+    setCurrentUser(getCurrentUser());
+  }, []);
+
   const [originCity, setOriginCity] = useState('Kathmandu');
   const [destCity, setDestCity] = useState('Pokhara');
   const [weightKg, setWeightKg] = useState<number>(5);
@@ -261,8 +268,12 @@ export default function RatesPage() {
                     Register for Launch &rarr;
                   </a>
                 ) : (
-                  <Link href={`/book?service=${rate.serviceCode}`} className="btn btn-primary btn-sm" style={{ marginTop: 'auto', textAlign: 'center' }}>
-                    Book Consignment &rarr;
+                  <Link
+                    href={currentUser ? `/book?service=${rate.serviceCode}` : `/login?redirect=/book`}
+                    className="btn btn-primary btn-sm"
+                    style={{ marginTop: 'auto', textAlign: 'center' }}
+                  >
+                    {currentUser ? "Book Consignment \u2192" : "Login to Book \u2192"}
                   </Link>
                 )}
               </div>
