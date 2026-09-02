@@ -620,6 +620,136 @@ a {
 }
 
 /* =========================================================
+   BOOKING WIZARD DESIGN SYSTEM & PROPER CSS
+   ========================================================= */
+.booking-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 1040px) {
+  .booking-layout-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.stepper-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 0.6rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+.stepper-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+
+.stepper-item:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+
+.stepper-item.active {
+  background: rgba(255, 102, 0, 0.12);
+  border-color: rgba(255, 102, 0, 0.35);
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(255, 102, 0, 0.15);
+}
+
+.stepper-item.completed {
+  color: var(--brand-emerald);
+}
+
+.stepper-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.stepper-item.active .stepper-badge {
+  background: var(--brand-orange);
+  color: #ffffff;
+}
+
+.stepper-item.completed .stepper-badge {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--brand-emerald);
+}
+
+.preset-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+}
+
+.preset-chip:hover {
+  background: rgba(255, 102, 0, 0.15);
+  border-color: var(--brand-orange);
+  color: #ffffff;
+}
+
+.service-card-select {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.service-card-select:hover {
+  border-color: rgba(255, 102, 0, 0.4);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.service-card-select.selected {
+  border: 2px solid var(--brand-orange);
+  background: rgba(255, 102, 0, 0.05);
+  box-shadow: 0 0 20px rgba(255, 102, 0, 0.15);
+}
+
+
+/* =========================================================
    SHIPPING LABEL PRINT STYLESHEET (@media print)
    Isolates the shipping label, removes all web clutter,
    and ensures 100% sharp black & white contrast on paper.
