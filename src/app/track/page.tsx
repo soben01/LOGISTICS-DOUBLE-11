@@ -23,10 +23,12 @@ import {
   UserCheck,
   ChevronRight,
   RefreshCw,
-  Printer
+  Printer,
+  Mail
 } from 'lucide-react';
 import { getShipmentById, getShipments, Shipment, Checkpoint } from '../../lib/store';
 import PrintableLabel from '../../components/shipping/PrintableLabel';
+import EmailSummaryModal from '../../components/notifications/EmailSummaryModal';
 
 function TrackContent() {
   const searchParams = useSearchParams();
@@ -39,6 +41,7 @@ function TrackContent() {
   const [copiedLink, setCopiedLink] = useState(false);
   const [subscribedNotifications, setSubscribedNotifications] = useState(false);
   const [showPrintLabel, setShowPrintLabel] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
 
   useEffect(() => {
     if (queryId) {
@@ -264,11 +267,13 @@ function TrackContent() {
 
                     <button
                       type="button"
-                      onClick={() => setSubscribedNotifications(!subscribedNotifications)}
-                      className={`btn btn-sm ${subscribedNotifications ? 'btn-primary' : 'btn-outline'}`}
+                      onClick={() => setShowEmailModal(true)}
+                      className="btn btn-outline btn-sm"
+                      title="Subscribe to 24-Hour Gmail Updates"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                     >
-                      <Bell size={14} />
-                      <span>{subscribedNotifications ? 'Subscribed' : 'Alerts'}</span>
+                      <Mail size={14} color="var(--brand-orange)" />
+                      <span>24h Gmail Alerts</span>
                     </button>
                   </div>
                 </div>
@@ -569,6 +574,16 @@ function TrackContent() {
               />
             </div>
           </div>
+        )}
+
+        {/* 24-Hour Gmail Notification Modal */}
+        {showEmailModal && (
+          <EmailSummaryModal
+            initialEmail=""
+            role="consignee"
+            associatedTrackingId={currentShipment?.id}
+            onClose={() => setShowEmailModal(false)}
+          />
         )}
       </div>
 

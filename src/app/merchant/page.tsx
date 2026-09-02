@@ -19,11 +19,13 @@ import {
   User,
   LogOut,
   Sparkles,
-  Printer
+  Printer,
+  Mail
 } from 'lucide-react';
 import { getCurrentUser, logoutUser, User as AuthUser } from '../../lib/auth';
 import { getShipments, Shipment } from '../../lib/store';
 import PrintableLabel from '../../components/shipping/PrintableLabel';
+import EmailSummaryModal from '../../components/notifications/EmailSummaryModal';
 
 export default function MerchantPortal() {
   const router = useRouter();
@@ -31,6 +33,7 @@ export default function MerchantPortal() {
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [printingShipment, setPrintingShipment] = useState<Shipment | null>(null);
+  const [showEmailModal, setShowEmailModal] = useState(false);
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -159,6 +162,55 @@ export default function MerchantPortal() {
           </div>
         </div>
 
+        {/* Automated 24-Hour Gmail Logistics & COD Digest Card */}
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(255, 102, 0, 0.08) 0%, rgba(6, 182, 212, 0.04) 100%)',
+          border: '1px solid rgba(255, 102, 0, 0.3)',
+          borderRadius: '14px',
+          padding: '1.25rem 1.75rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '2rem',
+          flexWrap: 'wrap',
+          gap: '1rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{
+              width: '46px',
+              height: '46px',
+              borderRadius: '12px',
+              background: 'rgba(255, 102, 0, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--brand-orange)',
+              border: '1px solid rgba(255, 102, 0, 0.3)'
+            }}>
+              <Mail size={22} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                <span style={{ fontWeight: 800, color: '#ffffff', fontSize: '1rem' }}>24-Hour Gmail Logistics &amp; COD Digest</span>
+                <span className="badge badge-emerald" style={{ fontSize: '0.65rem' }}>ACTIVE 24H SCHEDULE</span>
+              </div>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0 }}>
+                Automated 24-hr summary dispatched to <strong>{currentUser.email}</strong> daily at 08:00 NPT (Active Linehauls, Delivered Parcels, and COD Remittance Report).
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowEmailModal(true)}
+            className="btn btn-outline btn-sm"
+            style={{ fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '0.4rem', borderColor: 'var(--brand-orange)', color: '#ffffff' }}
+          >
+            <Clock size={14} color="var(--brand-orange)" />
+            <span>Configure 24h Gmail Alerts</span>
+          </button>
+        </div>
+
         {/* Consignment Records Table */}
         <div className="card" style={{ padding: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -282,6 +334,15 @@ export default function MerchantPortal() {
               />
             </div>
           </div>
+        )}
+
+        {/* 24-Hour Gmail Summary Modal */}
+        {showEmailModal && currentUser && (
+          <EmailSummaryModal
+            initialEmail={currentUser.email}
+            role="merchant"
+            onClose={() => setShowEmailModal(false)}
+          />
         )}
       </div>
     </div>

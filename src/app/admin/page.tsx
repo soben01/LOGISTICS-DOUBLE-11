@@ -28,7 +28,8 @@ import {
   Building,
   Radio,
   Lock,
-  Printer
+  Printer,
+  Mail
 } from 'lucide-react';
 import {
   getShipments,
@@ -50,12 +51,14 @@ import {
   User
 } from '../../lib/auth';
 import PrintableLabel from '../../components/shipping/PrintableLabel';
+import EmailSummaryModal from '../../components/notifications/EmailSummaryModal';
 
 export default function AdminControlPanel() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState<'shipments' | 'merchants' | 'waitlist' | 'hubs'>('shipments');
   const [printingShipment, setPrintingShipment] = useState<Shipment | null>(null);
+  const [showEmailModal, setShowEmailModal] = useState(false);
 
   // Shipments state
   const [shipments, setShipments] = useState<Shipment[]>([]);
@@ -300,6 +303,15 @@ export default function AdminControlPanel() {
               </div>
 
               <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowEmailModal(true)}
+                  className="btn btn-outline btn-sm"
+                  style={{ borderColor: 'var(--brand-orange)', color: '#ffffff', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                >
+                  <Mail size={14} color="var(--brand-orange)" />
+                  <span>24h Gmail Digest</span>
+                </button>
                 <button onClick={loadAllData} className="btn btn-secondary btn-sm">
                   <RefreshCw size={14} />
                   <span>Refresh Telemetry</span>
@@ -1036,6 +1048,15 @@ export default function AdminControlPanel() {
               />
             </div>
           </div>
+        )}
+
+        {/* 24-Hour Gmail Logistics & COD Summary Modal */}
+        {showEmailModal && currentUser && (
+          <EmailSummaryModal
+            initialEmail={currentUser.email}
+            role="admin"
+            onClose={() => setShowEmailModal(false)}
+          />
         )}
       </div>
     </div>
