@@ -257,17 +257,13 @@ function TrackContent() {
                 </div>
 
                 {/* Origin -> Destination Visual Banner */}
-                <div style={{
+                <div className="flex-between flex-sm-col gap-4" style={{
                   background: 'var(--bg-surface)',
                   borderRadius: 'var(--radius-md)',
                   padding: '1.5rem',
-                  display: 'grid',
-                  gridTemplateColumns: '1fr auto 1fr',
-                  alignItems: 'center',
-                  gap: '1.5rem',
                   border: '1px solid var(--border-subtle)'
                 }}>
-                  <div>
+                  <div style={{ minWidth: '160px' }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ORIGIN GATEWAY</div>
                     <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff' }}>
                       {currentShipment.origin.city}
@@ -277,7 +273,7 @@ function TrackContent() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem' }}>
+                  <div className="flex-col-center gap-1">
                     <div style={{
                       width: '42px',
                       height: '42px',
@@ -294,7 +290,7 @@ function TrackContent() {
                     </span>
                   </div>
 
-                  <div style={{ textAlign: 'right' }}>
+                  <div style={{ minWidth: '160px', textAlign: 'right' }} className="route-dest-cell">
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>DESTINATION</div>
                     <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff' }}>
                       {currentShipment.destination.city}
@@ -529,6 +525,12 @@ function TrackContent() {
         @media (max-width: 850px) {
           .track-layout {
             grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .route-dest-cell {
+            text-align: left !important;
+            width: 100% !important;
           }
         }
       `}</style>
