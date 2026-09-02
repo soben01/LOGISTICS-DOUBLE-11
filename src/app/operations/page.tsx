@@ -131,20 +131,20 @@ export default function OperationsPage() {
 
           <div className="metric-pill">
             <span className="metric-number" style={{ color: 'var(--brand-emerald)' }}>99.8%</span>
-            <span className="metric-label">On-Time Dispatch Rate</span>
+            <span className="metric-label">Nepal On-Time SLA</span>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Zero SLA breaches today</span>
           </div>
 
           <div className="metric-pill">
-            <span className="metric-number" style={{ color: 'var(--brand-cyan)' }}>14 Jets</span>
-            <span className="metric-label">Air Cargo Freighters Active</span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Transpacific & European lanes</span>
+            <span className="metric-number" style={{ color: 'var(--brand-cyan)' }}>77 Districts</span>
+            <span className="metric-label">Nationwide Domestic Reach</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>All 7 Provinces linehaul active</span>
           </div>
 
           <div className="metric-pill">
-            <span className="metric-number" style={{ color: 'var(--brand-amber)' }}>18,400 T</span>
-            <span className="metric-label">Daily Cargo Throughput</span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Double 11 Peak Surge Mode</span>
+            <span className="metric-number" style={{ color: 'var(--brand-amber)' }}>Coming Soon</span>
+            <span className="metric-label">International Air Cargo</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>TIA Air Terminal (Q4 2026)</span>
           </div>
         </div>
 
@@ -153,7 +153,7 @@ export default function OperationsPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Boxes size={18} color="var(--brand-orange)" />
-              <span>Global Automated Mega-Hub Capacity</span>
+              <span>Nepal Domestic Regional Hub Capacity &amp; Telemetry</span>
             </h3>
             <span style={{ fontSize: '0.8rem', color: 'var(--brand-emerald)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <span className="pulse-dot pulse-dot-green" style={{ width: 6, height: 6 }} /> All Sort Facilities Online
@@ -161,52 +161,52 @@ export default function OperationsPage() {
           </div>
 
           <div className="grid grid-cols-4 gap-4">
-            {/* Shenzhen */}
+            {/* Kathmandu */}
             <div style={{ background: 'var(--bg-surface)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.4rem' }}>
-                <strong>Shenzhen (SZX) Mega-Hub</strong>
-                <span style={{ color: 'var(--brand-orange)', fontWeight: 700 }}>92%</span>
+                <strong>Kathmandu Central Mega-Hub</strong>
+                <span style={{ color: 'var(--brand-orange)', fontWeight: 700 }}>94%</span>
               </div>
               <div style={{ height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
-                <div style={{ width: '92%', height: '100%', background: 'var(--brand-orange)' }} />
+                <div style={{ width: '94%', height: '100%', background: 'var(--brand-orange)' }} />
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>High Flow: Peak robotic sorting active</div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>Peak automated sorting (12,000 pk/hr)</div>
             </div>
 
-            {/* Singapore */}
+            {/* Pokhara */}
             <div style={{ background: 'var(--bg-surface)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.4rem' }}>
-                <strong>Singapore (SIN) Gateway</strong>
-                <span style={{ color: 'var(--brand-emerald)', fontWeight: 700 }}>74%</span>
+                <strong>Pokhara (PKR) Gandaki Gateway</strong>
+                <span style={{ color: 'var(--brand-emerald)', fontWeight: 700 }}>76%</span>
               </div>
               <div style={{ height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
-                <div style={{ width: '74%', height: '100%', background: 'var(--brand-emerald)' }} />
+                <div style={{ width: '76%', height: '100%', background: 'var(--brand-emerald)' }} />
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>Normal Flow: ASEAN express hub</div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>Normal Flow: Prithvi highway express unit</div>
             </div>
 
-            {/* Frankfurt */}
+            {/* Birgunj */}
             <div style={{ background: 'var(--bg-surface)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.4rem' }}>
-                <strong>Frankfurt (FRA) CargoCity</strong>
-                <span style={{ color: 'var(--brand-cyan)', fontWeight: 700 }}>81%</span>
+                <strong>Birgunj Inland Dry Port Hub</strong>
+                <span style={{ color: 'var(--brand-cyan)', fontWeight: 700 }}>88%</span>
               </div>
               <div style={{ height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
-                <div style={{ width: '81%', height: '100%', background: 'var(--brand-cyan)' }} />
+                <div style={{ width: '88%', height: '100%', background: 'var(--brand-cyan)' }} />
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>Optimized: European hub consolidation</div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>High Flow: Cross-corridor heavy freight</div>
             </div>
 
-            {/* Los Angeles */}
+            {/* Biratnagar */}
             <div style={{ background: 'var(--bg-surface)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.4rem' }}>
-                <strong>Los Angeles (LAX) Gateway</strong>
-                <span style={{ color: 'var(--brand-emerald)', fontWeight: 700 }}>68%</span>
+                <strong>Biratnagar Koshi Hub</strong>
+                <span style={{ color: 'var(--brand-emerald)', fontWeight: 700 }}>72%</span>
               </div>
               <div style={{ height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
-                <div style={{ width: '68%', height: '100%', background: 'var(--brand-emerald)' }} />
+                <div style={{ width: '72%', height: '100%', background: 'var(--brand-emerald)' }} />
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>Clear: US West Coast last-mile fleet ready</div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>Normal Flow: East Nepal e-commerce dispatch</div>
             </div>
           </div>
         </div>
@@ -267,7 +267,7 @@ export default function OperationsPage() {
                         {s.id}
                       </Link>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                        {s.telemetry.airwayBill}
+                        {s.telemetry.waybillNumber || s.telemetry.airwayBill}
                       </div>
                     </td>
 

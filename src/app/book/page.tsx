@@ -22,7 +22,9 @@ import {
   Mail,
   Phone,
   KeyRound,
-  LogOut
+  LogOut,
+  Clock,
+  Globe2
 } from 'lucide-react';
 import { createShipment, Shipment } from '../../lib/store';
 import { getCurrentUser, loginUser, signupUser, logoutUser, User } from '../../lib/auth';
@@ -161,29 +163,29 @@ function BookContent() {
   };
 
   const handleFinishBooking = () => {
-    let serviceName: Shipment['service'] = 'Double 11 Super Express';
-    if (selectedService === 'AIR') serviceName = 'Cross-Border Air Priority';
-    else if (selectedService === 'SEA') serviceName = 'Ocean Container FCL';
-    else if (selectedService === 'FUL') serviceName = 'Smart Hub Fulfillment';
+    let serviceName: Shipment['service'] = 'Double 11 Nepal Express';
+    if (selectedService === 'CARGO') serviceName = 'Nationwide Hub Cargo';
+    else if (selectedService === 'RUSH') serviceName = 'Same-Day Valley Rush';
+    else if (selectedService === 'INTL') serviceName = 'International Cross-Border (Coming Soon)';
 
     const shipment = createShipment({
       service: serviceName,
       serviceCode: selectedService,
       origin: {
         city: originCity,
-        country: originCountry,
-        hub: `${originCity} International Gateway`,
+        province: 'Bagmati Province',
+        hub: `${originCity} Central Hub`,
       },
       destination: {
         city: recipientCity,
-        country: recipientCountry,
-        hub: `${recipientCity} Distribution Center`,
-        postalCode: recipientPostal,
+        province: 'Nepal',
+        hub: `${recipientCity} Regional Hub`,
+        areaCode: recipientPostal,
       },
       sender: {
-        name: senderName || currentUser?.name || 'Authorized Consignor',
-        company: senderCompany || currentUser?.company || 'Verified Merchant',
-        phone: senderPhone || currentUser?.phone || '+1 800 555 0100',
+        name: senderName || currentUser?.name || 'Verified Merchant',
+        company: senderCompany || currentUser?.company || 'Nepal Merchant Pvt Ltd',
+        phone: senderPhone || currentUser?.phone || '+977 98000 00000',
       },
       recipient: {
         name: recipientName,
@@ -196,7 +198,7 @@ function BookContent() {
         weightKg: Number(weightKg),
         volumeCbm: (lengthCm * widthCm * heightCm) / 1000000,
         description: cargoDesc,
-        declaredValueUsd: Number(declaredValue),
+        declaredValueNpr: Number(declaredValue),
       },
     });
 
@@ -566,24 +568,20 @@ function BookContent() {
                     </div>
 
                     <div className="input-group">
-                      <label className="input-label">Origin Country / Gateway</label>
+                      <label className="input-label">Origin Hub (Nepal)</label>
                       <select
-                        value={originCountry}
-                        onChange={(e) => {
-                          setOriginCountry(e.target.value);
-                          if (e.target.value === 'HKG') setOriginCity('Hong Kong');
-                          else if (e.target.value === 'CHN') setOriginCity('Shenzhen');
-                          else if (e.target.value === 'SGP') setOriginCity('Singapore');
-                          else if (e.target.value === 'JPN') setOriginCity('Tokyo');
-                          else setOriginCity('Frankfurt');
-                        }}
+                        value={originCity}
+                        onChange={(e) => setOriginCity(e.target.value)}
                         className="select-field"
                       >
-                        <option value="HKG">Hong Kong (HKG Terminal 1)</option>
-                        <option value="CHN">Shenzhen / Shanghai (CHN Hub)</option>
-                        <option value="SGP">Singapore (Changi SIN)</option>
-                        <option value="JPN">Tokyo (Narita NRT)</option>
-                        <option value="DEU">Frankfurt (FRA CargoCity)</option>
+                        <option value="Kathmandu">Kathmandu (Central Hub - TIA Gate)</option>
+                        <option value="Lalitpur">Lalitpur (Patan Mega-Hub)</option>
+                        <option value="Bhaktapur">Bhaktapur (East Valley Hub)</option>
+                        <option value="Pokhara">Pokhara (Gandaki Regional Hub)</option>
+                        <option value="Birgunj">Birgunj (Dry Port Trade Terminal)</option>
+                        <option value="Biratnagar">Biratnagar (Koshi Province Hub)</option>
+                        <option value="Chitwan">Chitwan (Bharatpur / Narayangarh)</option>
+                        <option value="Butwal">Butwal (Lumbini Trade Corridor)</option>
                       </select>
                     </div>
                   </div>
@@ -602,12 +600,12 @@ function BookContent() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <h3 style={{ fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <Package size={20} color="var(--brand-orange)" />
-                    <span>Step 2: Consignee & Delivery Address</span>
+                    <span>Step 2: Consignee &amp; Delivery Destination</span>
                   </h3>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="input-group">
-                      <label className="input-label">Recipient Name</label>
+                      <label className="input-label">Recipient Full Name</label>
                       <input
                         type="text"
                         value={recipientName}
@@ -618,7 +616,7 @@ function BookContent() {
                     </div>
 
                     <div className="input-group">
-                      <label className="input-label">Company (Optional)</label>
+                      <label className="input-label">Company / Shop Name (Optional)</label>
                       <input
                         type="text"
                         value={recipientCompany}
@@ -628,46 +626,41 @@ function BookContent() {
                     </div>
 
                     <div className="input-group" style={{ gridColumn: 'span 2' }}>
-                      <label className="input-label">Street Address</label>
+                      <label className="input-label">Street / Area Address (Doorstep Delivery)</label>
                       <input
                         type="text"
                         value={recipientAddress}
                         onChange={(e) => setRecipientAddress(e.target.value)}
                         className="input-field"
-                        placeholder="Street, suite, floor"
+                        placeholder="e.g. Lakeside Ward 6, New Road, Lions Chowk"
                         required
                       />
                     </div>
 
                     <div className="input-group">
-                      <label className="input-label">City</label>
-                      <input
-                        type="text"
+                      <label className="input-label">Destination City / Region (Nepal)</label>
+                      <select
                         value={recipientCity}
                         onChange={(e) => setRecipientCity(e.target.value)}
-                        className="input-field"
-                        required
-                      />
-                    </div>
-
-                    <div className="input-group">
-                      <label className="input-label">Destination Country</label>
-                      <select
-                        value={recipientCountry}
-                        onChange={(e) => setRecipientCountry(e.target.value)}
                         className="select-field"
                       >
-                        <option value="USA">United States (USA)</option>
-                        <option value="GBR">United Kingdom (GBR)</option>
-                        <option value="DEU">Germany (DEU)</option>
-                        <option value="SGP">Singapore (SGP)</option>
-                        <option value="AUS">Australia (AUS)</option>
-                        <option value="CAN">Canada (CAN)</option>
+                        <option value="Pokhara">Pokhara (Gandaki Province)</option>
+                        <option value="Kathmandu">Kathmandu Valley</option>
+                        <option value="Lalitpur">Lalitpur (Patan)</option>
+                        <option value="Bhaktapur">Bhaktapur</option>
+                        <option value="Biratnagar">Biratnagar (Koshi Province)</option>
+                        <option value="Birgunj">Birgunj (Madhesh Province)</option>
+                        <option value="Chitwan">Chitwan (Bharatpur / Narayangarh)</option>
+                        <option value="Butwal">Butwal / Bhairahawa</option>
+                        <option value="Dharan">Dharan / Itahari</option>
+                        <option value="Nepalgunj">Nepalgunj (Banke)</option>
+                        <option value="Dhangadhi">Dhangadhi (Far-West)</option>
+                        <option value="Rest of Nepal">Rest of Nepal (77 Districts)</option>
                       </select>
                     </div>
 
                     <div className="input-group">
-                      <label className="input-label">Postal / Zip Code</label>
+                      <label className="input-label">Postal Code / Landmark</label>
                       <input
                         type="text"
                         value={recipientPostal}
@@ -801,11 +794,11 @@ function BookContent() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <h3 style={{ fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <Plane size={20} color="var(--brand-orange)" />
-                    <span>Step 4: Select Service Tier & Protection</span>
+                    <span>Step 4: Select Domestic Service Tier &amp; Protection</span>
                   </h3>
 
                   <div className="grid grid-cols-2 gap-4">
-                    {/* Option 1: Super Express */}
+                    {/* Option 1: Nepal Express */}
                     <div
                       onClick={() => setSelectedService('EXP')}
                       className="card"
@@ -817,91 +810,106 @@ function BookContent() {
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--brand-orange)', fontWeight: 700 }}>
-                          <Plane size={18} />
-                          <span>Double 11 Super Express</span>
+                          <Truck size={18} />
+                          <span>Double 11 Nepal Express</span>
                         </div>
                         <span className="badge badge-orange">Fastest</span>
                       </div>
                       <p style={{ fontSize: '0.82rem', marginBottom: '0.75rem' }}>
-                        Dedicated transpacific/Eurasian cargo jet with guaranteed 24-48h departure.
+                        24h guaranteed intercity linehaul with electric express vans &amp; live GPS rider tracking.
                       </p>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
-                        Est. ${(45 + weightKg * 9.5).toFixed(0)} USD
+                      <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
+                        Est. Rs. {Math.round(220 + (weightKg - 1) * 60)} NPR
                       </div>
                     </div>
 
-                    {/* Option 2: Air Priority */}
+                    {/* Option 2: Nationwide Cargo */}
                     <div
-                      onClick={() => setSelectedService('AIR')}
+                      onClick={() => setSelectedService('CARGO')}
                       className="card"
                       style={{
                         cursor: 'pointer',
-                        border: selectedService === 'AIR' ? '2px solid var(--brand-orange)' : undefined,
-                        background: selectedService === 'AIR' ? 'rgba(255, 102, 0, 0.06)' : undefined
+                        border: selectedService === 'CARGO' ? '2px solid var(--brand-orange)' : undefined,
+                        background: selectedService === 'CARGO' ? 'rgba(255, 102, 0, 0.06)' : undefined
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--brand-cyan)', fontWeight: 700 }}>
-                          <Plane size={18} />
-                          <span>Cross-Border Air Priority</span>
-                        </div>
-                        <span className="badge badge-cyan">Popular</span>
-                      </div>
-                      <p style={{ fontSize: '0.82rem', marginBottom: '0.75rem' }}>
-                        Standard commercial air cargo with 3-4 business day customs clearance.
-                      </p>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
-                        Est. ${(28 + weightKg * 6.2).toFixed(0)} USD
-                      </div>
-                    </div>
-
-                    {/* Option 3: Smart Fulfillment */}
-                    <div
-                      onClick={() => setSelectedService('FUL')}
-                      className="card"
-                      style={{
-                        cursor: 'pointer',
-                        border: selectedService === 'FUL' ? '2px solid var(--brand-orange)' : undefined,
-                        background: selectedService === 'FUL' ? 'rgba(255, 102, 0, 0.06)' : undefined
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--brand-amber)', fontWeight: 700 }}>
                           <Boxes size={18} />
-                          <span>Double 11 Smart Fulfillment</span>
+                          <span>Nationwide Hub Cargo</span>
                         </div>
-                        <span className="badge badge-amber">E-Com</span>
+                        <span className="badge badge-cyan">All 77 Districts</span>
                       </div>
                       <p style={{ fontSize: '0.82rem', marginBottom: '0.75rem' }}>
-                        Automated robotic pick, pack, and consolidated parcel dispatch (4-6 days).
+                        Bulk freight and consolidated distribution across all 7 provinces (2-3 days).
                       </p>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
-                        Est. ${(18 + weightKg * 4.8).toFixed(0)} USD
+                      <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
+                        Est. Rs. {Math.round(160 + weightKg * 40)} NPR
                       </div>
                     </div>
 
-                    {/* Option 4: Ocean FCL */}
+                    {/* Option 3: Valley Rush */}
                     <div
-                      onClick={() => setSelectedService('SEA')}
+                      onClick={() => setSelectedService('RUSH')}
                       className="card"
                       style={{
                         cursor: 'pointer',
-                        border: selectedService === 'SEA' ? '2px solid var(--brand-orange)' : undefined,
-                        background: selectedService === 'SEA' ? 'rgba(255, 102, 0, 0.06)' : undefined
+                        border: selectedService === 'RUSH' ? '2px solid var(--brand-orange)' : undefined,
+                        background: selectedService === 'RUSH' ? 'rgba(255, 102, 0, 0.06)' : undefined
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--brand-emerald)', fontWeight: 700 }}>
-                          <Ship size={18} />
-                          <span>Ocean Container FCL / LCL</span>
+                          <Clock size={18} />
+                          <span>Same-Day Valley Rush</span>
                         </div>
-                        <span className="badge badge-emerald">Bulk</span>
+                        <span className="badge badge-emerald">Under 3h</span>
                       </div>
                       <p style={{ fontSize: '0.82rem', marginBottom: '0.75rem' }}>
-                        Economical maritime shipping for pallets or full container loads (14-20 days).
+                        Direct dedicated rider for Kathmandu, Lalitpur &amp; Bhaktapur urgent deliveries.
                       </p>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
-                        Est. ${(75 + weightKg * 1.5).toFixed(0)} USD
+                      <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
+                        Est. Rs. {Math.round(290 + (weightKg - 1) * 50)} NPR
+                      </div>
+                    </div>
+
+                    {/* Option 4: International Air Freight (COMING SOON) */}
+                    <div
+                      onClick={() => {
+                        alert('International Cross-Border Cargo is currently in pilot phase and launching Q4 2026. Please select a domestic tier for immediate dispatch.');
+                      }}
+                      className="card"
+                      style={{
+                        cursor: 'pointer',
+                        border: '1px dashed rgba(245, 158, 11, 0.4)',
+                        background: 'rgba(245, 158, 11, 0.04)',
+                        position: 'relative'
+                      }}
+                    >
+                      <div style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '12px',
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        color: '#000',
+                        fontSize: '0.65rem',
+                        fontWeight: 800,
+                        padding: '0.15rem 0.5rem',
+                        borderRadius: '6px'
+                      }}>
+                        COMING SOON
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--brand-amber)', fontWeight: 700 }}>
+                          <Globe2 size={18} />
+                          <span>International Air Freight</span>
+                        </div>
+                      </div>
+                      <p style={{ fontSize: '0.82rem', marginBottom: '0.75rem' }}>
+                        TIA (Kathmandu) direct air cargo flights to Dubai, India &amp; China. Launching Q4 2026.
+                      </p>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--brand-amber)' }}>
+                        Pilot Phase &bull; Launching Q4 2026
                       </div>
                     </div>
                   </div>
@@ -978,10 +986,10 @@ function BookContent() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #111', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
                       <div>
                         <div style={{ fontSize: '1.4rem', fontWeight: 900, letterSpacing: '-0.02em', color: '#ea580c' }}>
-                          DOUBLE 11 LOGISTICS &middot; AIRWAY BILL
+                          DOUBLE 11 LOGISTICS &middot; DOMESTIC WAYBILL
                         </div>
                         <div style={{ fontSize: '0.8rem', color: '#4b5563' }}>
-                          Global Fast-Track Priority &middot; IATA Accredit &middot; Dispatch Node #89
+                          Nepal Express Priority &middot; Nationwide Linehaul &middot; Dispatch Node #NP-11
                         </div>
                       </div>
 
@@ -999,7 +1007,7 @@ function BookContent() {
                         <div style={{ fontWeight: 700, color: '#6b7280', fontSize: '0.75rem' }}>SHIPPER (FROM):</div>
                         <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{createdShipment.sender.name}</div>
                         <div>{createdShipment.sender.company}</div>
-                        <div>Gateway: {createdShipment.origin.hub}</div>
+                        <div>Origin Hub: {createdShipment.origin.hub}</div>
                         <div>Phone: {createdShipment.sender.phone}</div>
                       </div>
 
@@ -1008,7 +1016,7 @@ function BookContent() {
                         <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{createdShipment.recipient.name}</div>
                         <div>{createdShipment.recipient.company}</div>
                         <div>{createdShipment.recipient.address}</div>
-                        <div>{createdShipment.destination.city}, {createdShipment.destination.country} &middot; {createdShipment.destination.postalCode}</div>
+                        <div>{createdShipment.destination.city}, Nepal &middot; {createdShipment.destination.areaCode}</div>
                       </div>
                     </div>
 
@@ -1028,7 +1036,7 @@ function BookContent() {
                       </div>
                       <div>
                         <div style={{ color: '#6b7280', fontSize: '0.75rem' }}>DECLARED VALUE</div>
-                        <div style={{ fontWeight: 700 }}>${createdShipment.cargo.declaredValueUsd} USD</div>
+                        <div style={{ fontWeight: 700 }}>Rs. {createdShipment.cargo.declaredValueNpr} NPR</div>
                       </div>
                     </div>
 
@@ -1039,7 +1047,7 @@ function BookContent() {
                           ||||| | |||| ||| |||||| || |||
                         </div>
                         <div style={{ fontSize: '0.75rem', color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
-                          {createdShipment.telemetry.airwayBill}
+                          {createdShipment.telemetry.waybillNumber || createdShipment.telemetry.airwayBill}
                         </div>
                       </div>
 

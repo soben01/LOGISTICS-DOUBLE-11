@@ -91,15 +91,15 @@ export default function Navbar() {
           }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#10b981', fontWeight: 700, flexShrink: 0 }}>
               <span className="pulse-dot pulse-dot-green" style={{ width: 6, height: 6 }}></span>
-              SYSTEM OPERATIONAL
+              DOMESTIC NEPAL: 100% ACTIVE
             </span>
             <span style={{ color: 'var(--border-medium)', flexShrink: 0 }}>|</span>
             <span className="ticker-hide-sm" style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
-              Double 11 Peak Surge Engine: <strong style={{ color: '#f8fafc' }}>Active (100% SLA)</strong>
+              Hubs: <strong style={{ color: '#f8fafc' }}>KTM &bull; Pokhara &bull; Birgunj &bull; Biratnagar &bull; Chitwan &bull; Butwal</strong>
             </span>
             <span style={{ color: 'var(--border-medium)', flexShrink: 0 }} className="ticker-hide-md">|</span>
-            <span className="ticker-hide-md" style={{ whiteSpace: 'nowrap', color: 'var(--text-muted)' }}>
-              Gateways: <strong>HKG &bull; PVG &bull; SIN &bull; FRA &bull; LAX &bull; LHR</strong>
+            <span className="ticker-hide-md" style={{ whiteSpace: 'nowrap', color: 'var(--brand-amber)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+              <Globe2 size={12} /> International Cross-Border: <strong style={{ color: '#ffffff', background: 'rgba(245, 158, 11, 0.2)', padding: '0.1rem 0.4rem', borderRadius: '4px', border: '1px solid rgba(245, 158, 11, 0.4)' }}>Coming Soon</strong>
             </span>
           </div>
 
@@ -183,7 +183,7 @@ export default function Navbar() {
               }}>LOGISTICS</span>
             </div>
             <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
-              Intelligent Global Supply Chain
+              Nepal Nationwide &bull; International Coming Soon
             </div>
           </div>
         </Link>

@@ -16,27 +16,33 @@ import {
   Clock,
   TrendingUp,
   Globe,
+  Globe2,
   Sliders,
   Cpu,
   ChevronRight,
   Sparkles,
   Layers,
-  BarChart3
+  BarChart3,
+  MapPin,
+  Banknote,
+  Navigation
 } from 'lucide-react';
-import { calculateFreightRate, RateOption } from '../lib/store';
+import { calculateDomesticFreightRate, DomesticRateOption } from '../lib/store';
 
 export default function HomePage() {
   const router = useRouter();
   const [trackingId, setTrackingId] = useState('');
 
   // Quick Rate Calculator state
-  const [originCountry, setOriginCountry] = useState('HKG');
-  const [destCountry, setDestCountry] = useState('USA');
-  const [weightKg, setWeightKg] = useState<number>(5.5);
-  const [lengthCm, setLengthCm] = useState<number>(35);
-  const [widthCm, setWidthCm] = useState<number>(25);
-  const [heightCm, setHeightCm] = useState<number>(20);
-  const [calculatedRates, setCalculatedRates] = useState<RateOption[] | null>(null);
+  const [originCity, setOriginCity] = useState('Kathmandu');
+  const [destCity, setDestCity] = useState('Pokhara');
+  const [weightKg, setWeightKg] = useState<number>(3.5);
+  const [lengthCm, setLengthCm] = useState<number>(30);
+  const [widthCm, setWidthCm] = useState<number>(20);
+  const [heightCm, setHeightCm] = useState<number>(15);
+  const [calculatedRates, setCalculatedRates] = useState<DomesticRateOption[] | null>(null);
+  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [waitlistSuccess, setWaitlistSuccess] = useState(false);
 
   const handleTrackSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,62 +56,80 @@ export default function HomePage() {
 
   const handleCalculateRate = (e: React.FormEvent) => {
     e.preventDefault();
-    const rates = calculateFreightRate({
-      originCountry,
-      destCountry,
+    const rates = calculateDomesticFreightRate({
+      originCity,
+      destCity,
       weightKg: Number(weightKg),
       lengthCm: Number(lengthCm),
       widthCm: Number(widthCm),
       heightCm: Number(heightCm),
-      goodsType: 'General Cargo',
+      isInternational: destCity === 'International',
     });
     setCalculatedRates(rates);
   };
 
-  return (
-    <div style={{ position: 'relative', overflow: 'hidden' }}>
-      {/* Background Ambient Glows */}
-      <div className="hero-ambient-glow" />
+  const handleWaitlistSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!waitlistEmail.trim()) return;
+    setWaitlistSuccess(true);
+  };
 
+  return (
+    <div>
       {/* ================= HERO SECTION ================= */}
       <section style={{
         position: 'relative',
-        padding: '4rem 0 5rem 0',
+        padding: '5rem 0 4.5rem 0',
+        overflow: 'hidden',
         borderBottom: '1px solid var(--border-subtle)'
       }}>
-        <div className="container">
+        {/* Ambient background glow */}
+        <div style={{
+          position: 'absolute',
+          top: '10%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '750px',
+          height: '350px',
+          background: 'radial-gradient(circle, rgba(255, 102, 0, 0.12) 0%, rgba(6, 182, 212, 0.05) 50%, transparent 80%)',
+          pointerEvents: 'none',
+          zIndex: 0
+        }} />
+
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 0.85fr', gap: '3.5rem', alignItems: 'center' }} className="hero-grid">
-            {/* Left Col: Headings & Quick Search */}
+            {/* Left Col: Headings & Quick Tracker */}
             <div>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }} className="badge badge-orange">
                 <Zap size={13} />
-                <span>Double 11 High-Velocity Global Logistics</span>
+                <span>NEPAL DOMESTIC LOGISTICS &bull; ALL 7 PROVINCES ACTIVE</span>
               </div>
 
               <h1 style={{ marginBottom: '1.25rem' }}>
-                Unstoppable Cargo Speed for the <span style={{
+                Unstoppable Cargo Speed Across{' '}
+                <span style={{
                   background: 'linear-gradient(135deg, #ff6600 0%, #ff944d 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent'
-                }}>Global E-Commerce</span> Era.
+                }}>Nepal</span>.
               </h1>
 
               <p style={{ fontSize: '1.12rem', color: 'var(--text-secondary)', marginBottom: '2.5rem', maxWidth: '750px' }}>
-                Built for peak-surge volumes, international air express, and precision cross-border supply chains. Experience sub-second telemetry, automated customs clearance, and dedicated freight charters.
+                Next-generation domestic logistics network powering high-velocity e-commerce, same-day Kathmandu Valley dispatch, 24-hour intercity linehauls, and Cash on Delivery (COD) across all 77 districts. International cross-border cargo expanding soon.
               </p>
 
               {/* Instant Tracking Box */}
               <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem', width: '100%' }}>
                 <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <Search size={15} color="var(--brand-orange)" />
-                  <span>TRACK CONSIGNMENT OR AIRWAY BILL (AWB)</span>
+                  <span>TRACK DOMESTIC CONSIGNMENT OR WAYBILL (AWB)</span>
                 </div>
 
                 <form onSubmit={handleTrackSubmit} style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <input
                     type="text"
                     className="input-field"
-                    placeholder="Enter Tracking # (e.g. D11-8892-EXP)"
+                    placeholder="Enter Tracking # (e.g. D11-8892-KTM)"
                     value={trackingId}
                     onChange={(e) => setTrackingId(e.target.value)}
                     style={{ flex: 1, minWidth: '220px', fontFamily: 'var(--font-mono)', fontSize: '1rem', padding: '0.85rem 1.1rem' }}
@@ -121,41 +145,49 @@ export default function HomePage() {
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Try Live Samples:</span>
                   <button
                     type="button"
-                    onClick={() => handleSampleClick('D11-8892-EXP')}
+                    onClick={() => handleSampleClick('D11-8892-KTM')}
                     className="badge badge-subtle"
                     style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)' }}
                   >
-                    D11-8892-EXP (Air Express)
+                    D11-8892-KTM (KTM &rarr; Pokhara)
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleSampleClick('D11-4410-SEA')}
+                    onClick={() => handleSampleClick('D11-4410-BIRT')}
                     className="badge badge-subtle"
                     style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)' }}
                   >
-                    D11-4410-SEA (Ocean FCL)
+                    D11-4410-BIRT (Birgunj &rarr; Biratnagar)
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleSampleClick('D11-9921-AIR')}
+                    onClick={() => handleSampleClick('D11-9921-CHIT')}
                     className="badge badge-subtle"
                     style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)' }}
                   >
-                    D11-9921-AIR (Out for Delivery)
+                    D11-9921-CHIT (Chitwan Delivered)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSampleClick('D11-INTL-11')}
+                    className="badge badge-orange"
+                    style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)' }}
+                  >
+                    D11-INTL-11 (Global - Coming Soon)
                   </button>
                 </div>
               </div>
 
               {/* Trust Badges */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem', color: 'var(--text-muted)', fontSize: '0.85rem', flexWrap: 'wrap' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={16} color="var(--brand-emerald)" /> IATA Certified Charters
+                  <CheckCircle2 size={16} color="var(--brand-emerald)" /> All 77 Districts Covered
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={16} color="var(--brand-emerald)" /> 100% Carbon Neutral Option
+                  <CheckCircle2 size={16} color="var(--brand-emerald)" /> Same-Day &amp; 24h Delivery SLA
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={16} color="var(--brand-emerald)" /> 99.8% On-Time SLA
+                  <CheckCircle2 size={16} color="var(--brand-emerald)" /> Automated Merchant COD Remittance
                 </span>
               </div>
             </div>
@@ -171,40 +203,40 @@ export default function HomePage() {
               }}>
                 <img
                   src="/images/hero.jpg"
-                  alt="Double 11 Air Cargo Apron and Hub Terminal"
+                  alt="Double 11 Logistics Hub Terminal"
                   style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
                 />
 
                 {/* Glassmorphic Live Telemetry Overlay Card */}
                 <div style={{
                   position: 'absolute',
-                  bottom: '1rem',
-                  left: '1rem',
-                  right: '1rem',
-                  background: 'rgba(9, 13, 22, 0.88)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  bottom: '16px',
+                  left: '16px',
+                  right: '16px',
+                  background: 'rgba(9, 13, 24, 0.88)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
                   borderRadius: '12px',
-                  padding: '1rem 1.25rem',
+                  padding: '1.15rem 1.25rem',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
                   display: 'grid',
                   gridTemplateColumns: 'repeat(3, 1fr)',
                   gap: '0.75rem'
                 }}>
                   <div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>ACTIVE CHARTER</div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>D11-CX884</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--brand-cyan)' }}>B777-Freighter</div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>ACTIVE DISPATCH</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>BA-2-PA-8892</div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--brand-cyan)' }}>Electric Courier Van</div>
                   </div>
                   <div>
                     <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>ROUTE TRANSIT</div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff' }}>HKG &rarr; LAX</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--brand-emerald)' }}>Alt: FL340 (On Time)</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff' }}>KTM &rarr; PKR</div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--brand-emerald)' }}>Prithvi Highway (On Time)</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>PAYLOAD</div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>104,200 KG</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--brand-orange)' }}>Full Capacity</div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>NETWORK CAPACITY</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>100% SLA</div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--brand-orange)' }}>Nepal All 7 Provinces</div>
                   </div>
                 </div>
               </div>
@@ -222,27 +254,27 @@ export default function HomePage() {
         <div className="container">
           <div className="grid grid-cols-4 gap-6">
             <div className="metric-pill">
-              <div className="metric-number" style={{ color: 'var(--brand-orange)' }}>99.8%</div>
+              <div className="metric-number">99.8%</div>
               <div className="metric-label">On-Time Delivery SLA</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Strict fulfillment guarantee</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Across Kathmandu &amp; major cities</div>
             </div>
 
             <div className="metric-pill">
-              <div className="metric-number" style={{ color: 'var(--brand-cyan)' }}>4.2M+</div>
-              <div className="metric-label">Parcels Handled Weekly</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Scales effortlessly during Double 11</div>
+              <div className="metric-number">77</div>
+              <div className="metric-label">Districts Covered</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Complete nationwide reach</div>
             </div>
 
             <div className="metric-pill">
-              <div className="metric-number" style={{ color: 'var(--brand-emerald)' }}>18 MIN</div>
-              <div className="metric-label">Avg Hub In-to-Out Sorting</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Automated AGV robotics</div>
+              <div className="metric-number" style={{ color: 'var(--brand-cyan)' }}>6 HRS</div>
+              <div className="metric-label">Same-Day Valley Rush</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Kathmandu, Lalitpur, Bhaktapur</div>
             </div>
 
             <div className="metric-pill">
-              <div className="metric-number" style={{ color: '#ffffff' }}>120+</div>
-              <div className="metric-label">Countries Directly Connected</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Air, maritime & ground lanes</div>
+              <div className="metric-number" style={{ color: '#ffffff' }}>7</div>
+              <div className="metric-label">Provinces Connected</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Daily express linehaul runs</div>
             </div>
           </div>
         </div>
@@ -255,9 +287,9 @@ export default function HomePage() {
             <div className="badge badge-cyan" style={{ marginBottom: '0.75rem' }}>
               <Sliders size={13} /> Transparent Pricing
             </div>
-            <h2>Instant Freight Rate Estimator</h2>
-            <p style={{ maxWidth: '600px', margin: '0.5rem auto 0 auto' }}>
-              Calculate exact shipping rates, dimensional weight, and estimated transit times across our dedicated logistics network.
+            <h2>Instant Domestic Freight Rate Estimator</h2>
+            <p style={{ maxWidth: '650px', margin: '0.5rem auto 0 auto' }}>
+              Calculate exact shipping rates, dimensional weight, and estimated transit times across our dedicated Nepal network. International cargo coming soon.
             </p>
           </div>
 
@@ -265,34 +297,42 @@ export default function HomePage() {
             <form onSubmit={handleCalculateRate} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1.25rem', alignItems: 'flex-end' }} className="calc-grid">
               {/* Origin */}
               <div className="input-group">
-                <label className="input-label">Origin Gateway</label>
+                <label className="input-label">Origin City / Hub</label>
                 <select
-                  value={originCountry}
-                  onChange={(e) => setOriginCountry(e.target.value)}
+                  value={originCity}
+                  onChange={(e) => setOriginCity(e.target.value)}
                   className="select-field"
                 >
-                  <option value="HKG">Hong Kong (HKG)</option>
-                  <option value="CHN">Shenzhen / Shanghai (CHN)</option>
-                  <option value="SGP">Singapore (SGP)</option>
-                  <option value="JPN">Tokyo (JPN)</option>
-                  <option value="DEU">Frankfurt (DEU)</option>
+                  <option value="Kathmandu">Kathmandu (Central Hub)</option>
+                  <option value="Lalitpur">Lalitpur (Patan Hub)</option>
+                  <option value="Bhaktapur">Bhaktapur (East Valley)</option>
+                  <option value="Pokhara">Pokhara (Gandaki Hub)</option>
+                  <option value="Birgunj">Birgunj (Dry Port Terminal)</option>
+                  <option value="Biratnagar">Biratnagar (Koshi Hub)</option>
+                  <option value="Chitwan">Chitwan (Bharatpur Hub)</option>
+                  <option value="Butwal">Butwal (Lumbini Hub)</option>
                 </select>
               </div>
 
               {/* Destination */}
               <div className="input-group">
-                <label className="input-label">Destination Country</label>
+                <label className="input-label">Destination Area</label>
                 <select
-                  value={destCountry}
-                  onChange={(e) => setDestCountry(e.target.value)}
+                  value={destCity}
+                  onChange={(e) => setDestCity(e.target.value)}
                   className="select-field"
                 >
-                  <option value="USA">United States (USA)</option>
-                  <option value="GBR">United Kingdom (GBR)</option>
-                  <option value="DEU">Germany (DEU)</option>
-                  <option value="SGP">Singapore (SGP)</option>
-                  <option value="AUS">Australia (AUS)</option>
-                  <option value="CAN">Canada (CAN)</option>
+                  <option value="Pokhara">Pokhara (Gandaki)</option>
+                  <option value="Kathmandu">Kathmandu Valley</option>
+                  <option value="Biratnagar">Biratnagar (Koshi)</option>
+                  <option value="Birgunj">Birgunj (Madhesh)</option>
+                  <option value="Chitwan">Chitwan / Narayangarh</option>
+                  <option value="Butwal">Butwal / Bhairahawa</option>
+                  <option value="Dharan">Dharan / Itahari</option>
+                  <option value="Nepalgunj">Nepalgunj (Banke)</option>
+                  <option value="Dhangadhi">Dhangadhi (Kailali)</option>
+                  <option value="Nationwide">Rest of Nepal (77 Districts)</option>
+                  <option value="International">&bull; International (Coming Soon)</option>
                 </select>
               </div>
 
@@ -353,8 +393,8 @@ export default function HomePage() {
             {/* Results Grid */}
             {calculatedRates && (
               <div style={{ marginTop: '2.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '2rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <h3 style={{ fontSize: '1.25rem' }}>Available Service Tiers</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <h3 style={{ fontSize: '1.25rem' }}>Available Service Tiers ({originCity} &rarr; {destCity})</h3>
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                     Chargeable Wt: <strong>{Math.max(weightKg, (lengthCm * widthCm * heightCm) / 5000).toFixed(1)} KG</strong> (Volumetric 1:5000)
                   </span>
@@ -367,50 +407,92 @@ export default function HomePage() {
                       className="card"
                       style={{
                         position: 'relative',
-                        border: rate.recommended ? '1px solid var(--brand-orange)' : undefined,
-                        background: rate.recommended ? 'rgba(255, 102, 0, 0.04)' : undefined
+                        border: rate.isComingSoon
+                          ? '1px dashed rgba(245, 158, 11, 0.4)'
+                          : rate.recommended
+                          ? '1px solid var(--brand-orange)'
+                          : undefined,
+                        background: rate.isComingSoon
+                          ? 'rgba(245, 158, 11, 0.03)'
+                          : rate.recommended
+                          ? 'rgba(255, 102, 0, 0.04)'
+                          : undefined
                       }}
                     >
-                      {rate.recommended && (
+                      {rate.isComingSoon ? (
+                        <div style={{
+                          position: 'absolute',
+                          top: '-10px',
+                          right: '15px',
+                          background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                          color: '#000',
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                          padding: '0.2rem 0.6rem',
+                          borderRadius: '10px',
+                          letterSpacing: '0.05em'
+                        }}>
+                          COMING SOON
+                        </div>
+                      ) : rate.recommended && (
                         <div style={{
                           position: 'absolute',
                           top: '-10px',
                           right: '15px',
                           background: 'var(--brand-orange)',
                           color: '#fff',
-                          fontSize: '0.7rem',
+                          fontSize: '0.68rem',
                           fontWeight: 700,
-                          padding: '0.15rem 0.5rem',
-                          borderRadius: '4px'
+                          padding: '0.2rem 0.6rem',
+                          borderRadius: '10px',
+                          letterSpacing: '0.05em'
                         }}>
                           RECOMMENDED
                         </div>
                       )}
 
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)' }}>
                         {rate.serviceCode}
                       </div>
-                      <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>{rate.serviceName}</h4>
-                      
-                      <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--brand-orange)', fontFamily: 'var(--font-mono)', margin: '0.75rem 0' }}>
-                        ${rate.estimatedCostUsd} <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 400 }}>USD</span>
+                      <h4 style={{ fontSize: '1.05rem', margin: '0.25rem 0 0.75rem 0' }}>{rate.serviceName}</h4>
+
+                      <div style={{ marginBottom: '1rem' }}>
+                        {rate.isComingSoon ? (
+                          <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--brand-amber)' }}>
+                            Coming Soon
+                          </div>
+                        ) : (
+                          <>
+                            <span style={{ fontSize: '1.65rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
+                              Rs. {rate.estimatedCostNpr}
+                            </span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}> NPR (incl. tax)</span>
+                          </>
+                        )}
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', color: 'var(--brand-emerald)', marginBottom: '1rem' }}>
-                        <Clock size={14} /> {rate.transitDays}
+                      <div style={{ fontSize: '0.82rem', color: rate.isComingSoon ? 'var(--brand-amber)' : 'var(--brand-emerald)', fontWeight: 600, marginBottom: '0.75rem' }}>
+                        {rate.transitDays}
                       </div>
 
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.75rem', marginBottom: '1.25rem' }}>
-                        Carrier: <strong>{rate.carrierType}</strong>
-                      </div>
+                      <ul style={{ listStyle: 'none', fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1.25rem' }}>
+                        {rate.features.map((f, idx) => (
+                          <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <CheckCircle2 size={13} color={rate.isComingSoon ? 'var(--brand-amber)' : 'var(--brand-orange)'} />
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
 
-                      <Link
-                        href={`/book?service=${rate.serviceCode}&origin=${originCountry}&dest=${destCountry}&wt=${weightKg}`}
-                        className={`btn btn-sm ${rate.recommended ? 'btn-primary' : 'btn-secondary'}`}
-                        style={{ width: '100%' }}
-                      >
-                        Book This Tier
-                      </Link>
+                      {rate.isComingSoon ? (
+                        <a href="#international-waitlist" className="btn btn-outline btn-sm" style={{ width: '100%', marginTop: 'auto', textAlign: 'center' }}>
+                          Join Waitlist &rarr;
+                        </a>
+                      ) : (
+                        <Link href={`/book?service=${rate.serviceCode}`} className="btn btn-secondary btn-sm" style={{ width: '100%', marginTop: 'auto', textAlign: 'center' }}>
+                          Book Shipment &rarr;
+                        </Link>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -420,24 +502,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ================= CORE SERVICES ================= */}
-      <section style={{ padding: '5.5rem 0', borderBottom: '1px solid var(--border-subtle)' }}>
+      {/* ================= CORE SERVICES SECTION ================= */}
+      <section style={{ padding: '5.5rem 0', borderBottom: '1px solid var(--border-subtle)' }} id="services">
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem', flexWrap: 'wrap', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
-              <div className="badge badge-amber" style={{ marginBottom: '0.75rem' }}>
-                <Boxes size={13} /> Full-Stack Solutions
+              <div className="badge badge-orange" style={{ marginBottom: '0.75rem' }}>
+                <Layers size={13} /> High-Velocity Logistics
               </div>
-              <h2>Engineered for High-Velocity Freight</h2>
+              <h2>Domestic Across Nepal &bull; International Coming Soon</h2>
             </div>
             <Link href="/rates" className="btn btn-secondary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span>View All Rates & Tiers</span>
+              <span>View All Rates &amp; Tariffs</span>
               <ArrowRight size={14} />
             </Link>
           </div>
 
-          <div className="grid grid-cols-3 gap-8">
-            {/* Service 1: Air Express */}
+          <div className="grid grid-cols-4 gap-6">
+            {/* Service 1: Double 11 Nepal Express */}
             <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{
                 width: '48px',
@@ -450,29 +532,32 @@ export default function HomePage() {
                 color: 'var(--brand-orange)',
                 marginBottom: '1.25rem'
               }}>
-                <Plane size={24} />
+                <Truck size={24} />
               </div>
-              <h3>Double 11 Super Express</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                <span className="badge badge-emerald" style={{ fontSize: '0.68rem' }}>100% ACTIVE</span>
+              </div>
+              <h3>Double 11 Nepal Express</h3>
               <p style={{ margin: '0.75rem 0 1.25rem 0', fontSize: '0.92rem' }}>
-                Dedicated transpacific and Eurasian charter flights operating Boeing 777F cargo aircraft with guaranteed departure windows and sub-48-hour door-to-door transit.
+                Same-Day dispatch in Kathmandu Valley and 24-hour intercity linehauls to Pokhara, Birgunj, Biratnagar, Chitwan, and Butwal with real-time GPS tracking.
               </p>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={15} color="var(--brand-orange)" /> 24-48h Guaranteed SLA
+                  <CheckCircle2 size={15} color="var(--brand-orange)" /> 24h Guaranteed Intercity SLA
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={15} color="var(--brand-orange)" /> Real-Time Satellite Telemetry
+                  <CheckCircle2 size={15} color="var(--brand-orange)" /> Electric Express Vans &amp; Riders
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={15} color="var(--brand-orange)" /> Dedicated Tarmac Priority
+                  <CheckCircle2 size={15} color="var(--brand-orange)" /> Free Doorstep Merchant Pickup
                 </li>
               </ul>
               <Link href="/book?service=EXP" className="btn btn-secondary btn-sm" style={{ marginTop: 'auto' }}>
-                Book Air Express &rarr;
+                Book Express &rarr;
               </Link>
             </div>
 
-            {/* Service 2: Smart Robotic Warehousing */}
+            {/* Service 2: Nationwide Hub Cargo */}
             <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{
                 width: '48px',
@@ -487,27 +572,30 @@ export default function HomePage() {
               }}>
                 <Boxes size={24} />
               </div>
-              <h3>Smart Robotic Fulfillment</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                <span className="badge badge-cyan" style={{ fontSize: '0.68rem' }}>77 DISTRICTS</span>
+              </div>
+              <h3>Nationwide Hub Cargo</h3>
               <p style={{ margin: '0.75rem 0 1.25rem 0', fontSize: '0.92rem' }}>
-                Autonomous Mobile Robots (AMRs) and multi-level automated sorting lines in our Shenzhen, Hong Kong, and Singapore mega-hubs achieving 18-minute dock-to-dispatch turnaround.
+                Dedicated freight linehauls connecting East-West Highway corridors. Engineered for bulky shipments, electronics, wholesale inventory, and manufacturing goods.
               </p>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={15} color="var(--brand-cyan)" /> 99.99% Order Pick Accuracy
+                  <CheckCircle2 size={15} color="var(--brand-cyan)" /> Complete All-Province Coverage
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={15} color="var(--brand-cyan)" /> 24/7 Continuous Automated Packing
+                  <CheckCircle2 size={15} color="var(--brand-cyan)" /> Bulk Freight Discount Pricing
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={15} color="var(--brand-cyan)" /> Direct Integration API for Shopify/ERP
+                  <CheckCircle2 size={15} color="var(--brand-cyan)" /> Barcoded Warehouse Cross-Docking
                 </li>
               </ul>
-              <Link href="/book?service=FUL" className="btn btn-secondary btn-sm" style={{ marginTop: 'auto' }}>
-                Explore Fulfillment &rarr;
+              <Link href="/book?service=CARGO" className="btn btn-secondary btn-sm" style={{ marginTop: 'auto' }}>
+                Book Cargo &rarr;
               </Link>
             </div>
 
-            {/* Service 3: Ocean FCL / LCL Container Freight */}
+            {/* Service 3: E-Commerce Cash on Delivery (COD) */}
             <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{
                 width: '48px',
@@ -520,147 +608,232 @@ export default function HomePage() {
                 color: 'var(--brand-emerald)',
                 marginBottom: '1.25rem'
               }}>
-                <Ship size={24} />
+                <Banknote size={24} />
               </div>
-              <h3>Maritime Container Freight</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                <span className="badge badge-emerald" style={{ fontSize: '0.68rem' }}>COD SPECIALIST</span>
+              </div>
+              <h3>E-Commerce COD Network</h3>
               <p style={{ margin: '0.75rem 0 1.25rem 0', fontSize: '0.92rem' }}>
-                Ultra-large container vessel capacity securing guaranteed allocations at major terminals including Shanghai Yangshan, Singapore, Rotterdam, and Los Angeles.
+                Automated Cash on Delivery management with next-day bank remittance, real-time OTP delivery verification, and low return rates for online stores.
               </p>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={15} color="var(--brand-emerald)" /> Full Container (FCL) & Consolidated (LCL)
+                  <CheckCircle2 size={15} color="var(--brand-emerald)" /> Next-Day Direct Bank Remittance
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={15} color="var(--brand-emerald)" /> GPS-Monitored Smart E-Seals
+                  <CheckCircle2 size={15} color="var(--brand-emerald)" /> Customer Phone &amp; OTP Verification
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={15} color="var(--brand-emerald)" /> Port Drayage & Inland Intermodal
+                  <CheckCircle2 size={15} color="var(--brand-emerald)" /> Return &amp; Exchange Handling
                 </li>
               </ul>
-              <Link href="/book?service=SEA" className="btn btn-secondary btn-sm" style={{ marginTop: 'auto' }}>
-                Book Ocean Freight &rarr;
+              <Link href="/book" className="btn btn-secondary btn-sm" style={{ marginTop: 'auto' }}>
+                Setup COD &rarr;
               </Link>
             </div>
+
+            {/* Service 4: International Cross-Border Cargo (COMING SOON) */}
+            <div className="card" style={{
+              display: 'flex',
+              flexDirection: 'column',
+              border: '1px solid rgba(245, 158, 11, 0.4)',
+              background: 'linear-gradient(180deg, rgba(245, 158, 11, 0.06) 0%, rgba(13, 20, 36, 0.6) 100%)',
+              position: 'relative'
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                color: '#000000',
+                fontSize: '0.68rem',
+                fontWeight: 800,
+                padding: '0.2rem 0.6rem',
+                borderRadius: '6px',
+                letterSpacing: '0.05em'
+              }}>
+                COMING SOON
+              </div>
+
+              <div style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                background: 'rgba(245, 158, 11, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--brand-amber)',
+                marginBottom: '1.25rem'
+              }}>
+                <Globe2 size={24} />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                <span className="badge badge-orange" style={{ fontSize: '0.68rem' }}>GLOBAL EXPANSION</span>
+              </div>
+              <h3>International Air Freight</h3>
+              <p style={{ margin: '0.75rem 0 1.25rem 0', fontSize: '0.92rem' }}>
+                Dedicated cross-border air cargo charter connecting Tribhuvan International Airport (TIA) to Dubai, India, China, and Western markets. Launching Q4 2026.
+              </p>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <CheckCircle2 size={15} color="var(--brand-amber)" /> Nepal Customs Pre-Clearance
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <CheckCircle2 size={15} color="var(--brand-amber)" /> Direct Air Cargo Charters
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <CheckCircle2 size={15} color="var(--brand-amber)" /> Door-to-Door Global Forwarding
+                </li>
+              </ul>
+              <a href="#international-waitlist" className="btn btn-outline btn-sm" style={{ marginTop: 'auto', borderColor: 'var(--brand-amber)', color: 'var(--brand-amber)' }}>
+                Pre-Register for Launch &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= INTERNATIONAL EXPANSION WAITLIST BANNER ================= */}
+      <section style={{ padding: '4.5rem 0', backgroundColor: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }} id="international-waitlist">
+        <div className="container-narrow">
+          <div className="glass-panel" style={{
+            padding: '3rem 2.5rem',
+            textAlign: 'center',
+            border: '1px solid rgba(245, 158, 11, 0.35)',
+            background: 'radial-gradient(circle at center, rgba(245, 158, 11, 0.08) 0%, rgba(13, 20, 36, 0.95) 70%)'
+          }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              background: 'rgba(245, 158, 11, 0.15)',
+              color: 'var(--brand-amber)',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              padding: '0.3rem 0.8rem',
+              borderRadius: '20px',
+              fontSize: '0.8rem',
+              fontWeight: 700,
+              marginBottom: '1rem'
+            }}>
+              <Globe2 size={14} />
+              <span>GLOBAL CORRIDOR &bull; INTERNATIONAL COMING SOON</span>
+            </div>
+
+            <h2 style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>
+              Expanding Nepal's Exporters to Global Gateways
+            </h2>
+
+            <p style={{ maxWidth: '640px', margin: '0 auto 2rem auto', color: 'var(--text-secondary)', fontSize: '1rem' }}>
+              While our domestic fleet handles 100% of Nepal nationwide, our international air cargo division is completing aviation licensing and customs integrations for Q4 2026. Pre-register your business for early access and preferential charter tariffs.
+            </p>
+
+            {waitlistSuccess ? (
+              <div style={{
+                background: 'rgba(16, 185, 129, 0.15)',
+                border: '1px solid rgba(16, 185, 129, 0.4)',
+                borderRadius: '8px',
+                padding: '1rem 1.5rem',
+                maxWidth: '520px',
+                margin: '0 auto',
+                color: 'var(--brand-emerald)',
+                fontWeight: 600
+              }}>
+                &check; Thank you! Your merchant account has been registered for International Pilot Priority. We will notify you before launch.
+              </div>
+            ) : (
+              <form onSubmit={handleWaitlistSubmit} style={{ display: 'flex', gap: '0.5rem', maxWidth: '520px', margin: '0 auto', flexWrap: 'wrap' }}>
+                <input
+                  type="email"
+                  placeholder="Enter company email for international access..."
+                  value={waitlistEmail}
+                  onChange={(e) => setWaitlistEmail(e.target.value)}
+                  className="input-field"
+                  style={{ flex: 1, minWidth: '240px' }}
+                  required
+                />
+                <button type="submit" className="btn btn-primary">
+                  <span>Get Early Access</span>
+                  <ArrowRight size={15} />
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </section>
 
       {/* ================= VISUAL INFRASTRUCTURE SPOTLIGHT ================= */}
-      <section style={{ padding: '5.5rem 0', backgroundColor: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
+      <section style={{ padding: '5.5rem 0', borderBottom: '1px solid var(--border-subtle)' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3.5rem', alignItems: 'center' }} className="spotlight-grid">
             <div style={{ borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border-medium)', boxShadow: 'var(--shadow-lg)' }}>
               <img
                 src="/images/warehouse.jpg"
-                alt="Automated Robotics Sorting Facility"
+                alt="Automated Robotics Sorting Facility in Kathmandu"
                 style={{ width: '100%', height: 'auto', display: 'block' }}
               />
             </div>
 
             <div>
-              <div className="badge badge-orange" style={{ marginBottom: '0.75rem' }}>
-                <Cpu size={13} /> Next-Gen Supply Chain
+              <div className="badge badge-cyan" style={{ marginBottom: '0.75rem' }}>
+                <Cpu size={13} /> High-Tech Domestic Sorting
               </div>
-              <h2 style={{ marginBottom: '1rem' }}>Built to Withstand Peak "Double 11" Mega-Surges</h2>
-              <p style={{ marginBottom: '1.5rem' }}>
-                Traditional logistics networks collapse under sudden 500% volume spikes during global shopping events. Double 11 Logistics was designed from the ground up by <strong>Soben</strong> with elastic cloud dispatch algorithms and robotic buffer sorting.
+              <h2 style={{ marginBottom: '1.25rem' }}>
+                Kathmandu Valley &amp; Regional Super-Hubs
+              </h2>
+              <p style={{ marginBottom: '1.5rem', fontSize: '1.02rem', lineHeight: '1.7' }}>
+                Our automated cross-dock distribution center in Kathmandu processes up to 12,000 parcels per hour with optical dimensional scanners, ensuring parcels bound for Pokhara, Biratnagar, Chitwan, or Butwal depart on the morning linehaul without delays.
               </p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                  <div style={{ color: 'var(--brand-orange)', marginTop: '2px' }}><Zap size={18} /></div>
-                  <div>
-                    <h4 style={{ fontSize: '1rem' }}>Dynamic Multi-Modal Rerouting</h4>
-                    <p style={{ fontSize: '0.88rem' }}>When air corridors experience weather or air-traffic delays, our AI automatically transfers cargo onto high-speed rail or direct expedited sea lines without human delay.</p>
-                  </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '2rem' }}>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>18 MIN</div>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Hub Intake to Linehaul Loading</div>
                 </div>
-
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                  <div style={{ color: 'var(--brand-cyan)', marginTop: '2px' }}><ShieldCheck size={18} /></div>
-                  <div>
-                    <h4 style={{ fontSize: '1rem' }}>Instant Green-Lane Customs Filing</h4>
-                    <p style={{ fontSize: '0.88rem' }}>Pre-clearance documentation is electronically submitted to US CBP, UK Border Force, and EU Customs while cargo is still in flight, ensuring instantaneous release upon touchdown.</p>
-                  </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--brand-orange)', fontFamily: 'var(--font-mono)' }}>99.98%</div>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Automated Barcode Sort Accuracy</div>
                 </div>
               </div>
 
-              <Link href="/about" className="btn btn-primary">
-                Learn About Our Architecture & Founder &rarr;
+              <Link href="/operations" className="btn btn-secondary">
+                <span>View Live Operations Tower</span>
+                <ChevronRight size={16} />
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ================= MARITIME VISUAL SHOWCASE ================= */}
-      <section style={{ padding: '5.5rem 0', borderBottom: '1px solid var(--border-subtle)' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3.5rem', alignItems: 'center' }} className="spotlight-grid">
-            <div>
-              <div className="badge badge-emerald" style={{ marginBottom: '0.75rem' }}>
-                <Ship size={13} /> Global Maritime Power
-              </div>
-              <h2 style={{ marginBottom: '1rem' }}>Ultra-Large Vessel Allocations & Green Shipping</h2>
-              <p style={{ marginBottom: '1.5rem' }}>
-                From 20ft and 40ft High Cube containers to specialized breakbulk machinery, our maritime division manages end-to-end container logistics with real-time satellite AIS tracking and zero port-congestion detention fees.
-              </p>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
-                <div className="metric-pill">
-                  <span className="metric-number" style={{ fontSize: '1.4rem', color: 'var(--brand-emerald)' }}>48,000 TEU</span>
-                  <span className="metric-label">Monthly Vessel Capacity</span>
-                </div>
-                <div className="metric-pill">
-                  <span className="metric-number" style={{ fontSize: '1.4rem', color: 'var(--brand-cyan)' }}>0%</span>
-                  <span className="metric-label">Container Rollover Rate</span>
-                </div>
-              </div>
-
-              <Link href="/book?service=SEA" className="btn btn-secondary">
-                Request Container Rate &rarr;
-              </Link>
-            </div>
-
-            <div style={{ borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border-medium)', boxShadow: 'var(--shadow-lg)' }}>
-              <img
-                src="/images/ocean.jpg"
-                alt="Container Ship at Sea"
-                style={{ width: '100%', height: 'auto', display: 'block' }}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ================= CALL TO ACTION ================= */}
-      <section style={{ padding: '5.5rem 0', textAlign: 'center' }}>
+      {/* ================= FINAL CALL TO ACTION ================= */}
+      <section style={{ padding: '6rem 0' }}>
         <div className="container-narrow">
-          <div className="glass-panel" style={{ padding: '3.5rem 2rem', position: 'relative', overflow: 'hidden' }}>
+          <div className="glass-panel" style={{ padding: '3.5rem 2rem', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
             <div style={{
               position: 'absolute',
-              width: '300px',
-              height: '300px',
-              background: 'radial-gradient(circle, rgba(255, 102, 0, 0.2) 0%, transparent 70%)',
-              top: '-50px',
-              right: '-50px',
-              pointerEvents: 'none'
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: 'linear-gradient(90deg, #ff6600, #06b6d4, #10b981)'
             }} />
 
             <div className="badge badge-orange" style={{ marginBottom: '1rem' }}>
-              <Sparkles size={13} /> Ready for Takeoff
+              <Zap size={13} /> START DISPATCHING TODAY
             </div>
 
-            <h2 style={{ fontSize: '2.4rem', marginBottom: '1rem' }}>
-              Ready to Upgrade Your Logistics Pipeline?
+            <h2 style={{ fontSize: '2.2rem', marginBottom: '1rem' }}>
+              Ready to Accelerate Your Domestic Logistics?
             </h2>
 
-            <p style={{ maxWidth: '560px', margin: '0 auto 2rem auto', fontSize: '1.05rem' }}>
-              Book an urgent consignment in less than 2 minutes, get instant transparent waybills, and experience why modern e-commerce leaders trust Double 11.
+            <p style={{ maxWidth: '580px', margin: '0 auto 2rem auto', fontSize: '1.05rem' }}>
+              Book an urgent consignment anywhere across Nepal in under 2 minutes, get instant transparent waybills, and experience why modern merchants trust Double 11.
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
               <Link href="/book" className="btn btn-primary btn-lg">
-                <span>Book a Shipment Now</span>
+                <span>Book Domestic Shipment</span>
                 <ArrowRight size={16} />
               </Link>
               <Link href="/operations" className="btn btn-secondary btn-lg">

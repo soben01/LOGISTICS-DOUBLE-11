@@ -1,7 +1,7 @@
 export interface Checkpoint {
   id: string;
   timestamp: string;
-  status: 'Order Placed' | 'Picked Up' | 'Hub Received' | 'Export Cleared' | 'In Flight' | 'At Sea' | 'Import Cleared' | 'Out for Delivery' | 'Delivered' | 'Delayed';
+  status: 'Order Placed' | 'Picked Up' | 'Hub Received' | 'Export Cleared' | 'In Flight' | 'At Sea' | 'In Transit' | 'Import Cleared' | 'Customs Cleared' | 'Out for Delivery' | 'Delivered' | 'Delayed';
   location: string;
   description: string;
   isCompleted: boolean;
@@ -9,19 +9,23 @@ export interface Checkpoint {
 
 export interface Shipment {
   id: string;
-  service: 'Double 11 Super Express' | 'Cross-Border Air Priority' | 'Ocean Container FCL' | 'Smart Hub Fulfillment';
-  serviceCode: 'EXP' | 'AIR' | 'SEA' | 'FUL';
+  service: string;
+  serviceCode: 'EXP' | 'CARGO' | 'RUSH' | 'INTL' | 'AIR' | 'SEA' | 'FUL';
+  isInternational?: boolean;
   status: 'In Transit' | 'Out for Delivery' | 'Customs Cleared' | 'Delivered' | 'Pending Pickup' | 'Exception';
   origin: {
     city: string;
-    country: string;
+    province?: string;
+    country?: string;
     hub: string;
   };
   destination: {
     city: string;
-    country: string;
+    province?: string;
+    country?: string;
     hub: string;
-    postalCode: string;
+    areaCode?: string;
+    postalCode?: string;
   };
   sender: {
     name: string;
@@ -39,12 +43,16 @@ export interface Shipment {
     weightKg: number;
     volumeCbm: number;
     description: string;
-    declaredValueUsd: number;
+    declaredValueNpr?: number;
+    declaredValueUsd?: number;
     hazardClass?: string;
   };
   telemetry: {
-    flightVesselNumber: string;
-    airwayBill: string;
+    transportVehicle?: string;
+    flightVesselNumber?: string;
+    waybillNumber?: string;
+    airwayBill?: string;
+    trackingRoute?: string;
     containerUnit?: string;
     estimatedArrival: string;
     temperatureCelsius?: number;
@@ -60,331 +68,293 @@ export interface Shipment {
 
 export const INITIAL_SHIPMENTS: Shipment[] = [
   {
-    id: 'D11-8892-EXP',
-    service: 'Double 11 Super Express',
+    id: 'D11-8892-KTM',
+    service: 'Double 11 Nepal Express',
     serviceCode: 'EXP',
     status: 'In Transit',
     origin: {
-      city: 'Hong Kong',
-      country: 'HKG',
-      hub: 'HKG Air Freight Hub 1',
+      city: 'Kathmandu',
+      province: 'Bagmati Province',
+      hub: 'Kathmandu Central Mega-Hub (TIA Cargo Gate)',
     },
     destination: {
-      city: 'Los Angeles',
-      country: 'USA',
-      hub: 'LAX Gateway Hub B',
-      postalCode: '90045',
+      city: 'Pokhara',
+      province: 'Gandaki Province',
+      hub: 'Pokhara Lake City Distribution Hub',
+      areaCode: '33700',
     },
     sender: {
-      name: 'Global Tech Components Ltd',
-      company: 'Apex Silicon Global',
-      phone: '+852 2891 4401',
+      name: 'Himalayan Electronics Nepal',
+      company: 'Apex Tech Nepal Pvt Ltd',
+      phone: '+977 98012 34567',
     },
     recipient: {
-      name: 'Elena Rostova',
-      company: 'Pacific Robotics Corp',
-      address: '1420 Century Blvd, Suite 400, Los Angeles, CA',
-      phone: '+1 310 555 0192',
+      name: 'Pradeep Gurung',
+      company: 'Annapurna IT Solutions',
+      address: 'Lakeside Ward No. 6, Pokhara, Gandaki, Nepal',
+      phone: '+977 98460 11223',
     },
     cargo: {
-      pieces: 6,
-      weightKg: 28.5,
-      volumeCbm: 0.12,
-      description: 'Precision AI Server Sensor Modules & Optics',
-      declaredValueUsd: 14800,
+      pieces: 3,
+      weightKg: 8.5,
+      volumeCbm: 0.045,
+      description: 'Smart Handheld Scanners & 5G Modem Routers',
+      declaredValueNpr: 145000,
     },
     telemetry: {
-      flightVesselNumber: 'D11-Cargo CX884 (B777-Freighter)',
-      airwayBill: 'AWB-111-9042-8892',
-      containerUnit: 'PMC-8911-D11',
-      estimatedArrival: 'Tomorrow at 16:30 PST',
-      temperatureCelsius: 19.4,
-      currentSpeedKmh: 890,
+      transportVehicle: 'D11 Express Electric Van #BA-2-PA-8892',
+      waybillNumber: 'AWB-D11-NP-8892',
+      trackingRoute: 'Prithvi Highway High-Speed Route',
+      estimatedArrival: 'Today at 16:30 NPT',
+      temperatureCelsius: 22.1,
+      currentSpeedKmh: 68,
     },
     checkpoints: [
       {
-        id: 'cp-5',
-        timestamp: 'Sep 02, 2026 - 19:40 HKT',
-        status: 'In Flight',
-        location: 'Pacific Air Corridor (FL340)',
-        description: 'Trans-Pacific flight en route from HKG to LAX. Telemetry active.',
+        id: 'cp-ktm-4',
+        timestamp: 'Sep 02, 2026 - 11:30 NPT',
+        status: 'In Transit',
+        location: 'Mugling Transit Gateway',
+        description: 'En route along Prithvi Corridor with GPS telemetry & thermal monitoring active.',
         isCompleted: true,
       },
       {
-        id: 'cp-4',
-        timestamp: 'Sep 02, 2026 - 16:15 HKT',
-        status: 'Export Cleared',
-        location: 'Hong Kong International (HKG)',
-        description: 'Double 11 Fast-Track Customs export clearance verified & sealed.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-3',
-        timestamp: 'Sep 02, 2026 - 13:00 HKT',
+        id: 'cp-ktm-3',
+        timestamp: 'Sep 02, 2026 - 08:45 NPT',
         status: 'Hub Received',
-        location: 'Shenzhen-HK Border Mega-Sort Hub',
-        description: 'High-speed automated X-ray security scanning and dimensioning complete.',
+        location: 'Kathmandu Central Mega-Hub',
+        description: 'Automated barcode sorting and weight audit complete. Loaded to Express Courier Van.',
         isCompleted: true,
       },
       {
-        id: 'cp-2',
-        timestamp: 'Sep 02, 2026 - 09:30 HKT',
+        id: 'cp-ktm-2',
+        timestamp: 'Sep 02, 2026 - 07:15 NPT',
         status: 'Picked Up',
-        location: 'Shenzhen High-Tech Park',
-        description: 'Courier collected consignment via Double 11 Electric Fleet.',
+        location: 'New Road Commercial Hub, Kathmandu',
+        description: 'Double 11 Rider collected parcel directly from merchant warehouse.',
         isCompleted: true,
       },
       {
-        id: 'cp-1',
-        timestamp: 'Sep 01, 2026 - 22:15 HKT',
+        id: 'cp-ktm-1',
+        timestamp: 'Sep 01, 2026 - 21:00 NPT',
         status: 'Order Placed',
-        location: 'Double 11 Cloud System',
-        description: 'Waybill generated and pre-customs documentation filed.',
+        location: 'Double 11 Digital Portal',
+        description: 'Consignment booked online. Digital waybill issued.',
         isCompleted: true,
       },
     ],
   },
   {
-    id: 'D11-4410-SEA',
-    service: 'Ocean Container FCL',
-    serviceCode: 'SEA',
-    status: 'In Transit',
-    origin: {
-      city: 'Shanghai',
-      country: 'CHN',
-      hub: 'Yangshan Deepwater Port',
-    },
-    destination: {
-      city: 'Rotterdam',
-      country: 'NLD',
-      hub: 'Rotterdam Maasvlakte Terminal',
-      postalCode: '3199 LK',
-    },
-    sender: {
-      name: 'East Ocean E-Commerce Logistics',
-      company: 'Double 11 Supply Chain Marine',
-      phone: '+86 21 6888 3211',
-    },
-    recipient: {
-      name: 'Marc van der Meer',
-      company: 'EuroLogix Mega-Distribution BV',
-      address: 'Europaweg 900, Port of Rotterdam, Netherlands',
-      phone: '+31 10 789 2200',
-    },
-    cargo: {
-      pieces: 1240,
-      weightKg: 18600,
-      volumeCbm: 68.0,
-      description: 'Double 11 Festival Consumer Electronics & Smart Home Gear (40ft High Cube Container)',
-      declaredValueUsd: 385000,
-    },
-    telemetry: {
-      flightVesselNumber: 'MV D11-TITAN (Voyage 2608W)',
-      airwayBill: 'BOL-D11-SH-RT-4410',
-      containerUnit: 'D11U-984210-9 (40HC)',
-      estimatedArrival: 'Sep 14, 2026 - 08:00 CET',
-      currentSpeedKmh: 35,
-    },
-    checkpoints: [
-      {
-        id: 'cp-sea-3',
-        timestamp: 'Sep 02, 2026 - 08:00 UTC',
-        status: 'At Sea',
-        location: 'Malacca Strait Transit',
-        description: 'Vessel cruising at 19 knots, ocean telemetry and container locks intact.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-sea-2',
-        timestamp: 'Aug 29, 2026 - 18:30 CST',
-        status: 'Export Cleared',
-        location: 'Yangshan Port, Shanghai',
-        description: 'Container gantry-crane loaded aboard MV D11-TITAN.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-sea-1',
-        timestamp: 'Aug 27, 2026 - 11:00 CST',
-        status: 'Hub Received',
-        location: 'Pudong Smart Consolidation Yard',
-        description: 'Full container load sealed with smart GPS tamper-proof e-seal.',
-        isCompleted: true,
-      },
-    ],
-  },
-  {
-    id: 'D11-9921-AIR',
-    service: 'Cross-Border Air Priority',
-    serviceCode: 'AIR',
+    id: 'D11-4410-BIRT',
+    service: 'Nationwide Hub Cargo',
+    serviceCode: 'CARGO',
     status: 'Out for Delivery',
     origin: {
-      city: 'Tokyo',
-      country: 'JPN',
-      hub: 'Narita Sky Logistics Hub',
+      city: 'Birgunj',
+      province: 'Madhesh Province',
+      hub: 'Birgunj Inland Dry Port Terminal',
     },
     destination: {
-      city: 'Singapore',
-      country: 'SGP',
-      hub: 'Changi Airfreight Centre',
-      postalCode: '819642',
+      city: 'Biratnagar',
+      province: 'Koshi Province',
+      hub: 'Biratnagar Eastern Industrial Hub',
+      areaCode: '56613',
     },
     sender: {
-      name: 'Kenji Takahashi',
-      company: 'Nippon Precision Optics',
-      phone: '+81 3 5555 8899',
+      name: 'Terai Supply Chain Logistics',
+      company: 'Double 11 South Corridor Branch',
+      phone: '+977 98112 88990',
     },
     recipient: {
-      name: 'Sarah Tan',
-      company: 'Astra Bio-Medical Singapore',
-      address: '21 Biopolis Road, Nucleos Tower, Singapore 138567',
-      phone: '+65 6789 0123',
+      name: 'Sunita Sharma',
+      company: 'Koshi Agro-Industrial Trade',
+      address: 'Main Road Ward No. 4, Biratnagar, Koshi, Nepal',
+      phone: '+977 98020 99881',
+    },
+    cargo: {
+      pieces: 12,
+      weightKg: 240,
+      volumeCbm: 1.2,
+      description: 'Industrial Precision Hardware, Pumps & Fittings',
+      declaredValueNpr: 480000,
+    },
+    telemetry: {
+      transportVehicle: 'D11 Heavy Freight Carrier #NA-5-KHA-4410',
+      waybillNumber: 'AWB-D11-NP-4410',
+      trackingRoute: 'East-West Highway (Mahendra Highway)',
+      estimatedArrival: 'Today at 14:00 NPT',
+      currentSpeedKmh: 55,
+    },
+    checkpoints: [
+      {
+        id: 'cp-brt-3',
+        timestamp: 'Sep 02, 2026 - 10:15 NPT',
+        status: 'Out for Delivery',
+        location: 'Biratnagar Hub Distribution Line',
+        description: 'Assigned to delivery pilot Ramesh Karki. Out for final delivery to recipient premises.',
+        isCompleted: true,
+      },
+      {
+        id: 'cp-brt-2',
+        timestamp: 'Sep 02, 2026 - 05:30 NPT',
+        status: 'Hub Received',
+        location: 'Itahari Regional Transit Center',
+        description: 'Cross-docking completed. Transferred to Biratnagar delivery unit.',
+        isCompleted: true,
+      },
+      {
+        id: 'cp-brt-1',
+        timestamp: 'Sep 01, 2026 - 16:00 NPT',
+        status: 'Picked Up',
+        location: 'Birgunj Dry Port Customs Zone',
+        description: 'Bulk consignment secured with GPS tamper-proof e-seal.',
+        isCompleted: true,
+      },
+    ],
+  },
+  {
+    id: 'D11-9921-CHIT',
+    service: 'Same-Day Valley Rush',
+    serviceCode: 'RUSH',
+    status: 'Delivered',
+    origin: {
+      city: 'Lalitpur',
+      province: 'Bagmati Province',
+      hub: 'Patan High-Tech Fulfillment Hub',
+    },
+    destination: {
+      city: 'Bharatpur',
+      province: 'Bagmati Province',
+      hub: 'Chitwan Narayangarh Gateway',
+      areaCode: '44200',
+    },
+    sender: {
+      name: 'Double 11 Central Fulfillment',
+      company: 'Double 11 Express Nepal',
+      phone: '+977 1 5522001',
+    },
+    recipient: {
+      name: 'Bibek Adhikari',
+      company: 'Chitwan Medical Supplies',
+      address: 'Lions Chowk, Narayangarh, Bharatpur, Chitwan',
+      phone: '+977 98550 12345',
     },
     cargo: {
       pieces: 2,
-      weightKg: 8.2,
-      volumeCbm: 0.04,
-      description: 'Temperature-Controlled Bio-Medical Optical Scopes',
-      declaredValueUsd: 32000,
+      weightKg: 4.2,
+      volumeCbm: 0.02,
+      description: 'Emergency Medical Diagnostic Kits & Optics',
+      declaredValueNpr: 85000,
     },
     telemetry: {
-      flightVesselNumber: 'D11 Express Courier Van #SG-44',
-      airwayBill: 'AWB-111-7712-9921',
-      estimatedArrival: 'Today at 17:15 SGT (In ~45 mins)',
-      temperatureCelsius: 4.1,
+      transportVehicle: 'D11 Swift Electric Van #BA-1-JHA-9921',
+      waybillNumber: 'AWB-D11-NP-9921',
+      trackingRoute: 'Kathmandu-Mugling-Narayangarh Express Lane',
+      estimatedArrival: 'Delivered Successfully',
+    },
+    proofOfDelivery: {
+      deliveredAt: 'Sep 02, 2026 - 10:45 NPT',
+      receivedBy: 'Bibek Adhikari (Verified via Handheld App)',
+      signatureText: 'Bibek Adhikari - Narayangarh Clinic',
     },
     checkpoints: [
       {
-        id: 'cp-air-5',
-        timestamp: 'Sep 02, 2026 - 15:30 SGT',
+        id: 'cp-chit-4',
+        timestamp: 'Sep 02, 2026 - 10:45 NPT',
+        status: 'Delivered',
+        location: 'Lions Chowk, Narayangarh, Chitwan',
+        description: 'Consignment handed over successfully. Digital proof of delivery verified.',
+        isCompleted: true,
+      },
+      {
+        id: 'cp-chit-3',
+        timestamp: 'Sep 02, 2026 - 08:30 NPT',
         status: 'Out for Delivery',
-        location: 'Central Singapore Delivery Zone',
-        description: 'Courier assigned: David Lim (Contact: +65 9123 4567). Delivery vehicle en route.',
+        location: 'Bharatpur Central Station',
+        description: 'Out for priority doorstep delivery with driver Manoj Shrestha.',
         isCompleted: true,
       },
       {
-        id: 'cp-air-4',
-        timestamp: 'Sep 02, 2026 - 11:45 SGT',
-        status: 'Import Cleared',
-        location: 'Changi Airport Customs Facility',
-        description: 'Expedited customs clearance completed. Transferred to local distribution van.',
+        id: 'cp-chit-2',
+        timestamp: 'Sep 02, 2026 - 05:00 NPT',
+        status: 'In Transit',
+        location: 'Nagdhunga - Naubise Corridor',
+        description: 'Departed Kathmandu Valley on early morning express run.',
         isCompleted: true,
       },
       {
-        id: 'cp-air-3',
-        timestamp: 'Sep 02, 2026 - 06:10 SGT',
+        id: 'cp-chit-1',
+        timestamp: 'Sep 01, 2026 - 20:00 NPT',
         status: 'Hub Received',
-        location: 'Singapore Changi Gateway',
-        description: 'Flight D11-701 arrived from Tokyo Narita on schedule.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-air-2',
-        timestamp: 'Sep 01, 2026 - 23:30 JST',
-        status: 'Export Cleared',
-        location: 'Tokyo Narita (NRT)',
-        description: 'Cargo palletized and secured into refrigerated LD3 container.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-air-1',
-        timestamp: 'Sep 01, 2026 - 17:00 JST',
-        status: 'Picked Up',
-        location: 'Tokyo Ginza Technology District',
-        description: 'Special courier pickup with cold-chain monitoring initiated.',
+        location: 'Lalitpur Patan Hub',
+        description: 'Package packaged and cleared for Same-Day priority dispatch.',
         isCompleted: true,
       },
     ],
   },
   {
-    id: 'D11-2041-LOC',
-    service: 'Smart Hub Fulfillment',
-    serviceCode: 'FUL',
-    status: 'Delivered',
+    id: 'D11-INTL-11',
+    service: 'International Cross-Border (Coming Soon)',
+    serviceCode: 'INTL',
+    isInternational: true,
+    status: 'Customs Cleared',
     origin: {
-      city: 'Shenzhen',
-      country: 'CHN',
-      hub: 'Baoan Automated Fulfillment Park',
+      city: 'Kathmandu (TIA)',
+      province: 'Nepal',
+      hub: 'Tribhuvan International Airport Cargo Terminal',
     },
     destination: {
-      city: 'London',
-      country: 'GBR',
-      hub: 'Heathrow Logistics Centre',
-      postalCode: 'EC2A 4NE',
+      city: 'Dubai / Global Gateways',
+      province: 'UAE / Worldwide',
+      hub: 'Dubai International Air Cargo Terminal',
+      areaCode: 'DXB-01',
     },
     sender: {
-      name: 'Double 11 Global Fulfillment Direct',
-      company: 'D11 Express Hub Direct',
-      phone: '+86 755 8899 0011',
+      name: 'Soben (Double 11 Global)',
+      company: 'Double 11 Logistics Nepal',
+      phone: '+977 1 4411000',
     },
     recipient: {
-      name: 'Oliver Thorne',
-      company: 'Thorne & Company Design Studio',
-      address: '42 Shoreditch High Street, London EC2A 4NE, UK',
-      phone: '+44 20 7946 0912',
+      name: 'Global Enterprise Partner',
+      company: 'International Cargo Network',
+      address: 'Dubai South Aviation District, UAE',
+      phone: '+971 4 800 1111',
     },
     cargo: {
       pieces: 1,
-      weightKg: 3.4,
-      volumeCbm: 0.015,
-      description: 'Designer Ceramic Artwork & Exhibition Catalogs',
-      declaredValueUsd: 1250,
+      weightKg: 10.0,
+      volumeCbm: 0.05,
+      description: 'International Air Freight Corridor Pilot Test Kit',
+      declaredValueNpr: 250000,
     },
     telemetry: {
-      flightVesselNumber: 'D11 Eco-Electric Sprinter #UK-19',
-      airwayBill: 'AWB-111-3011-2041',
-      estimatedArrival: 'Delivered Successfully',
-    },
-    proofOfDelivery: {
-      deliveredAt: 'Sep 02, 2026 - 11:24 BST',
-      receivedBy: 'O. Thorne (Signed via Handheld Tablet)',
-      signatureText: 'Oliver Thorne - Front Reception Desk',
+      transportVehicle: 'International Boeing 777F Charter Corridor',
+      waybillNumber: 'AWB-D11-INTL-001',
+      trackingRoute: 'TIA (KTM) to DXB / HKG Corridor',
+      estimatedArrival: 'Official International Launch: Coming Soon (Q4 2026)',
     },
     checkpoints: [
       {
-        id: 'cp-del-5',
-        timestamp: 'Sep 02, 2026 - 11:24 BST',
-        status: 'Delivered',
-        location: 'London EC2A 4NE',
-        description: 'Package delivered safely to recipient. Proof of Delivery signature archived.',
+        id: 'cp-intl-2',
+        timestamp: 'Sep 02, 2026 - 12:00 NPT',
+        status: 'Customs Cleared',
+        location: 'Kathmandu TIA Air Cargo Complex',
+        description: 'Nepal Customs pre-clearance validation successful for international flight lanes.',
         isCompleted: true,
       },
       {
-        id: 'cp-del-4',
-        timestamp: 'Sep 02, 2026 - 08:30 BST',
-        status: 'Out for Delivery',
-        location: 'London Shoreditch Route',
-        description: 'Out for delivery with driver Arthur Campbell.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-del-3',
-        timestamp: 'Sep 01, 2026 - 19:10 BST',
-        status: 'Import Cleared',
-        location: 'London Heathrow (LHR)',
-        description: 'UK Border Force clearance expedited via Double 11 automated green lane.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-del-2',
-        timestamp: 'Aug 31, 2026 - 22:00 HKT',
-        status: 'In Flight',
-        location: 'Hong Kong -> London Air Corridor',
-        description: 'Direct freight charter D11-008 departed HKG.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-del-1',
-        timestamp: 'Aug 30, 2026 - 14:00 HKT',
-        status: 'Picked Up',
-        location: 'Shenzhen Hub',
-        description: 'Order processed by high-speed AGV robotic fulfillment unit #42.',
+        id: 'cp-intl-1',
+        timestamp: 'Sep 01, 2026 - 15:00 NPT',
+        status: 'Order Placed',
+        location: 'Double 11 Global Expansion Division',
+        description: 'Corridor pilot initiated. International services launching soon for all Nepal businesses.',
         isCompleted: true,
       },
     ],
   },
 ];
 
-const STORAGE_KEY = 'double11_shipments_v1';
+const STORAGE_KEY = 'double11_shipments_nepal_v1';
 
 export function getShipments(): Shipment[] {
   if (typeof window === 'undefined') return INITIAL_SHIPMENTS;
@@ -422,27 +392,28 @@ export function createShipment(data: Partial<Shipment>): Shipment {
 
   const newShipment: Shipment = {
     id: newId,
-    service: data.service || 'Double 11 Super Express',
+    service: data.service || 'Double 11 Nepal Express',
     serviceCode: code,
     status: 'Pending Pickup',
-    origin: data.origin || { city: 'Shenzhen', country: 'CHN', hub: 'Shenzhen Mega Hub' },
-    destination: data.destination || { city: 'New York', country: 'USA', hub: 'JFK Hub', postalCode: '10001' },
-    sender: data.sender || { name: 'Customer Consignor', company: 'Self', phone: '+1 000 000 0000' },
-    recipient: data.recipient || { name: 'Receiver', company: 'Personal', address: 'City Center', phone: '+1 000 000 0000' },
-    cargo: data.cargo || { pieces: 1, weightKg: 2.5, volumeCbm: 0.01, description: 'E-commerce Merchandise', declaredValueUsd: 250 },
+    origin: data.origin || { city: 'Kathmandu', province: 'Bagmati Province', hub: 'Kathmandu Central Hub' },
+    destination: data.destination || { city: 'Pokhara', province: 'Gandaki Province', hub: 'Pokhara Regional Hub', areaCode: '33700' },
+    sender: data.sender || { name: 'Verified Merchant', company: 'Nepal Business', phone: '+977 98000 00000' },
+    recipient: data.recipient || { name: 'Customer Receiver', company: 'Personal', address: 'City Road', phone: '+977 98000 00000' },
+    cargo: data.cargo || { pieces: 1, weightKg: 2.0, volumeCbm: 0.01, description: 'E-Commerce Consignment', declaredValueNpr: 5000 },
     telemetry: {
-      flightVesselNumber: 'D11-Express Dispatch Unit',
-      airwayBill: `AWB-111-${randomNum}-${Math.floor(1000 + Math.random() * 9000)}`,
-      estimatedArrival: 'In 2-3 Business Days',
-      temperatureCelsius: 21.0,
+      transportVehicle: 'D11 Swift Electric Dispatch Unit',
+      waybillNumber: `AWB-D11-NP-${randomNum}`,
+      trackingRoute: `${data.origin?.city || 'Kathmandu'} to ${data.destination?.city || 'Pokhara'} Express Corridor`,
+      estimatedArrival: 'Next Business Day (by 17:00 NPT)',
+      temperatureCelsius: 21.5,
     },
     checkpoints: [
       {
         id: `cp-${Date.now()}`,
         timestamp: `${now}`,
         status: 'Order Placed',
-        location: `${data.origin?.city || 'Shenzhen'} Dispatch Terminal`,
-        description: 'Booking confirmed online. Waybill and barcode issued. Awaiting courier collection.',
+        location: `${data.origin?.city || 'Kathmandu'} Dispatch Center`,
+        description: 'Consignment confirmed online. Digital waybill issued. Rider assigned for collection.',
         isCompleted: true,
       },
     ],
@@ -483,10 +454,10 @@ export function updateShipmentStatus(
     updatedShipment.proofOfDelivery = {
       deliveredAt: now,
       receivedBy: `${updatedShipment.recipient.name} (Direct Signature)`,
-      signatureText: `${updatedShipment.recipient.name} - Electronic POD`,
+      signatureText: `${updatedShipment.recipient.name} - Electronic POD Handheld`,
     };
   } else if (newStatus === 'Customs Cleared') checkpointStatus = 'Import Cleared';
-  else if (newStatus === 'In Transit') checkpointStatus = 'In Flight';
+  else if (newStatus === 'In Transit') checkpointStatus = 'In Transit';
 
   const newCheckpoint: Checkpoint = {
     id: `cp-${Date.now()}`,
@@ -508,73 +479,73 @@ export function updateShipmentStatus(
 }
 
 export interface QuoteRequest {
-  originCountry: string;
-  destCountry: string;
+  originCity: string;
+  destCity: string;
   weightKg: number;
   lengthCm: number;
   widthCm: number;
   heightCm: number;
-  goodsType: string;
+  isInternational?: boolean;
 }
 
-export interface RateOption {
+export interface DomesticRateOption {
   serviceName: string;
-  serviceCode: 'EXP' | 'AIR' | 'SEA' | 'FUL';
+  serviceCode: 'EXP' | 'CARGO' | 'RUSH' | 'INTL';
   transitDays: string;
-  estimatedCostUsd: number;
+  estimatedCostNpr: number;
+  isComingSoon?: boolean;
   carrierType: string;
   features: string[];
   recommended?: boolean;
 }
 
-export function calculateFreightRate(params: QuoteRequest): RateOption[] {
+export function calculateDomesticFreightRate(params: QuoteRequest): DomesticRateOption[] {
   const volumetricWeight = (params.lengthCm * params.widthCm * params.heightCm) / 5000;
   const chargeableWeight = Math.max(params.weightKg, volumetricWeight, 1);
 
-  // Multiplier based on destination
-  let regionFactor = 1.0;
-  if (params.destCountry === 'USA' || params.destCountry === 'CAN') regionFactor = 1.25;
-  else if (params.destCountry === 'GBR' || params.destCountry === 'DEU' || params.destCountry === 'FRA') regionFactor = 1.35;
-  else if (params.destCountry === 'AUS' || params.destCountry === 'NZL') regionFactor = 1.4;
+  // Valley vs Outstation calculation
+  const isValley =
+    (params.originCity === 'Kathmandu' || params.originCity === 'Lalitpur' || params.originCity === 'Bhaktapur') &&
+    (params.destCity === 'Kathmandu' || params.destCity === 'Lalitpur' || params.destCity === 'Bhaktapur');
 
-  const baseRateExp = 28 + chargeableWeight * 8.5 * regionFactor;
-  const baseRateAir = 18 + chargeableWeight * 5.8 * regionFactor;
-  const baseRateSea = 65 + (chargeableWeight > 50 ? chargeableWeight * 0.9 : 45);
-  const baseRateSaver = 12 + chargeableWeight * 4.2 * regionFactor;
+  const baseExpress = isValley ? 120 + (chargeableWeight - 1) * 40 : 220 + (chargeableWeight - 1) * 70;
+  const baseCargo = isValley ? 90 + chargeableWeight * 25 : 160 + chargeableWeight * 45;
+  const baseRush = isValley ? 250 + (chargeableWeight - 1) * 50 : 390 + (chargeableWeight - 1) * 90;
 
   return [
     {
-      serviceName: 'Double 11 Super Express',
+      serviceName: 'Double 11 Nepal Express',
       serviceCode: 'EXP',
-      transitDays: '1 - 2 Business Days',
-      estimatedCostUsd: Math.round(baseRateExp),
-      carrierType: 'Dedicated Air Cargo Jet (Boeing 777F)',
-      features: ['Priority customs clearance', 'Guaranteed departure window', 'Active temperature & GPS telemetry', '24/7 Dedicated dispatch agent'],
+      transitDays: isValley ? 'Same-Day (within 6 hrs)' : 'Next-Day (24 hrs Guaranteed)',
+      estimatedCostNpr: Math.round(baseExpress),
+      carrierType: 'Dedicated High-Speed Electric Fleet & Highway Linehaul',
+      features: ['Real-time GPS rider tracking', 'Free Doorstep Pickup', '100% On-Time SLA Guarantee', 'Automated SMS alerts to recipient'],
       recommended: true,
     },
     {
-      serviceName: 'Cross-Border Air Priority',
-      serviceCode: 'AIR',
-      transitDays: '3 - 4 Business Days',
-      estimatedCostUsd: Math.round(baseRateAir),
-      carrierType: 'Commercial Scheduled Air Freight',
-      features: ['Automated milestone tracking', 'Standard insurance included', 'Door-to-door delivery', 'Customs import filing'],
+      serviceName: 'Nationwide Hub Cargo',
+      serviceCode: 'CARGO',
+      transitDays: '2 - 3 Days Nationwide (All 7 Provinces)',
+      estimatedCostNpr: Math.round(baseCargo),
+      carrierType: 'Inter-Provincial Heavy Freight Network',
+      features: ['Best for bulk parcels & B2B stock', 'Secure warehouse buffering', 'Full waybill tracking across all 77 districts'],
     },
     {
-      serviceName: 'Double 11 Peak Saver',
-      serviceCode: 'FUL',
-      transitDays: '5 - 7 Business Days',
-      estimatedCostUsd: Math.round(baseRateSaver),
-      carrierType: 'Consolidated Air & Ground Network',
-      features: ['Best value for e-commerce parcels', 'Smart warehouse robotic dispatch', 'Full online tracking'],
+      serviceName: 'Same-Day Valley Rush',
+      serviceCode: 'RUSH',
+      transitDays: 'Under 3 Hours (Kathmandu, Lalitpur, Bhaktapur)',
+      estimatedCostNpr: Math.round(baseRush),
+      carrierType: 'Instant Dedicated Electric Two-Wheeler / Van Fleet',
+      features: ['Direct point-to-point courier', 'Urgent medical, documents & food orders', 'Instant digital POD with photo'],
     },
     {
-      serviceName: 'Ocean Container FCL / LCL',
-      serviceCode: 'SEA',
-      transitDays: '14 - 22 Ocean Transit Days',
-      estimatedCostUsd: Math.round(baseRateSea),
-      carrierType: 'Ultra-Large Container Vessel',
-      features: ['Ideal for heavy bulk cargo (>50kg)', 'Port-to-port or door-to-door', 'Marine cargo protection'],
+      serviceName: 'International Cross-Border Cargo',
+      serviceCode: 'INTL',
+      transitDays: 'Coming Soon (Launching Q4 2026)',
+      estimatedCostNpr: 0,
+      isComingSoon: true,
+      carrierType: 'Tribhuvan Airport (TIA) Direct Cargo Flights to Global Hubs',
+      features: ['Export customs pre-clearance with Nepal Customs', 'Direct connections to India, China, UAE & US/EU', 'Register your business for early access'],
     },
   ];
 }

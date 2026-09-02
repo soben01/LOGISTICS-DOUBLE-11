@@ -94,13 +94,16 @@ function TrackContent() {
 
   const getServiceIcon = (code: Shipment['serviceCode']) => {
     switch (code) {
-      case 'EXP':
+      case 'INTL':
       case 'AIR':
-        return <Plane size={20} color="var(--brand-orange)" />;
+        return <Plane size={20} color="var(--brand-amber)" />;
       case 'SEA':
         return <Ship size={20} color="var(--brand-cyan)" />;
+      case 'EXP':
+      case 'RUSH':
+        return <Truck size={20} color="var(--brand-orange)" />;
       default:
-        return <Truck size={20} color="var(--brand-amber)" />;
+        return <Truck size={20} color="var(--brand-cyan)" />;
     }
   };
 
@@ -434,15 +437,24 @@ function TrackContent() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', fontSize: '0.88rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Carrier Unit:</span>
-                    <strong style={{ color: '#ffffff' }}>{currentShipment.telemetry.flightVesselNumber}</strong>
+                    <strong style={{ color: '#ffffff' }}>{currentShipment.telemetry.transportVehicle || currentShipment.telemetry.flightVesselNumber || 'Double 11 Fleet Unit'}</strong>
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>Airway Bill / BOL:</span>
+                    <span style={{ color: 'var(--text-muted)' }}>Waybill / Consignment:</span>
                     <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-orange)' }}>
-                      {currentShipment.telemetry.airwayBill}
+                      {currentShipment.telemetry.waybillNumber || currentShipment.telemetry.airwayBill}
                     </span>
                   </div>
+
+                  {currentShipment.telemetry.trackingRoute && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
+                      <span style={{ color: 'var(--text-muted)' }}>Route Corridor:</span>
+                      <span style={{ fontFamily: 'var(--font-mono)', color: '#ffffff' }}>
+                        {currentShipment.telemetry.trackingRoute}
+                      </span>
+                    </div>
+                  )}
 
                   {currentShipment.telemetry.containerUnit && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
@@ -470,7 +482,7 @@ function TrackContent() {
               <div className="card" style={{ padding: '1.75rem' }}>
                 <h3 style={{ fontSize: '1.1rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Boxes size={17} color="var(--brand-amber)" />
-                  <span>Cargo Manifest & Spec</span>
+                  <span>Cargo Manifest &amp; Spec</span>
                 </h3>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.88rem' }}>
@@ -500,7 +512,7 @@ function TrackContent() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.75rem' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Declared Value:</span>
                     <strong style={{ color: 'var(--brand-emerald)', fontFamily: 'var(--font-mono)' }}>
-                      ${currentShipment.cargo.declaredValueUsd.toLocaleString()} USD
+                      {currentShipment.cargo.declaredValueNpr ? `Rs. ${currentShipment.cargo.declaredValueNpr.toLocaleString()} NPR` : `$${(currentShipment.cargo.declaredValueUsd || 0).toLocaleString()} USD`}
                     </strong>
                   </div>
                 </div>

@@ -76,13 +76,13 @@ export default function AboutPage() {
               </div>
 
               <p style={{ fontSize: '1.05rem', lineHeight: '1.7', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                &ldquo;Modern international trade is no longer just about moving steel boxes from Point A to Point B. It is an algorithmic orchestration problem. We started <strong>DOUBLE 11</strong> to eliminate the legacy black boxes in global freight—giving modern commerce builders sub-second telemetry, direct customs API integration, and guaranteed delivery during the most brutal peak shopping surges.&rdquo;
+                &ldquo;We started <strong>DOUBLE 11</strong> to solve the toughest logistics challenge in Nepal: connecting all 7 provinces and 77 districts with guaranteed next-day linehauls, automated Cash on Delivery (COD), and sub-second digital tracking. We are operating 100% active across Nepal today, and preparing our direct international cross-border air cargo corridors for launch in Q4 2026.&rdquo;
               </p>
 
               <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', fontSize: '0.88rem', color: 'var(--text-primary)' }}>
-                <span>&bull; Full-Stack Supply Chain Engineering</span>
-                <span>&bull; High-Velocity Logistics Systems</span>
-                <span>&bull; Automated Mega-Hub Robotics</span>
+                <span>&bull; Nationwide Nepal Domestic Hubs (77 Districts)</span>
+                <span>&bull; Automated E-Commerce COD Remittance</span>
+                <span>&bull; International Air Cargo Expansion (Coming Soon)</span>
               </div>
             </div>
           </div>
