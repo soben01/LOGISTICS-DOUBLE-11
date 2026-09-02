@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -13,13 +13,37 @@ import {
   ArrowRight,
   ShieldCheck,
   Globe2,
-  Cpu
+  Cpu,
+  User as UserIcon,
+  LogOut,
+  Lock
 } from 'lucide-react';
+import { getCurrentUser, logoutUser, User } from '../../lib/auth';
 
 export default function Navbar() {
   const [quickTrackId, setQuickTrackId] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkUser = () => {
+      setCurrentUser(getCurrentUser());
+    };
+    checkUser();
+
+    window.addEventListener('auth-change', checkUser);
+    window.addEventListener('storage', checkUser);
+    return () => {
+      window.removeEventListener('auth-change', checkUser);
+      window.removeEventListener('storage', checkUser);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    logoutUser();
+    router.push('/');
+  };
 
   const handleQuickTrack = (e: React.FormEvent) => {
     e.preventDefault();
@@ -146,7 +170,7 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Right Action: Quick Track Input + CTA */}
+        {/* Right Action: Quick Track + Auth + CTA */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <form onSubmit={handleQuickTrack} className="hide-mobile" style={{
             position: 'relative',
@@ -165,7 +189,7 @@ export default function Navbar() {
                 padding: '0.55rem 2.25rem 0.55rem 0.85rem',
                 fontSize: '0.82rem',
                 color: '#ffffff',
-                width: '210px',
+                width: '180px',
                 outline: 'none',
                 fontFamily: 'var(--font-mono)'
               }}
@@ -188,6 +212,59 @@ export default function Navbar() {
               <Search size={15} />
             </button>
           </form>
+
+          {/* User Auth Display */}
+          {currentUser ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '8px',
+                padding: '0.35rem 0.65rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                <div style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #ff6600 0%, #06b6d4 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  color: '#ffffff'
+                }}>
+                  {currentUser.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="hide-mobile" style={{ fontSize: '0.8rem', lineHeight: '1.2' }}>
+                  <div style={{ fontWeight: 600, color: '#ffffff' }}>{currentUser.name}</div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--brand-cyan)' }}>{currentUser.company}</div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="btn btn-outline btn-sm"
+                title="Sign Out"
+                style={{ padding: '0.45rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <LogOut size={14} />
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="btn btn-secondary btn-sm"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+            >
+              <UserIcon size={14} />
+              <span>Sign In</span>
+            </Link>
+          )}
 
           <Link href="/book" className="btn btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <span>Ship Now</span>
@@ -224,6 +301,34 @@ export default function Navbar() {
           flexDirection: 'column',
           gap: '1rem'
         }}>
+          {currentUser ? (
+            <div style={{
+              padding: '0.75rem 1rem',
+              background: 'var(--bg-surface)',
+              borderRadius: '8px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <div style={{ fontWeight: 700, color: '#ffffff' }}>{currentUser.name}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{currentUser.email}</div>
+              </div>
+              <button onClick={handleLogout} className="btn btn-outline btn-sm">
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn btn-secondary btn-sm"
+              style={{ justifyContent: 'center' }}
+            >
+              Sign In / Register
+            </Link>
+          )}
+
           <form onSubmit={handleQuickTrack} style={{ display: 'flex', gap: '0.5rem' }}>
             <input
               type="text"
