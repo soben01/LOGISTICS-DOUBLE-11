@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { createShipment, Shipment } from '../../lib/store';
 import { getCurrentUser, loginUser, signupUser, logoutUser, User } from '../../lib/auth';
+import PrintableLabel from '../../components/shipping/PrintableLabel';
 
 function BookContent() {
   const router = useRouter();
@@ -977,104 +978,11 @@ function BookContent() {
                     </p>
                   </div>
 
-                  {/* Printable Official Waybill Card */}
-                  <div style={{
-                    background: '#ffffff',
-                    color: '#070a12',
-                    borderRadius: '12px',
-                    padding: '2rem',
-                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
-                    position: 'relative'
-                  }}>
-                    {/* Header */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #111', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
-                      <div>
-                        <div style={{ fontSize: '1.4rem', fontWeight: 900, letterSpacing: '-0.02em', color: '#ea580c' }}>
-                          DOUBLE 11 LOGISTICS &middot; DOMESTIC WAYBILL
-                        </div>
-                        <div style={{ fontSize: '0.8rem', color: '#4b5563' }}>
-                          Nepal Express Priority &middot; Nationwide Linehaul &middot; Dispatch Node #NP-11
-                        </div>
-                      </div>
+                  {/* Official High-Contrast Shipping Label (Thermal / A4 Ready) */}
+                  <PrintableLabel shipment={createdShipment} />
 
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6b7280' }}>CONSIGNMENT #</div>
-                        <div style={{ fontSize: '1.25rem', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>
-                          {createdShipment.id}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Shipper & Consignee Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '1.25rem', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
-                      <div>
-                        <div style={{ fontWeight: 700, color: '#6b7280', fontSize: '0.75rem' }}>SHIPPER (FROM):</div>
-                        <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{createdShipment.sender.name}</div>
-                        <div>{createdShipment.sender.company}</div>
-                        <div>Origin Hub: {createdShipment.origin.hub}</div>
-                        <div>Phone: {createdShipment.sender.phone}</div>
-                      </div>
-
-                      <div>
-                        <div style={{ fontWeight: 700, color: '#6b7280', fontSize: '0.75rem' }}>CONSIGNEE (TO):</div>
-                        <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{createdShipment.recipient.name}</div>
-                        <div>{createdShipment.recipient.company}</div>
-                        <div>{createdShipment.recipient.address}</div>
-                        <div>{createdShipment.destination.city}, Nepal &middot; {createdShipment.destination.areaCode}</div>
-                      </div>
-                    </div>
-
-                    {/* Cargo Details */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '1.25rem', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
-                      <div>
-                        <div style={{ color: '#6b7280', fontSize: '0.75rem' }}>PIECES</div>
-                        <div style={{ fontWeight: 700 }}>{createdShipment.cargo.pieces} PKGS</div>
-                      </div>
-                      <div>
-                        <div style={{ color: '#6b7280', fontSize: '0.75rem' }}>GROSS WEIGHT</div>
-                        <div style={{ fontWeight: 700 }}>{createdShipment.cargo.weightKg} KG</div>
-                      </div>
-                      <div>
-                        <div style={{ color: '#6b7280', fontSize: '0.75rem' }}>SERVICE TIER</div>
-                        <div style={{ fontWeight: 700 }}>{createdShipment.service}</div>
-                      </div>
-                      <div>
-                        <div style={{ color: '#6b7280', fontSize: '0.75rem' }}>DECLARED VALUE</div>
-                        <div style={{ fontWeight: 700 }}>Rs. {createdShipment.cargo.declaredValueNpr} NPR</div>
-                      </div>
-                    </div>
-
-                    {/* Barcode & Signature Graphic */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.5rem', letterSpacing: '4px', fontWeight: 800 }}>
-                          ||||| | |||| ||| |||||| || |||
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
-                          {createdShipment.telemetry.waybillNumber || createdShipment.telemetry.airwayBill}
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{
-                          padding: '0.35rem 0.65rem',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '6px',
-                          fontSize: '0.75rem',
-                          fontWeight: 700,
-                          color: '#059669',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.3rem'
-                        }}>
-                          <CheckCircle2 size={13} /> CUSTOMS PRE-CLEARED
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                  {/* Action Buttons (Excluded from print) */}
+                  <div className="no-print" style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginTop: '1.5rem' }}>
                     <Link href={`/track?id=${createdShipment.id}`} className="btn btn-primary btn-lg">
                       <span>Track This Package Live</span>
                       <ArrowRight size={16} />
@@ -1089,17 +997,6 @@ function BookContent() {
                         <span>Back to Merchant Portal</span>
                       </Link>
                     )}
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (typeof window !== 'undefined') window.print();
-                      }}
-                      className="btn btn-outline btn-lg"
-                    >
-                      <Printer size={16} />
-                      <span>Print Label</span>
-                    </button>
                   </div>
                 </div>
               )}

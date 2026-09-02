@@ -27,7 +27,8 @@ import {
   UserCheck,
   Building,
   Radio,
-  Lock
+  Lock,
+  Printer
 } from 'lucide-react';
 import {
   getShipments,
@@ -48,11 +49,13 @@ import {
   loginUser,
   User
 } from '../../lib/auth';
+import PrintableLabel from '../../components/shipping/PrintableLabel';
 
 export default function AdminControlPanel() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState<'shipments' | 'merchants' | 'waitlist' | 'hubs'>('shipments');
+  const [printingShipment, setPrintingShipment] = useState<Shipment | null>(null);
 
   // Shipments state
   const [shipments, setShipments] = useState<Shipment[]>([]);
@@ -511,6 +514,16 @@ export default function AdminControlPanel() {
                               >
                                 <Plus size={12} />
                                 <span>Point</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => setPrintingShipment(s)}
+                                className="btn btn-outline btn-sm"
+                                title="Print Official Shipping Label"
+                                style={{ padding: '0.35rem 0.5rem', color: 'var(--brand-orange)', borderColor: 'rgba(255, 102, 0, 0.4)' }}
+                              >
+                                <Printer size={13} />
                               </button>
 
                               <button
@@ -996,6 +1009,31 @@ export default function AdminControlPanel() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Printable Label Modal for Admin */}
+        {printingShipment && (
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0, 0, 0, 0.85)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999,
+              padding: '1.5rem',
+              overflowY: 'auto'
+            }}
+          >
+            <div style={{ maxWidth: '750px', width: '100%', margin: 'auto' }}>
+              <PrintableLabel
+                shipment={printingShipment}
+                onClose={() => setPrintingShipment(null)}
+              />
             </div>
           </div>
         )}

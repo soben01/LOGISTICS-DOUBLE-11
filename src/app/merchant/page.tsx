@@ -18,16 +18,19 @@ import {
   FileText,
   User,
   LogOut,
-  Sparkles
+  Sparkles,
+  Printer
 } from 'lucide-react';
 import { getCurrentUser, logoutUser, User as AuthUser } from '../../lib/auth';
 import { getShipments, Shipment } from '../../lib/store';
+import PrintableLabel from '../../components/shipping/PrintableLabel';
 
 export default function MerchantPortal() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [printingShipment, setPrintingShipment] = useState<Shipment | null>(null);
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -231,10 +234,23 @@ export default function MerchantPortal() {
                     </td>
 
                     <td style={{ padding: '1rem', textAlign: 'right' }}>
-                      <Link href={`/track?id=${s.id}`} className="btn btn-secondary btn-sm" style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}>
-                        <span>Track Live</span>
-                        <ArrowRight size={12} />
-                      </Link>
+                      <div style={{ display: 'inline-flex', gap: '0.4rem', alignItems: 'center' }}>
+                        <button
+                          type="button"
+                          onClick={() => setPrintingShipment(s)}
+                          className="btn btn-outline btn-sm"
+                          style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                          title="Print Official Shipping Label"
+                        >
+                          <Printer size={12} />
+                          <span>Print Label</span>
+                        </button>
+
+                        <Link href={`/track?id=${s.id}`} className="btn btn-secondary btn-sm" style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}>
+                          <span>Track</span>
+                          <ArrowRight size={12} />
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -242,6 +258,31 @@ export default function MerchantPortal() {
             </table>
           </div>
         </div>
+
+        {/* Printable Label Modal */}
+        {printingShipment && (
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0, 0, 0, 0.85)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999,
+              padding: '1.5rem',
+              overflowY: 'auto'
+            }}
+          >
+            <div style={{ maxWidth: '750px', width: '100%', margin: 'auto' }}>
+              <PrintableLabel
+                shipment={printingShipment}
+                onClose={() => setPrintingShipment(null)}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

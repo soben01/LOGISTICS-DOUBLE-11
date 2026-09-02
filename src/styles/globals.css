@@ -618,3 +618,74 @@ a {
   color: var(--brand-orange);
   box-shadow: var(--shadow-sm);
 }
+
+/* =========================================================
+   SHIPPING LABEL PRINT STYLESHEET (@media print)
+   Isolates the shipping label, removes all web clutter,
+   and ensures 100% sharp black & white contrast on paper.
+   ========================================================= */
+@media print {
+  @page {
+    size: auto;
+    margin: 8mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 11pt !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide entire page structure during print */
+  header,
+  footer,
+  nav,
+  .no-print,
+  button,
+  .btn,
+  .tab-list,
+  .badge {
+    display: none !important;
+  }
+
+  /* Hide everything on body except the printable shipping label */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make only the designated printable shipping label visible and centered */
+  #printable-shipping-label,
+  #printable-shipping-label * {
+    visibility: visible !important;
+  }
+
+  #printable-shipping-label {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 180mm !important;
+    margin: 0 auto !important;
+    padding: 16px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 3px solid #000000 !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    display: block !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* High contrast black borders for shipping label grid */
+  #printable-shipping-label table,
+  #printable-shipping-label td,
+  #printable-shipping-label th,
+  #printable-shipping-label div {
+    color: #000000 !important;
+  }
+}
+

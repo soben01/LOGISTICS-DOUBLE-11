@@ -22,9 +22,11 @@ import {
   Gauge,
   UserCheck,
   ChevronRight,
-  RefreshCw
+  RefreshCw,
+  Printer
 } from 'lucide-react';
 import { getShipmentById, getShipments, Shipment, Checkpoint } from '../../lib/store';
+import PrintableLabel from '../../components/shipping/PrintableLabel';
 
 function TrackContent() {
   const searchParams = useSearchParams();
@@ -36,6 +38,7 @@ function TrackContent() {
   const [notFound, setNotFound] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [subscribedNotifications, setSubscribedNotifications] = useState(false);
+  const [showPrintLabel, setShowPrintLabel] = useState(false);
 
   useEffect(() => {
     if (queryId) {
@@ -237,7 +240,18 @@ function TrackContent() {
                     </h2>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowPrintLabel(true)}
+                      className="btn btn-primary btn-sm"
+                      title="Print Official Shipping Label"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                    >
+                      <Printer size={14} />
+                      <span>Print Label</span>
+                    </button>
+
                     <button
                       type="button"
                       onClick={copyTrackingLink}
@@ -528,6 +542,31 @@ function TrackContent() {
                   Manage in Operations Tower &rarr;
                 </Link>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Printable Label Modal (High-Contrast Thermal/A4) */}
+        {showPrintLabel && currentShipment && (
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0, 0, 0, 0.85)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999,
+              padding: '1.5rem',
+              overflowY: 'auto'
+            }}
+          >
+            <div style={{ maxWidth: '750px', width: '100%', margin: 'auto' }}>
+              <PrintableLabel
+                shipment={currentShipment}
+                onClose={() => setShowPrintLabel(false)}
+              />
             </div>
           </div>
         )}
