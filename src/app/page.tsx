@@ -673,18 +673,20 @@ export default function HomePage() {
       </section>
 
       <style jsx>{`
-        @media (max-width: 900px) {
+        @media (max-width: 1080px) {
           .hero-grid {
             grid-template-columns: 1fr !important;
+            gap: 2.5rem !important;
           }
           .spotlight-grid {
             grid-template-columns: 1fr !important;
+            gap: 2.5rem !important;
           }
           .calc-grid {
             grid-template-columns: 1fr 1fr !important;
           }
         }
-        @media (max-width: 600px) {
+        @media (max-width: 640px) {
           .calc-grid {
             grid-template-columns: 1fr !important;
           }
