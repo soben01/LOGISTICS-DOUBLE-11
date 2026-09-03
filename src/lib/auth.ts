@@ -282,3 +282,180 @@ export function resolveMatchedRedirect(user: User, redirectParam?: string | null
   }
 }
 
+export interface SubUser {
+  id: string;
+  parentId?: string;
+  name: string;
+  email: string;
+  password?: string;
+  role: 'merchant' | 'admin';
+  subRole: string;
+  phone?: string;
+  permissions: string[];
+  status: 'active' | 'suspended';
+  createdAt: string;
+  lastLoginAt?: string;
+}
+
+const SUB_USERS_STORAGE_KEY = 'double11_sub_users_v2';
+
+const DEFAULT_SUB_USERS: SubUser[] = [
+  {
+    id: 'sub-usr-1',
+    parentId: 'usr-admin-1',
+    name: 'Pradeep KC',
+    email: 'pradeep.ops@double11.com',
+    password: 'password123',
+    role: 'admin',
+    subRole: 'Operations & Hub Controller',
+    phone: '+977 98111 22334',
+    permissions: ['Linehaul Dispatching', 'Hub Sort Telemetry', 'Carrier SLA Routing'],
+    status: 'active',
+    createdAt: '2026-02-15',
+    lastLoginAt: 'Today 09:30 NPT',
+  },
+  {
+    id: 'sub-usr-2',
+    parentId: 'usr-admin-1',
+    name: 'Bikram Rayamajhi',
+    email: 'bikram.audit@double11.com',
+    password: 'password123',
+    role: 'admin',
+    subRole: 'Compliance & Security Auditor',
+    phone: '+977 98222 33445',
+    permissions: ['Audit Trail Inspection', 'KYC & Merchant Risk', 'Dispute Resolution'],
+    status: 'active',
+    createdAt: '2026-02-20',
+    lastLoginAt: 'Yesterday 14:15 NPT',
+  },
+  {
+    id: 'sub-usr-3',
+    parentId: 'usr-merch-default',
+    name: 'Ramesh Sharma',
+    email: 'ramesh.warehouse@merchant.np',
+    password: 'password123',
+    role: 'merchant',
+    subRole: 'Warehouse Dispatcher',
+    phone: '+977 98412 34567',
+    permissions: ['Print Thermal Waybills', 'Barcode Scan Sorting', 'Manifest Creation'],
+    status: 'active',
+    createdAt: '2026-03-01',
+    lastLoginAt: 'Today 11:00 NPT',
+  },
+  {
+    id: 'sub-usr-4',
+    parentId: 'usr-merch-default',
+    name: 'Sunita Thapa',
+    email: 'sunita.finance@merchant.np',
+    password: 'password123',
+    role: 'merchant',
+    subRole: 'Finance & COD Accountant',
+    phone: '+977 98510 98765',
+    permissions: ['COD Remittance Ledger', 'Bank Account Settlement', 'Financial Statements'],
+    status: 'active',
+    createdAt: '2026-03-10',
+    lastLoginAt: 'Today 16:45 NPT',
+  },
+];
+
+export function getSubUsers(filterRole?: 'merchant' | 'admin'): SubUser[] {
+  if (typeof window === 'undefined') {
+    return filterRole ? DEFAULT_SUB_USERS.filter(u => u.role === filterRole) : DEFAULT_SUB_USERS;
+  }
+  try {
+    const raw = localStorage.getItem(SUB_USERS_STORAGE_KEY);
+    let list: SubUser[] = raw ? JSON.parse(raw) : DEFAULT_SUB_USERS;
+    if (!raw) {
+      localStorage.setItem(SUB_USERS_STORAGE_KEY, JSON.stringify(DEFAULT_SUB_USERS));
+    }
+    if (filterRole) {
+      return list.filter(u => u.role === filterRole);
+    }
+    return list;
+  } catch {
+    return DEFAULT_SUB_USERS;
+  }
+}
+
+export function addSubUser(data: {
+  name: string;
+  email: string;
+  password?: string;
+  role: 'merchant' | 'admin';
+  subRole: string;
+  parentId?: string;
+  phone?: string;
+  permissions?: string[];
+}): { success: boolean; subUser?: SubUser; error?: string } {
+  if (!data.name || !data.name.trim()) {
+    return { success: false, error: 'Sub-user full name is required.' };
+  }
+  if (!data.email || !data.email.includes('@')) {
+    return { success: false, error: 'Valid business email is required.' };
+  }
+
+  const current = getSubUsers();
+  const cleanEmail = data.email.trim().toLowerCase();
+
+  if (current.some(u => u.email.toLowerCase() === cleanEmail)) {
+    return { success: false, error: 'A sub-user with this email already exists.' };
+  }
+
+  const newSubUser: SubUser = {
+    id: `sub-usr-${Date.now()}`,
+    parentId: data.parentId || 'active_parent',
+    name: data.name.trim(),
+    email: cleanEmail,
+    password: data.password || 'password123',
+    role: data.role,
+    subRole: data.subRole,
+    phone: data.phone?.trim() || '+977 98000 00000',
+    permissions: data.permissions && data.permissions.length > 0 ? data.permissions : ['Standard Portal Access', 'Dispatch Telemetry'],
+    status: 'active',
+    createdAt: new Date().toISOString().split('T')[0],
+    lastLoginAt: 'Just created',
+  };
+
+  const updated = [newSubUser, ...current];
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(SUB_USERS_STORAGE_KEY, JSON.stringify(updated));
+    window.dispatchEvent(new Event('sub-users-change'));
+  }
+
+  return { success: true, subUser: newSubUser };
+}
+
+export function deleteSubUser(id: string): boolean {
+  const current = getSubUsers();
+  const filtered = current.filter(u => u.id !== id);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(SUB_USERS_STORAGE_KEY, JSON.stringify(filtered));
+    window.dispatchEvent(new Event('sub-users-change'));
+  }
+  return true;
+}
+
+export function switchActiveSubUser(subUser: SubUser): User {
+  const currentUser = getCurrentUser();
+  const switchedUser: User = {
+    id: currentUser ? currentUser.id : subUser.id,
+    name: subUser.name,
+    email: subUser.email,
+    company: currentUser ? currentUser.company : (subUser.role === 'admin' ? 'Double 11 Logistics HQ' : 'Nepal Merchant Pvt Ltd'),
+    phone: subUser.phone || '+977 98000 00000',
+    role: subUser.role,
+    subRole: subUser.subRole,
+    status: 'active',
+    codBalanceNpr: currentUser ? currentUser.codBalanceNpr : 0,
+    totalShipments: currentUser ? currentUser.totalShipments : 0,
+    createdAt: currentUser ? currentUser.createdAt : subUser.createdAt,
+  };
+
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(switchedUser));
+    window.dispatchEvent(new Event('auth-change'));
+  }
+
+  return switchedUser;
+}
+

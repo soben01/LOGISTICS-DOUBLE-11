@@ -109,31 +109,94 @@ export default function Navbar() {
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0, whiteSpace: 'nowrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0, whiteSpace: 'nowrap' }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', color: 'var(--brand-orange)', fontWeight: 600, fontSize: '0.72rem' }} className="ticker-hide-sm">
               <Radio size={12} className="animate-pulse" /> 24/7 Dispatch Control
             </span>
-            <button
-              type="button"
-              onClick={() => setProfileDrawerOpen(true)}
-              style={{
-                fontSize: '0.7rem',
-                background: currentUser?.role === 'admin' ? 'rgba(255, 102, 0, 0.15)' : 'rgba(6, 182, 212, 0.15)',
-                color: currentUser?.role === 'admin' ? '#ff8533' : 'var(--brand-cyan)',
-                padding: '0.2rem 0.65rem',
-                borderRadius: '4px',
-                border: currentUser?.role === 'admin' ? '1px solid rgba(255, 102, 0, 0.35)' : '1px solid rgba(6, 182, 212, 0.35)',
-                fontWeight: 700,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer'
-              }}
-            >
-              {currentUser ? <UserIcon size={12} /> : <Lock size={12} />}
-              <span>{currentUser ? `My Profile (${currentUser.name}) ▾` : 'Portal Login ▾'}</span>
-            </button>
+
+            {/* Profile Section moved into Top Bar */}
+            {currentUser ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
+                <button
+                  type="button"
+                  onClick={() => setProfileDrawerOpen(true)}
+                  title="Open Account Control & All Portals"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: currentUser.role === 'admin' ? '1px solid rgba(255, 102, 0, 0.45)' : '1px solid rgba(6, 182, 212, 0.45)',
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <div style={{
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '50%',
+                    background: currentUser.role === 'admin' ? 'linear-gradient(135deg, #ff6600 0%, #b45309 100%)' : 'linear-gradient(135deg, #06b6d4 0%, #0d9488 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 800,
+                    fontSize: '0.7rem',
+                    color: '#ffffff',
+                    flexShrink: 0
+                  }}>
+                    {currentUser.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', lineHeight: 1.1 }}>
+                      <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#ffffff' }}>
+                        {currentUser.name}
+                      </span>
+                      <span className={currentUser.role === 'admin' ? 'badge badge-orange' : 'badge badge-cyan'} style={{ fontSize: '0.56rem', padding: '0.04rem 0.3rem' }}>
+                        {currentUser.role === 'admin' ? 'ADMIN' : 'MERCHANT'}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.62rem', color: currentUser.role === 'admin' ? 'var(--brand-orange)' : 'var(--brand-cyan)', marginTop: '1px' }}>
+                      My Profile &bull; All Portals ▾
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="btn btn-outline btn-sm"
+                  title="Sign Out"
+                  style={{ padding: '0.25rem 0.45rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, height: '26px' }}
+                >
+                  <LogOut size={12} />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setProfileDrawerOpen(true)}
+                style={{
+                  fontSize: '0.7rem',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: 'var(--text-secondary)',
+                  padding: '0.2rem 0.65rem',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  whiteSpace: 'nowrap',
+                  cursor: 'pointer'
+                }}
+              >
+                <Lock size={12} />
+                <span>Portal Login ▾</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -358,84 +421,28 @@ export default function Navbar() {
             </button>
           </form>
 
-          {/* User Auth Display / Profile Section Trigger */}
-          {currentUser ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, whiteSpace: 'nowrap' }}>
-              <button
-                type="button"
-                onClick={() => setProfileDrawerOpen(true)}
-                title="Open Profile & Portals"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: currentUser.role === 'admin' ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(6, 182, 212, 0.4)',
-                  borderRadius: '8px',
-                  padding: '0.35rem 0.65rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  flexShrink: 0,
-                  whiteSpace: 'nowrap',
-                  cursor: 'pointer',
-                  textAlign: 'left'
-                }}
+          {/* Main Navbar Right Actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
+            {!currentUser && (
+              <Link
+                href="/login"
+                className="btn btn-secondary btn-sm"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0, whiteSpace: 'nowrap' }}
               >
-                <div style={{
-                  width: '24px',
-                  height: '24px',
-                  borderRadius: '50%',
-                  background: currentUser.role === 'admin' ? 'linear-gradient(135deg, #ff6600 0%, #d97706 100%)' : 'linear-gradient(135deg, #06b6d4 0%, #10b981 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.75rem',
-                  fontWeight: 800,
-                  color: '#ffffff',
-                  flexShrink: 0
-                }}>
-                  {currentUser.role === 'admin' ? 'A' : 'M'}
-                </div>
-                <div className="nav-user-details" style={{ fontSize: '0.8rem', lineHeight: '1.2', whiteSpace: 'nowrap' }}>
-                  <div style={{ fontWeight: 600, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <span>{currentUser.name}</span>
-                    <span className={currentUser.role === 'admin' ? 'badge badge-orange' : 'badge badge-cyan'} style={{ fontSize: '0.62rem', padding: '0.08rem 0.35rem' }}>
-                      {currentUser.role === 'admin' ? 'ADMIN' : 'MERCHANT'}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '0.68rem', color: currentUser.role === 'admin' ? 'var(--brand-orange)' : 'var(--brand-cyan)' }}>
-                    My Profile &bull; All Portals ▾
-                  </div>
-                </div>
-              </button>
+                <UserIcon size={14} />
+                <span>Login / Sign In</span>
+              </Link>
+            )}
 
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="btn btn-outline btn-sm"
-                title="Sign Out"
-                style={{ padding: '0.45rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-              >
-                <LogOut size={14} />
-              </button>
-            </div>
-          ) : (
             <Link
-              href="/login"
-              className="btn btn-secondary btn-sm"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0, whiteSpace: 'nowrap' }}
+              href={currentUser ? "/book" : "/login?redirect=/book"}
+              className="btn btn-primary btn-sm"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
-              <UserIcon size={14} />
-              <span>Login / Sign In</span>
+              <span>{currentUser ? "+ Book Cargo" : "Ship Now"}</span>
+              <ArrowRight size={14} />
             </Link>
-          )}
-
-          <Link
-            href={currentUser ? "/book" : "/login?redirect=/book"}
-            className="btn btn-primary btn-sm"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0, whiteSpace: 'nowrap' }}
-          >
-            <span>{currentUser ? "New Shipment" : "Ship Now"}</span>
-            <ArrowRight size={14} />
-          </Link>
+          </div>
 
           {/* Mobile Menu Toggle Button */}
           <button
