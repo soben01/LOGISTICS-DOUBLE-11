@@ -797,6 +797,36 @@ a {
   }
 }
 
+.booking-sections-row {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.booking-section-col {
+  flex: 1 1 calc(50% - 0.75rem);
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.booking-section-col > .booking-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1024px) {
+  .booking-sections-row {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .booking-section-col {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+}
+
 .booking-field-row {
   display: flex;
   flex-wrap: wrap;

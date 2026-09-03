@@ -688,462 +688,485 @@ function BookContent() {
                   </div>
                 )}
 
-                {/* 1. CONSIGNEE (TO) */}
-                <div className="booking-card">
-                  <div className="booking-card-header">
-                    <div className="booking-step-badge" style={{ background: 'rgba(6, 182, 212, 0.15)', color: 'var(--brand-cyan)' }}>
-                      1
-                    </div>
-                    <div>
-                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
-                        <MapPin size={18} color="var(--brand-cyan)" />
-                        <span>Consignee Details (Destination &amp; Doorstep Delivery)</span>
-                      </h3>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                        Recipient receives live SMS arrival link and OTP security code
+                {/* ================= ROW 1: 1 - 2 SECTIONS (2 COLUMNS, DISPLAY: FLEX) ================= */}
+                <div className="booking-sections-row">
+                  {/* Column 1: 1. CONSIGNEE (TO) */}
+                  <div className="booking-section-col">
+                    <div className="booking-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                      <div className="booking-card-header">
+                        <div className="booking-step-badge" style={{ background: 'rgba(6, 182, 212, 0.15)', color: 'var(--brand-cyan)' }}>
+                          1
+                        </div>
+                        <div>
+                          <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
+                            <MapPin size={18} color="var(--brand-cyan)" />
+                            <span>Consignee Details (Destination)</span>
+                          </h3>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                            Doorstep delivery with SMS tracking &amp; OTP security
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 1-Click Popular Cities */}
+                      <div style={{ marginBottom: '1.25rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>
+                          POPULAR DESTINATIONS:
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                          {['Pokhara', 'Kathmandu', 'Biratnagar', 'Birgunj', 'Chitwan', 'Butwal', 'Dharan', 'Nepalgunj'].map((city) => (
+                            <button
+                              key={city}
+                              type="button"
+                              onClick={() => setRecipientCity(city)}
+                              className="preset-chip"
+                              style={{
+                                background: recipientCity === city ? 'rgba(6, 182, 212, 0.2)' : undefined,
+                                borderColor: recipientCity === city ? 'var(--brand-cyan)' : undefined,
+                                color: recipientCity === city ? '#ffffff' : undefined
+                              }}
+                            >
+                              {city}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="booking-field-row" style={{ marginTop: 'auto' }}>
+                        <div className="input-group booking-field-col-6">
+                          <label className="input-label">Destination Hub *</label>
+                          <select
+                            value={recipientCity}
+                            onChange={(e) => setRecipientCity(e.target.value)}
+                            className="select-field"
+                          >
+                            <option value="Pokhara">Pokhara (Gandaki Province)</option>
+                            <option value="Kathmandu">Kathmandu Valley</option>
+                            <option value="Lalitpur">Lalitpur (Patan)</option>
+                            <option value="Bhaktapur">Bhaktapur</option>
+                            <option value="Biratnagar">Biratnagar (Koshi Province)</option>
+                            <option value="Birgunj">Birgunj (Madhesh Province)</option>
+                            <option value="Chitwan">Chitwan (Bharatpur / Narayangarh)</option>
+                            <option value="Butwal">Butwal / Bhairahawa</option>
+                            <option value="Dharan">Dharan / Itahari</option>
+                            <option value="Nepalgunj">Nepalgunj (Banke)</option>
+                            <option value="Dhangadhi">Dhangadhi (Far-West)</option>
+                            <option value="Rest of Nepal">Rest of Nepal (77 Districts)</option>
+                          </select>
+                        </div>
+
+                        <div className="input-group booking-field-col-6">
+                          <label className="input-label">Recipient Name *</label>
+                          <input
+                            type="text"
+                            value={recipientName}
+                            onChange={(e) => setRecipientName(e.target.value)}
+                            className="input-field"
+                            placeholder="e.g. Pradeep Gurung"
+                            required
+                          />
+                        </div>
+
+                        <div className="input-group booking-field-col-6">
+                          <label className="input-label">Recipient Mobile (OTP) *</label>
+                          <input
+                            type="tel"
+                            value={recipientPhone}
+                            onChange={(e) => setRecipientPhone(e.target.value)}
+                            className="input-field"
+                            placeholder="+977 98XXXXXXXX"
+                            required
+                          />
+                        </div>
+
+                        <div className="input-group booking-field-col-6">
+                          <label className="input-label">Company / Store Name</label>
+                          <input
+                            type="text"
+                            value={recipientCompany}
+                            onChange={(e) => setRecipientCompany(e.target.value)}
+                            className="input-field"
+                            placeholder="e.g. Annapurna IT Solutions"
+                          />
+                        </div>
+
+                        <div className="input-group booking-field-col-12">
+                          <label className="input-label">Doorstep Delivery Address *</label>
+                          <input
+                            type="text"
+                            value={recipientAddress}
+                            onChange={(e) => setRecipientAddress(e.target.value)}
+                            className="input-field"
+                            placeholder="e.g. Lakeside Ward 6, Near Barahi Chowk, Pokhara"
+                            required
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* 1-Click Popular Cities */}
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>
-                      POPULAR DESTINATIONS (1-CLICK SELECT):
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                      {['Pokhara', 'Kathmandu', 'Biratnagar', 'Birgunj', 'Chitwan', 'Butwal', 'Dharan', 'Nepalgunj'].map((city) => (
-                        <button
-                          key={city}
-                          type="button"
-                          onClick={() => setRecipientCity(city)}
-                          className="preset-chip"
-                          style={{
-                            background: recipientCity === city ? 'rgba(6, 182, 212, 0.2)' : undefined,
-                            borderColor: recipientCity === city ? 'var(--brand-cyan)' : undefined,
-                            color: recipientCity === city ? '#ffffff' : undefined
-                          }}
-                        >
-                          {city}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  {/* Column 2: 2. CARGO SPECIFICATIONS */}
+                  <div className="booking-section-col">
+                    <div className="booking-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                      <div className="booking-card-header">
+                        <div className="booking-step-badge" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--brand-emerald)' }}>
+                          2
+                        </div>
+                        <div>
+                          <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
+                            <Boxes size={18} color="var(--brand-emerald)" />
+                            <span>Cargo Specifications &amp; Dimensions</span>
+                          </h3>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                            Volumetric (L&times;W&times;H / 5000) vs Gross Actual Weight
+                          </div>
+                        </div>
+                      </div>
 
-                  <div className="booking-field-row">
-                    <div className="input-group booking-field-col-6">
-                      <label className="input-label">Destination City / Hub *</label>
-                      <select
-                        value={recipientCity}
-                        onChange={(e) => setRecipientCity(e.target.value)}
-                        className="select-field"
-                      >
-                        <option value="Pokhara">Pokhara (Gandaki Province)</option>
-                        <option value="Kathmandu">Kathmandu Valley</option>
-                        <option value="Lalitpur">Lalitpur (Patan)</option>
-                        <option value="Bhaktapur">Bhaktapur</option>
-                        <option value="Biratnagar">Biratnagar (Koshi Province)</option>
-                        <option value="Birgunj">Birgunj (Madhesh Province)</option>
-                        <option value="Chitwan">Chitwan (Bharatpur / Narayangarh)</option>
-                        <option value="Butwal">Butwal / Bhairahawa</option>
-                        <option value="Dharan">Dharan / Itahari</option>
-                        <option value="Nepalgunj">Nepalgunj (Banke)</option>
-                        <option value="Dhangadhi">Dhangadhi (Far-West)</option>
-                        <option value="Rest of Nepal">Rest of Nepal (77 Districts)</option>
-                      </select>
-                    </div>
+                      {/* Category Presets */}
+                      <div style={{ marginBottom: '1.25rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>
+                          QUICK CARGO PRESETS:
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            onClick={() => applyPreset('Standard E-Commerce Parcel', 2.0, 25, 18, 12, 3500)}
+                            className="preset-chip"
+                          >
+                            📦 Standard Box (2.0 KG)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => applyPreset('Important Legal Documents & Contracts', 0.5, 32, 24, 2, 1000)}
+                            className="preset-chip"
+                          >
+                            📄 Documents (0.5 KG)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => applyPreset('Clothing, Apparel & Knitwear', 3.5, 35, 25, 15, 6000)}
+                            className="preset-chip"
+                          >
+                            👗 Apparel (3.5 KG)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => applyPreset('Electronics, Smartphone & Accessories', 1.5, 22, 16, 10, 18000)}
+                            className="preset-chip"
+                          >
+                            💻 Electronics (1.5 KG)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => applyPreset('Industrial Bulk Spares & Hardware', 12.0, 50, 40, 30, 25000)}
+                            className="preset-chip"
+                          >
+                            🏭 Carton (12 KG)
+                          </button>
+                        </div>
+                      </div>
 
-                    <div className="input-group booking-field-col-6">
-                      <label className="input-label">Recipient Full Name *</label>
-                      <input
-                        type="text"
-                        value={recipientName}
-                        onChange={(e) => setRecipientName(e.target.value)}
-                        className="input-field"
-                        placeholder="e.g. Pradeep Gurung"
-                        required
-                      />
-                    </div>
+                      <div className="booking-field-row" style={{ marginTop: 'auto' }}>
+                        <div className="input-group booking-field-col-12">
+                          <label className="input-label">Commodity / Package Contents *</label>
+                          <input
+                            type="text"
+                            value={cargoDesc}
+                            onChange={(e) => setCargoDesc(e.target.value)}
+                            className="input-field"
+                            placeholder="e.g. Handicrafts, Men's Shoes, Electronic Gadgets"
+                            required
+                          />
+                        </div>
 
-                    <div className="input-group booking-field-col-6">
-                      <label className="input-label">Recipient Mobile Phone (For OTP &amp; Delivery) *</label>
-                      <input
-                        type="tel"
-                        value={recipientPhone}
-                        onChange={(e) => setRecipientPhone(e.target.value)}
-                        className="input-field"
-                        placeholder="+977 98XXXXXXXX"
-                        required
-                      />
-                    </div>
+                        <div className="input-group booking-field-col-6">
+                          <label className="input-label">Pieces (Colli) *</label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="500"
+                            value={pieces}
+                            onChange={(e) => setPieces(parseInt(e.target.value) || 1)}
+                            className="input-field"
+                            required
+                          />
+                        </div>
 
-                    <div className="input-group booking-field-col-6">
-                      <label className="input-label">Company / Store Name (Optional)</label>
-                      <input
-                        type="text"
-                        value={recipientCompany}
-                        onChange={(e) => setRecipientCompany(e.target.value)}
-                        className="input-field"
-                        placeholder="e.g. Annapurna IT Solutions"
-                      />
-                    </div>
+                        <div className="input-group booking-field-col-6">
+                          <label className="input-label">Gross Weight (KG) *</label>
+                          <input
+                            type="number"
+                            step="0.1"
+                            min="0.1"
+                            max="2000"
+                            value={weightKg}
+                            onChange={(e) => setWeightKg(parseFloat(e.target.value) || 0.5)}
+                            className="input-field"
+                            required
+                          />
+                        </div>
 
-                    <div className="input-group booking-field-col-12">
-                      <label className="input-label">Doorstep Delivery Address &amp; Landmark *</label>
-                      <input
-                        type="text"
-                        value={recipientAddress}
-                        onChange={(e) => setRecipientAddress(e.target.value)}
-                        className="input-field"
-                        placeholder="e.g. Lakeside Ward 6, Near Barahi Chowk, Pokhara"
-                        required
-                      />
+                        <div className="input-group booking-field-col-12">
+                          <label className="input-label">Declared Cargo Value (Rs. NPR)</label>
+                          <input
+                            type="number"
+                            min="100"
+                            value={declaredValueNpr}
+                            onChange={(e) => setDeclaredValueNpr(parseFloat(e.target.value) || 1000)}
+                            className="input-field"
+                          />
+                        </div>
+
+                        {/* Dimensions & Computed Volumetric Weight */}
+                        <div className="input-group booking-field-col-12">
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                            <label className="input-label" style={{ margin: 0 }}>Dimensions (L &times; W &times; H cm)</label>
+                            <span style={{ fontSize: '0.72rem', color: 'var(--brand-emerald)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                              Volumetric: {volumetricWeight.toFixed(2)} KG
+                            </span>
+                          </div>
+                          <div className="booking-dimensions-flex">
+                            <input
+                              type="number"
+                              placeholder="L (cm)"
+                              value={lengthCm}
+                              onChange={(e) => setLengthCm(parseInt(e.target.value) || 10)}
+                              className="input-field booking-dimension-box"
+                            />
+                            <span style={{ color: 'var(--text-muted)' }}>&times;</span>
+                            <input
+                              type="number"
+                              placeholder="W (cm)"
+                              value={widthCm}
+                              onChange={(e) => setWidthCm(parseInt(e.target.value) || 10)}
+                              className="input-field booking-dimension-box"
+                            />
+                            <span style={{ color: 'var(--text-muted)' }}>&times;</span>
+                            <input
+                              type="number"
+                              placeholder="H (cm)"
+                              value={heightCm}
+                              onChange={(e) => setHeightCm(parseInt(e.target.value) || 5)}
+                              className="input-field booking-dimension-box"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* 2. CARGO SPECIFICATIONS */}
-                <div className="booking-card">
-                  <div className="booking-card-header">
-                    <div className="booking-step-badge" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--brand-emerald)' }}>
-                      2
-                    </div>
-                    <div>
-                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
-                        <Boxes size={18} color="var(--brand-emerald)" />
-                        <span>Cargo Specifications &amp; Dimensions</span>
-                      </h3>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                        Dimensional formula: Volumetric (L&times;W&times;H / 5000) vs Gross Weight
+                {/* ================= ROW 2: 3 - 4 SECTIONS (2 COLUMNS, DISPLAY: FLEX) ================= */}
+                <div className="booking-sections-row">
+                  {/* Column 1: 3. CASH ON DELIVERY (COD) */}
+                  <div className="booking-section-col">
+                    <div className="booking-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                      <div className="booking-card-header">
+                        <div className="booking-step-badge" style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--brand-amber)' }}>
+                          3
+                        </div>
+                        <div>
+                          <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
+                            <Banknote size={18} color="var(--brand-amber)" />
+                            <span>Cash on Delivery (COD) Settings</span>
+                          </h3>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                            Doorstep collection &amp; next-day direct bank settlement
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
-                  {/* Category Presets */}
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>
-                      QUICK CARGO PRESETS:
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                      <button
-                        type="button"
-                        onClick={() => applyPreset('Standard E-Commerce Parcel', 2.0, 25, 18, 12, 3500)}
-                        className="preset-chip"
-                      >
-                        📦 Standard Box (2.0 KG)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => applyPreset('Important Legal Documents & Contracts', 0.5, 32, 24, 2, 1000)}
-                        className="preset-chip"
-                      >
-                        📄 Documents (0.5 KG)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => applyPreset('Clothing, Apparel & Knitwear', 3.5, 35, 25, 15, 6000)}
-                        className="preset-chip"
-                      >
-                        👗 Fashion Apparel (3.5 KG)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => applyPreset('Electronics, Smartphone & Accessories', 1.5, 22, 16, 10, 18000)}
-                        className="preset-chip"
-                      >
-                        💻 Electronics (1.5 KG)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => applyPreset('Industrial Bulk Spares & Hardware', 12.0, 50, 40, 30, 25000)}
-                        className="preset-chip"
-                      >
-                        🏭 Wholesale Carton (12 KG)
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="booking-field-row">
-                    <div className="input-group booking-field-col-12">
-                      <label className="input-label">Commodity / Package Contents *</label>
-                      <input
-                        type="text"
-                        value={cargoDesc}
-                        onChange={(e) => setCargoDesc(e.target.value)}
-                        className="input-field"
-                        placeholder="e.g. Handicrafts, Men's Shoes, Electronic Gadgets"
-                        required
-                      />
-                    </div>
-
-                    {/* 3 Suitable Columns: Pieces, Weight, Declared Value */}
-                    <div className="input-group booking-field-col-4">
-                      <label className="input-label">Pieces (Colli Count) *</label>
-                      <input
-                        type="number"
-                        min="1"
-                        max="500"
-                        value={pieces}
-                        onChange={(e) => setPieces(parseInt(e.target.value) || 1)}
-                        className="input-field"
-                        required
-                      />
-                    </div>
-
-                    <div className="input-group booking-field-col-4">
-                      <label className="input-label">Gross Actual Weight (KG) *</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        min="0.1"
-                        max="2000"
-                        value={weightKg}
-                        onChange={(e) => setWeightKg(parseFloat(e.target.value) || 0.5)}
-                        className="input-field"
-                        required
-                      />
-                    </div>
-
-                    <div className="input-group booking-field-col-4">
-                      <label className="input-label">Declared Cargo Value (Rs. NPR)</label>
-                      <input
-                        type="number"
-                        min="100"
-                        value={declaredValueNpr}
-                        onChange={(e) => setDeclaredValueNpr(parseFloat(e.target.value) || 1000)}
-                        className="input-field"
-                      />
-                    </div>
-
-                    {/* Dimensions & Live Computed Volumetric Weight */}
-                    <div className="input-group booking-field-col-8">
-                      <label className="input-label">Package Dimensions (L &times; W &times; H cm)</label>
-                      <div className="booking-dimensions-flex">
-                        <input
-                          type="number"
-                          placeholder="L (cm)"
-                          value={lengthCm}
-                          onChange={(e) => setLengthCm(parseInt(e.target.value) || 10)}
-                          className="input-field booking-dimension-box"
-                        />
-                        <span style={{ color: 'var(--text-muted)' }}>&times;</span>
-                        <input
-                          type="number"
-                          placeholder="W (cm)"
-                          value={widthCm}
-                          onChange={(e) => setWidthCm(parseInt(e.target.value) || 10)}
-                          className="input-field booking-dimension-box"
-                        />
-                        <span style={{ color: 'var(--text-muted)' }}>&times;</span>
-                        <input
-                          type="number"
-                          placeholder="H (cm)"
-                          value={heightCm}
-                          onChange={(e) => setHeightCm(parseInt(e.target.value) || 5)}
-                          className="input-field booking-dimension-box"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="input-group booking-field-col-4" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
                       <div style={{
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.25)',
-                        borderRadius: '8px',
-                        padding: '0.65rem 0.85rem',
-                        fontSize: '0.78rem',
+                        background: isCod ? 'rgba(16, 185, 129, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+                        border: isCod ? '2px solid rgba(16, 185, 129, 0.4)' : '1px solid var(--border-subtle)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: '1.25rem',
+                        transition: 'all var(--transition-fast)',
                         display: 'flex',
                         flexDirection: 'column',
-                        justifyContent: 'center'
+                        gap: '1rem',
+                        flex: 1
                       }}>
-                        <div style={{ color: 'var(--brand-emerald)', fontWeight: 700 }}>Volumetric Weight:</div>
-                        <div style={{ color: '#ffffff', fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.95rem' }}>
-                          {volumetricWeight.toFixed(2)} KG
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer', margin: 0 }}>
+                            <input
+                              type="checkbox"
+                              checked={isCod}
+                              onChange={(e) => setIsCod(e.target.checked)}
+                              style={{ width: '18px', height: '18px', accentColor: 'var(--brand-emerald)' }}
+                            />
+                            <div>
+                              <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.95rem' }}>
+                                Enable Cash on Delivery (COD)
+                              </div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                Rider collects cash at recipient doorstep
+                              </div>
+                            </div>
+                          </label>
+
+                          <span className={isCod ? 'badge badge-emerald' : 'badge badge-subtle'}>
+                            {isCod ? 'COD ACTIVE' : 'PREPAID'}
+                          </span>
+                        </div>
+
+                        {isCod && (
+                          <div style={{ borderTop: '1px solid rgba(16, 185, 129, 0.2)', paddingTop: '0.85rem' }}>
+                            <div className="input-group" style={{ margin: 0 }}>
+                              <label className="input-label" style={{ color: 'var(--brand-emerald)', fontWeight: 700 }}>
+                                COD Cash Amount to Collect (Rs. NPR) *
+                              </label>
+                              <div style={{ position: 'relative' }}>
+                                <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontWeight: 900, color: 'var(--brand-emerald)', fontSize: '1.05rem' }}>
+                                  Rs.
+                                </span>
+                                <input
+                                  type="number"
+                                  min="10"
+                                  value={codAmountNpr}
+                                  onChange={(e) => setCodAmountNpr(parseFloat(e.target.value) || 0)}
+                                  className="input-field"
+                                  style={{ paddingLeft: '2.8rem', fontFamily: 'var(--font-mono)', fontSize: '1.15rem', fontWeight: 800 }}
+                                  required
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        <div style={{
+                          background: 'rgba(255, 255, 255, 0.03)',
+                          borderRadius: '8px',
+                          padding: '0.75rem',
+                          fontSize: '0.75rem',
+                          color: 'var(--text-secondary)',
+                          border: '1px solid rgba(255, 255, 255, 0.06)',
+                          marginTop: 'auto'
+                        }}>
+                          ⚡ <strong>Auto-Remittance:</strong> Funds credited to merchant bank account next business day at 16:00 NPT.
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* 3. CASH ON DELIVERY (COD) */}
-                <div className="booking-card">
-                  <div className="booking-card-header">
-                    <div className="booking-step-badge" style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--brand-amber)' }}>
-                      3
-                    </div>
-                    <div>
-                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
-                        <Banknote size={18} color="var(--brand-amber)" />
-                        <span>Cash on Delivery (COD) Settings</span>
-                      </h3>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                        Automated cash collection and next-business-day direct bank transfer
+                  {/* Column 2: 4. SERVICE TIER & ALL-INCLUSIVE FARE */}
+                  <div className="booking-section-col">
+                    <div className="booking-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                      <div className="booking-card-header">
+                        <div className="booking-step-badge" style={{ background: 'rgba(255, 102, 0, 0.15)', color: 'var(--brand-orange)' }}>
+                          4
+                        </div>
+                        <div>
+                          <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
+                            <Truck size={18} color="var(--brand-orange)" />
+                            <span>Service Speed &amp; Unified Fare</span>
+                          </h3>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                            Transit corridors with guaranteed SLA &amp; fixed rates
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <div style={{
-                    background: isCod ? 'rgba(16, 185, 129, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-                    border: isCod ? '2px solid rgba(16, 185, 129, 0.4)' : '1px solid var(--border-subtle)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '1.25rem',
-                    transition: 'all var(--transition-fast)'
-                  }}>
-                    <div className="booking-field-row" style={{ alignItems: 'center' }}>
-                      <div className={isCod ? 'booking-field-col-6' : 'booking-field-col-12'}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer', margin: 0 }}>
+                      {/* 3 Service Tiers stacked cleanly */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1rem' }}>
+                        {/* Tier 1: Double 11 Nepal Express */}
+                        <div
+                          onClick={() => setSelectedService('EXP')}
+                          className={`service-card-select ${selectedService === 'EXP' ? 'selected' : ''}`}
+                          style={{ padding: '0.75rem 1rem' }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <span style={{ fontWeight: 800, color: 'var(--brand-orange)', fontSize: '0.92rem' }}>Nepal Express</span>
+                              <span className="badge badge-orange" style={{ fontSize: '0.58rem', padding: '0.15rem 0.4rem' }}>24H SLA</span>
+                            </div>
+                            <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
+                              Rs. {Math.round(220 + Math.max(0, chargeableWeight - 1) * 60)} NPR
+                            </div>
+                          </div>
+                          <p style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', margin: 0 }}>
+                            Intercity linehauls to Pokhara, Birgunj, Biratnagar, Chitwan &amp; Butwal.
+                          </p>
+                        </div>
+
+                        {/* Tier 2: Nationwide Hub Cargo */}
+                        <div
+                          onClick={() => setSelectedService('CARGO')}
+                          className={`service-card-select ${selectedService === 'CARGO' ? 'selected' : ''}`}
+                          style={{ padding: '0.75rem 1rem' }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <span style={{ fontWeight: 800, color: 'var(--brand-cyan)', fontSize: '0.92rem' }}>Nationwide Cargo</span>
+                              <span className="badge badge-cyan" style={{ fontSize: '0.58rem', padding: '0.15rem 0.4rem' }}>77 DISTRICTS</span>
+                            </div>
+                            <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
+                              Rs. {Math.round(160 + Math.max(0, chargeableWeight - 1) * 40)} NPR
+                            </div>
+                          </div>
+                          <p style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', margin: 0 }}>
+                            Bulk freight and cross-docking for heavy commercial inventory.
+                          </p>
+                        </div>
+
+                        {/* Tier 3: Same-Day Valley Rush */}
+                        <div
+                          onClick={() => setSelectedService('RUSH')}
+                          className={`service-card-select ${selectedService === 'RUSH' ? 'selected' : ''}`}
+                          style={{ padding: '0.75rem 1rem' }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <span style={{ fontWeight: 800, color: 'var(--brand-emerald)', fontSize: '0.92rem' }}>Valley Rush</span>
+                              <span className="badge badge-emerald" style={{ fontSize: '0.58rem', padding: '0.15rem 0.4rem' }}>&lt; 3 HOURS</span>
+                            </div>
+                            <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
+                              Rs. {Math.round(290 + Math.max(0, chargeableWeight - 1) * 50)} NPR
+                            </div>
+                          </div>
+                          <p style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', margin: 0 }}>
+                            Dedicated instant rider in Kathmandu, Lalitpur &amp; Bhaktapur.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Value Add Options */}
+                      <div style={{
+                        background: 'rgba(255, 255, 255, 0.02)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: '0.85rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.5rem',
+                        marginTop: 'auto'
+                      }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', cursor: 'pointer', fontSize: '0.78rem' }}>
                           <input
                             type="checkbox"
-                            checked={isCod}
-                            onChange={(e) => setIsCod(e.target.checked)}
-                            style={{ width: '18px', height: '18px', accentColor: 'var(--brand-emerald)' }}
+                            checked={addInsurance}
+                            onChange={(e) => setAddInsurance(e.target.checked)}
+                            style={{ width: '15px', height: '15px', accentColor: 'var(--brand-orange)' }}
                           />
-                          <div>
-                            <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.95rem' }}>
-                              Enable Cash on Delivery (COD)
-                            </div>
-                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                              Rider collects cash from buyer at doorstep upon OTP confirmation
-                            </div>
-                          </div>
+                          <span>
+                            Domestic Transit Insurance (Covers to Rs. 100k) &mdash; <strong>+Rs. 150</strong>
+                          </span>
+                        </label>
+
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', cursor: 'pointer', fontSize: '0.78rem' }}>
+                          <input
+                            type="checkbox"
+                            checked={addCarbonOffset}
+                            onChange={(e) => setAddCarbonOffset(e.target.checked)}
+                            style={{ width: '15px', height: '15px', accentColor: 'var(--brand-emerald)' }}
+                          />
+                          <span>
+                            Electric Van Contribution (Hydro-Charged) &mdash; <strong>+Rs. 50</strong>
+                          </span>
                         </label>
                       </div>
-
-                      {isCod && (
-                        <div className="booking-field-col-6">
-                          <div className="input-group" style={{ margin: 0 }}>
-                            <label className="input-label" style={{ color: 'var(--brand-emerald)', fontWeight: 700 }}>
-                              Amount to Collect (Rs. NPR) *
-                            </label>
-                            <div style={{ position: 'relative' }}>
-                              <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontWeight: 900, color: 'var(--brand-emerald)', fontSize: '1.05rem' }}>
-                                Rs.
-                              </span>
-                              <input
-                                type="number"
-                                min="10"
-                                value={codAmountNpr}
-                                onChange={(e) => setCodAmountNpr(parseFloat(e.target.value) || 0)}
-                                className="input-field"
-                                style={{ paddingLeft: '2.8rem', fontFamily: 'var(--font-mono)', fontSize: '1.1rem', fontWeight: 800 }}
-                                required
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      )}
                     </div>
-                  </div>
-                </div>
-
-                {/* 4. SERVICE TIER & ONE UNIFIED FARE */}
-                <div className="booking-card">
-                  <div className="booking-card-header">
-                    <div className="booking-step-badge" style={{ background: 'rgba(255, 102, 0, 0.15)', color: 'var(--brand-orange)' }}>
-                      4
-                    </div>
-                    <div>
-                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
-                        <Truck size={18} color="var(--brand-orange)" />
-                        <span>Choose Service Speed &amp; One All-Inclusive Fare</span>
-                      </h3>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                        Select transit corridor speed for automatic route allocation
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="booking-service-cards" style={{ marginBottom: '1.25rem' }}>
-                    {/* Tier 1: Double 11 Nepal Express */}
-                    <div
-                      onClick={() => setSelectedService('EXP')}
-                      className={`service-card-select booking-service-item ${selectedService === 'EXP' ? 'selected' : ''}`}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                        <div style={{ fontWeight: 800, color: 'var(--brand-orange)', fontSize: '0.92rem' }}>
-                          Nepal Express
-                        </div>
-                        <span className="badge badge-orange" style={{ fontSize: '0.6rem' }}>24H SLA</span>
-                      </div>
-                      <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
-                        Intercity linehauls to Pokhara, Birgunj, Biratnagar, Chitwan &amp; Butwal.
-                      </p>
-                      <div style={{ marginTop: 'auto', fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
-                        Rs. {Math.round(220 + Math.max(0, chargeableWeight - 1) * 60)} NPR
-                      </div>
-                    </div>
-
-                    {/* Tier 2: Nationwide Hub Cargo */}
-                    <div
-                      onClick={() => setSelectedService('CARGO')}
-                      className={`service-card-select booking-service-item ${selectedService === 'CARGO' ? 'selected' : ''}`}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                        <div style={{ fontWeight: 800, color: 'var(--brand-cyan)', fontSize: '0.92rem' }}>
-                          Nationwide Cargo
-                        </div>
-                        <span className="badge badge-cyan" style={{ fontSize: '0.6rem' }}>77 DISTRICTS</span>
-                      </div>
-                      <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
-                        Bulk freight and consolidated cross-docking for heavy commercial inventory.
-                      </p>
-                      <div style={{ marginTop: 'auto', fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
-                        Rs. {Math.round(160 + Math.max(0, chargeableWeight - 1) * 40)} NPR
-                      </div>
-                    </div>
-
-                    {/* Tier 3: Same-Day Valley Rush */}
-                    <div
-                      onClick={() => setSelectedService('RUSH')}
-                      className={`service-card-select booking-service-item ${selectedService === 'RUSH' ? 'selected' : ''}`}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                        <div style={{ fontWeight: 800, color: 'var(--brand-emerald)', fontSize: '0.92rem' }}>
-                          Valley Rush
-                        </div>
-                        <span className="badge badge-emerald" style={{ fontSize: '0.6rem' }}>&lt; 3 HOURS</span>
-                      </div>
-                      <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
-                        Dedicated instant rider in Kathmandu, Lalitpur &amp; Bhaktapur.
-                      </p>
-                      <div style={{ marginTop: 'auto', fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
-                        Rs. {Math.round(290 + Math.max(0, chargeableWeight - 1) * 50)} NPR
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Value Add Options */}
-                  <div style={{
-                    background: 'rgba(255, 255, 255, 0.02)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '1.1rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.75rem'
-                  }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer', fontSize: '0.85rem' }}>
-                      <input
-                        type="checkbox"
-                        checked={addInsurance}
-                        onChange={(e) => setAddInsurance(e.target.checked)}
-                        style={{ width: '16px', height: '16px', accentColor: 'var(--brand-orange)' }}
-                      />
-                      <span>
-                        Include All-Risk Domestic Transit Insurance (Covers up to Rs. 100,000 NPR) &mdash; <strong>+Rs. 150 NPR</strong>
-                      </span>
-                    </label>
-
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer', fontSize: '0.85rem' }}>
-                      <input
-                        type="checkbox"
-                        checked={addCarbonOffset}
-                        onChange={(e) => setAddCarbonOffset(e.target.checked)}
-                        style={{ width: '16px', height: '16px', accentColor: 'var(--brand-emerald)' }}
-                      />
-                      <span>
-                        Zero-Emission Electric Van Contribution (100% Nepal Hydro-Charged) &mdash; <strong>+Rs. 50 NPR</strong>
-                      </span>
-                    </label>
                   </div>
                 </div>
               </div>
