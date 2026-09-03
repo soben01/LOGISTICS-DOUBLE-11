@@ -467,15 +467,30 @@ export default function ProfilePortalDrawer({
                       </Link>
 
                       <Link
-                        href="/operations"
+                        href="/bookings"
                         onClick={onClose}
                         className="profile-portal-link"
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                          <Cpu size={16} color="var(--brand-amber)" />
+                          <Boxes size={16} color="var(--brand-orange)" />
                           <div>
-                            <div style={{ fontWeight: 600, fontSize: '0.85rem', color: '#ffffff' }}>All Bookings &amp; Network Console</div>
-                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>All regional hubs, live corridors, fleet updates</div>
+                            <div style={{ fontWeight: 600, fontSize: '0.85rem', color: '#ffffff' }}>All Bookings Data Registry</div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Pure booking records, customer data, and AWB manifests</div>
+                          </div>
+                        </div>
+                        <ChevronRight size={15} color="var(--text-muted)" />
+                      </Link>
+
+                      <Link
+                        href="/dashboard"
+                        onClick={onClose}
+                        className="profile-portal-link"
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                          <Cpu size={16} color="var(--brand-cyan)" />
+                          <div>
+                            <div style={{ fontWeight: 600, fontSize: '0.85rem', color: '#ffffff' }}>Operations &amp; Fleet Dashboard</div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Live telemetry metrics, hub sorting capacity, and SLA</div>
                           </div>
                         </div>
                         <ChevronRight size={15} color="var(--text-muted)" />
@@ -501,15 +516,30 @@ export default function ProfilePortalDrawer({
                       </Link>
 
                       <Link
-                        href="/operations"
+                        href="/dashboard"
                         onClick={onClose}
                         className="profile-portal-link"
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                          <Truck size={16} color="var(--brand-cyan)" />
+                          <Cpu size={16} color="var(--brand-cyan)" />
                           <div>
-                            <div style={{ fontWeight: 600, fontSize: '0.85rem', color: '#ffffff' }}>All Bookings &amp; Dispatches Registry</div>
-                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Update consignment statuses, linehaul routes</div>
+                            <div style={{ fontWeight: 600, fontSize: '0.85rem', color: '#ffffff' }}>Operations &amp; Fleet Dashboard</div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Accurate live telemetry, hub load distribution</div>
+                          </div>
+                        </div>
+                        <ChevronRight size={15} color="var(--text-muted)" />
+                      </Link>
+
+                      <Link
+                        href="/bookings"
+                        onClick={onClose}
+                        className="profile-portal-link"
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                          <Boxes size={16} color="var(--brand-amber)" />
+                          <div>
+                            <div style={{ fontWeight: 600, fontSize: '0.85rem', color: '#ffffff' }}>All Bookings Data Registry</div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Consignment records, customer search, status updates</div>
                           </div>
                         </div>
                         <ChevronRight size={15} color="var(--text-muted)" />
@@ -805,12 +835,20 @@ export default function ProfilePortalDrawer({
                   QUICK NAVIGATION:
                 </div>
                 <Link
-                  href="/operations"
+                  href="/bookings"
                   onClick={onClose}
                   style={{ fontSize: '0.82rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}
                 >
                   <Boxes size={14} color="var(--brand-orange)" />
-                  <span>All Bookings &amp; Network Operations</span>
+                  <span>All Bookings Data Registry</span>
+                </Link>
+                <Link
+                  href="/dashboard"
+                  onClick={onClose}
+                  style={{ fontSize: '0.82rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}
+                >
+                  <Cpu size={14} color="var(--brand-cyan)" />
+                  <span>Operations &amp; Fleet Dashboard</span>
                 </Link>
                 <Link
                   href="/book"

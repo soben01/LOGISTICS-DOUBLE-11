@@ -217,7 +217,7 @@ export default function Navbar() {
             Book Cargo
           </Link>
           <Link
-            href="/operations"
+            href="/bookings"
             style={{
               fontSize: '0.9rem',
               fontWeight: 700,
@@ -230,6 +230,21 @@ export default function Navbar() {
           >
             <Boxes size={15} />
             <span>All Bookings</span>
+          </Link>
+          <Link
+            href="/dashboard"
+            style={{
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              color: 'var(--brand-cyan)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <Cpu size={15} />
+            <span>Dashboard</span>
           </Link>
           <Link href="/rates" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
             Rates &amp; Tariffs
@@ -461,11 +476,18 @@ export default function Navbar() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingTop: '0.25rem' }}>
             <Link
-              href="/operations"
+              href="/bookings"
               onClick={() => setMobileMenuOpen(false)}
               style={{ padding: '0.6rem 0', color: 'var(--brand-orange)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
             >
-              <Boxes size={16} /> All Bookings &amp; Network Console
+              <Boxes size={16} /> All Bookings (Data Records)
+            </Link>
+            <Link
+              href="/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ padding: '0.6rem 0', color: 'var(--brand-cyan)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+              <Cpu size={16} /> Operations Dashboard
             </Link>
             <Link
               href="/track"

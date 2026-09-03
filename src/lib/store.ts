@@ -116,6 +116,107 @@ export async function fetchD1Status(): Promise<any | null> {
   }
 }
 
+export function normalizeD1Shipment(raw: any): Shipment {
+  let details: any = {};
+  if (typeof raw.raw_details === 'string') {
+    try {
+      details = JSON.parse(raw.raw_details);
+    } catch {
+      details = {};
+    }
+  } else if (raw.raw_details && typeof raw.raw_details === 'object') {
+    details = raw.raw_details;
+  }
+
+  const rawStatus = (raw.status || '').toLowerCase();
+  let status: Shipment['status'] = 'In Transit';
+  if (rawStatus.includes('deliver') || rawStatus === 'completed') {
+    status = 'Delivered';
+  } else if (rawStatus.includes('out') || rawStatus.includes('courier')) {
+    status = 'Out for Delivery';
+  } else if (rawStatus.includes('custom') || rawStatus.includes('cleared')) {
+    status = 'Customs Cleared';
+  } else if (rawStatus.includes('pending') || rawStatus.includes('pickup')) {
+    status = 'Pending Pickup';
+  }
+
+  const destCity = details.destination_city || details.city || 'Pokhara';
+
+  return {
+    id: raw.tracking_number || details.number || `D11-D1-${raw.id}`,
+    service: 'Double 11 Nepal Express',
+    serviceCode: 'EXP',
+    status: status,
+    origin: {
+      city: 'Kathmandu',
+      hub: 'Kathmandu Mega-Hub (KTM-01)'
+    },
+    destination: {
+      city: destCity,
+      hub: `${destCity} Regional Hub`
+    },
+    sender: {
+      name: 'Central Merchant Dispatch',
+      company: 'Double 11 Logistics Command HQ',
+      phone: '+977 1 4411000'
+    },
+    recipient: {
+      name: raw.consignee_name || details.consignee_name || 'Verified Consignee',
+      company: details.consignee_company || '',
+      address: details.destination_address || `${destCity} Main Road, Ward 4`,
+      phone: raw.consignee_contact || details.consignee_contact || '+977 98000 00000'
+    },
+    cargo: {
+      pieces: Number(details.pieces || 1),
+      weightKg: Number(details.weight || details.weightKg || 2.5),
+      description: details.contents || details.description || 'Commercial Merchandise Parcel',
+      declaredValueNpr: Number(details.declared_value || 4500)
+    },
+    telemetry: {
+      transportVehicle: 'BA 2 KHA 8841 (Express E-Van)',
+      estimatedArrival: 'Guaranteed 24H SLA',
+      trackingRoute: 'Kathmandu Mega-Hub -> Prithvi Highway -> Regional Hub'
+    },
+    checkpoints: [
+      {
+        id: `cp-${raw.id || '1'}`,
+        timestamp: raw.created_at || '2026-08-27 06:00',
+        status: status === 'Delivered' ? 'Delivered' : 'In Transit',
+        location: `${destCity} Regional Hub`,
+        description: raw.latest_event || 'Consignment verified in Cloudflare D1 tracking database',
+        isCompleted: true
+      }
+    ]
+  };
+}
+
+export async function getAllCombinedBookings(): Promise<Shipment[]> {
+  const localShipments = getShipments();
+  if (typeof window === 'undefined') return localShipments;
+
+  try {
+    const res = await fetch('/api/shipments');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.shipments)) {
+        const remoteShipments = data.shipments.map(normalizeD1Shipment);
+        const seenIds = new Set(localShipments.map(s => s.id.toUpperCase()));
+        const combined = [...localShipments];
+        for (const remote of remoteShipments) {
+          if (!seenIds.has(remote.id.toUpperCase())) {
+            combined.push(remote);
+            seenIds.add(remote.id.toUpperCase());
+          }
+        }
+        return combined;
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching combined shipments:', err);
+  }
+  return localShipments;
+}
+
 export function getShipmentById(id: string): Shipment | undefined {
   const shipments = getShipments();
   const cleanId = id.trim().toUpperCase();
