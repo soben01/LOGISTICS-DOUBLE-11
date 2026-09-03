@@ -816,13 +816,32 @@ a {
 
 .booking-field-col-4 {
   flex: 1 1 calc(33.333% - 0.85rem);
-  min-width: 180px;
+  min-width: 170px;
+}
+
+.booking-field-col-8 {
+  flex: 1 1 calc(66.666% - 0.85rem);
+  min-width: 300px;
+}
+
+.booking-dimensions-flex {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  width: 100%;
+}
+
+.booking-dimension-box {
+  flex: 1 1 0;
+  min-width: 65px;
+  text-align: center;
 }
 
 .booking-service-cards {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .booking-service-item {
@@ -833,6 +852,7 @@ a {
 @media (max-width: 768px) {
   .booking-field-col-6,
   .booking-field-col-4,
+  .booking-field-col-8,
   .booking-service-item {
     flex: 1 1 100%;
     min-width: 100%;

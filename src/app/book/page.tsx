@@ -55,11 +55,12 @@ function BookContent() {
   const [authError, setAuthError] = useState('');
   const [authSuccess, setAuthSuccess] = useState('');
 
-  // 1. Shipper (Origin / Sender)
-  const [originCity, setOriginCity] = useState(initialOrigin);
-  const [senderName, setSenderName] = useState('');
-  const [senderCompany, setSenderCompany] = useState('');
-  const [senderPhone, setSenderPhone] = useState('');
+  // 1. Shipper (Origin / Sender - Hidden by Default)
+  const [originCity, setOriginCity] = useState(initialOrigin || 'Kathmandu');
+  const [senderName, setSenderName] = useState('Soben');
+  const [senderCompany, setSenderCompany] = useState('Double 11 Logistics Command HQ');
+  const [senderPhone, setSenderPhone] = useState('+977 1 4411000');
+  const [showShipperDetails, setShowShipperDetails] = useState(false);
 
   // 2. Consignee (Destination / Recipient)
   const [recipientCity, setRecipientCity] = useState(initialDest);
@@ -568,84 +569,130 @@ function BookContent() {
               {/* Left Column: All Dispatch Modules (Shipper, Consignee, Cargo, COD, Service) */}
               <div className="booking-form-col">
 
-                {/* 1. SHIPPER (FROM) */}
-                <div className="booking-card">
-                  <div className="booking-card-header">
-                    <div className="booking-step-badge" style={{ background: 'rgba(255, 102, 0, 0.15)', color: 'var(--brand-orange)' }}>
-                      1
+                {/* Compact Shipper Origin Bar (Shipper Details Hidden by Default) */}
+                <div style={{
+                  background: 'rgba(255, 102, 0, 0.05)',
+                  border: '1px solid rgba(255, 102, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '0.75rem 1.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                    <div style={{
+                      width: '30px',
+                      height: '30px',
+                      borderRadius: '8px',
+                      background: 'rgba(255, 102, 0, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--brand-orange)'
+                    }}>
+                      <Package size={16} />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
-                        <Package size={18} color="var(--brand-orange)" />
-                        <span>Shipper Details (Origin Hub)</span>
-                      </h3>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                        Free merchant doorstep pickup across Kathmandu Valley, Pokhara &amp; Birgunj
+                      <div style={{ fontSize: '0.88rem', color: '#ffffff', fontWeight: 700 }}>
+                        Dispatch Origin: {originCity} Mega-Hub
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        Consignor: {senderName} ({senderCompany}) &bull; {senderPhone}
                       </div>
                     </div>
                   </div>
 
-                  <div className="booking-field-row">
-                    <div className="input-group booking-field-col-6">
-                      <label className="input-label">Origin Nepal Hub *</label>
-                      <select
-                        value={originCity}
-                        onChange={(e) => setOriginCity(e.target.value)}
-                        className="select-field"
-                      >
-                        <option value="Kathmandu">Kathmandu (Central Mega-Hub - TIA Gate)</option>
-                        <option value="Lalitpur">Lalitpur (Patan Hub)</option>
-                        <option value="Bhaktapur">Bhaktapur (East Valley Hub)</option>
-                        <option value="Pokhara">Pokhara (Gandaki Regional Hub)</option>
-                        <option value="Birgunj">Birgunj (Dry Port Trade Terminal)</option>
-                        <option value="Biratnagar">Biratnagar (Koshi Province Hub)</option>
-                        <option value="Chitwan">Chitwan (Bharatpur / Narayangarh)</option>
-                        <option value="Butwal">Butwal (Lumbini Trade Corridor)</option>
-                      </select>
-                    </div>
-
-                    <div className="input-group booking-field-col-6">
-                      <label className="input-label">Shipper Contact Name *</label>
-                      <input
-                        type="text"
-                        value={senderName}
-                        onChange={(e) => setSenderName(e.target.value)}
-                        className="input-field"
-                        placeholder="e.g. Ramesh Thapa"
-                        required
-                      />
-                    </div>
-
-                    <div className="input-group booking-field-col-6">
-                      <label className="input-label">Company / Brand Name</label>
-                      <input
-                        type="text"
-                        value={senderCompany}
-                        onChange={(e) => setSenderCompany(e.target.value)}
-                        className="input-field"
-                        placeholder="e.g. Himalayan Apparel Nepal"
-                      />
-                    </div>
-
-                    <div className="input-group booking-field-col-6">
-                      <label className="input-label">Consignor Telephone *</label>
-                      <input
-                        type="tel"
-                        value={senderPhone}
-                        onChange={(e) => setSenderPhone(e.target.value)}
-                        className="input-field"
-                        placeholder="+977 98510 12345"
-                        required
-                      />
-                    </div>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowShipperDetails(prev => !prev)}
+                    className="btn btn-secondary btn-sm"
+                    style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem' }}
+                  >
+                    <span>{showShipperDetails ? 'Hide Shipper Details ▲' : 'Edit Shipper Details ▾'}</span>
+                  </button>
                 </div>
 
-                {/* 2. CONSIGNEE (TO) */}
+                {/* Optional Expanded Shipper Details */}
+                {showShipperDetails && (
+                  <div className="booking-card" style={{ border: '1px solid rgba(255, 102, 0, 0.3)' }}>
+                    <div className="booking-card-header">
+                      <div className="booking-step-badge" style={{ background: 'rgba(255, 102, 0, 0.15)', color: 'var(--brand-orange)' }}>
+                        Origin
+                      </div>
+                      <div>
+                        <h3 style={{ fontSize: '1.1rem', color: '#ffffff', margin: 0 }}>
+                          Shipper Details (Origin Hub)
+                        </h3>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                          Free doorstep pickup across Kathmandu Valley, Pokhara &amp; Birgunj
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="booking-field-row">
+                      <div className="input-group booking-field-col-6">
+                        <label className="input-label">Origin Nepal Hub *</label>
+                        <select
+                          value={originCity}
+                          onChange={(e) => setOriginCity(e.target.value)}
+                          className="select-field"
+                        >
+                          <option value="Kathmandu">Kathmandu (Central Mega-Hub - TIA Gate)</option>
+                          <option value="Lalitpur">Lalitpur (Patan Hub)</option>
+                          <option value="Bhaktapur">Bhaktapur (East Valley Hub)</option>
+                          <option value="Pokhara">Pokhara (Gandaki Regional Hub)</option>
+                          <option value="Birgunj">Birgunj (Dry Port Trade Terminal)</option>
+                          <option value="Biratnagar">Biratnagar (Koshi Province Hub)</option>
+                          <option value="Chitwan">Chitwan (Bharatpur / Narayangarh)</option>
+                          <option value="Butwal">Butwal (Lumbini Trade Corridor)</option>
+                        </select>
+                      </div>
+
+                      <div className="input-group booking-field-col-6">
+                        <label className="input-label">Shipper Contact Name *</label>
+                        <input
+                          type="text"
+                          value={senderName}
+                          onChange={(e) => setSenderName(e.target.value)}
+                          className="input-field"
+                          placeholder="e.g. Ramesh Thapa"
+                          required
+                        />
+                      </div>
+
+                      <div className="input-group booking-field-col-6">
+                        <label className="input-label">Company / Brand Name</label>
+                        <input
+                          type="text"
+                          value={senderCompany}
+                          onChange={(e) => setSenderCompany(e.target.value)}
+                          className="input-field"
+                          placeholder="e.g. Himalayan Apparel Nepal"
+                        />
+                      </div>
+
+                      <div className="input-group booking-field-col-6">
+                        <label className="input-label">Consignor Telephone *</label>
+                        <input
+                          type="tel"
+                          value={senderPhone}
+                          onChange={(e) => setSenderPhone(e.target.value)}
+                          className="input-field"
+                          placeholder="+977 98510 12345"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 1. CONSIGNEE (TO) */}
                 <div className="booking-card">
                   <div className="booking-card-header">
                     <div className="booking-step-badge" style={{ background: 'rgba(6, 182, 212, 0.15)', color: 'var(--brand-cyan)' }}>
-                      2
+                      1
                     </div>
                     <div>
                       <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
@@ -754,11 +801,11 @@ function BookContent() {
                   </div>
                 </div>
 
-                {/* 3. CARGO SPECIFICATIONS */}
+                {/* 2. CARGO SPECIFICATIONS */}
                 <div className="booking-card">
                   <div className="booking-card-header">
                     <div className="booking-step-badge" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--brand-emerald)' }}>
-                      3
+                      2
                     </div>
                     <div>
                       <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
@@ -828,7 +875,8 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group booking-field-col-6">
+                    {/* 3 Suitable Columns: Pieces, Weight, Declared Value */}
+                    <div className="input-group booking-field-col-4">
                       <label className="input-label">Pieces (Colli Count) *</label>
                       <input
                         type="number"
@@ -841,7 +889,7 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group booking-field-col-6">
+                    <div className="input-group booking-field-col-4">
                       <label className="input-label">Gross Actual Weight (KG) *</label>
                       <input
                         type="number"
@@ -855,37 +903,7 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group booking-field-col-6">
-                      <label className="input-label">Package Dimensions (L &times; W &times; H cm)</label>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <input
-                          type="number"
-                          placeholder="L"
-                          value={lengthCm}
-                          onChange={(e) => setLengthCm(parseInt(e.target.value) || 10)}
-                          className="input-field"
-                          style={{ textAlign: 'center', flex: '1 1 0' }}
-                        />
-                        <input
-                          type="number"
-                          placeholder="W"
-                          value={widthCm}
-                          onChange={(e) => setWidthCm(parseInt(e.target.value) || 10)}
-                          className="input-field"
-                          style={{ textAlign: 'center', flex: '1 1 0' }}
-                        />
-                        <input
-                          type="number"
-                          placeholder="H"
-                          value={heightCm}
-                          onChange={(e) => setHeightCm(parseInt(e.target.value) || 5)}
-                          className="input-field"
-                          style={{ textAlign: 'center', flex: '1 1 0' }}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="input-group booking-field-col-6">
+                    <div className="input-group booking-field-col-4">
                       <label className="input-label">Declared Cargo Value (Rs. NPR)</label>
                       <input
                         type="number"
@@ -895,14 +913,62 @@ function BookContent() {
                         className="input-field"
                       />
                     </div>
+
+                    {/* Dimensions & Live Computed Volumetric Weight */}
+                    <div className="input-group booking-field-col-8">
+                      <label className="input-label">Package Dimensions (L &times; W &times; H cm)</label>
+                      <div className="booking-dimensions-flex">
+                        <input
+                          type="number"
+                          placeholder="L (cm)"
+                          value={lengthCm}
+                          onChange={(e) => setLengthCm(parseInt(e.target.value) || 10)}
+                          className="input-field booking-dimension-box"
+                        />
+                        <span style={{ color: 'var(--text-muted)' }}>&times;</span>
+                        <input
+                          type="number"
+                          placeholder="W (cm)"
+                          value={widthCm}
+                          onChange={(e) => setWidthCm(parseInt(e.target.value) || 10)}
+                          className="input-field booking-dimension-box"
+                        />
+                        <span style={{ color: 'var(--text-muted)' }}>&times;</span>
+                        <input
+                          type="number"
+                          placeholder="H (cm)"
+                          value={heightCm}
+                          onChange={(e) => setHeightCm(parseInt(e.target.value) || 5)}
+                          className="input-field booking-dimension-box"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="input-group booking-field-col-4" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                      <div style={{
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        border: '1px solid rgba(16, 185, 129, 0.25)',
+                        borderRadius: '8px',
+                        padding: '0.65rem 0.85rem',
+                        fontSize: '0.78rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center'
+                      }}>
+                        <div style={{ color: 'var(--brand-emerald)', fontWeight: 700 }}>Volumetric Weight:</div>
+                        <div style={{ color: '#ffffff', fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.95rem' }}>
+                          {volumetricWeight.toFixed(2)} KG
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* 4. CASH ON DELIVERY (COD) */}
+                {/* 3. CASH ON DELIVERY (COD) */}
                 <div className="booking-card">
                   <div className="booking-card-header">
                     <div className="booking-step-badge" style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--brand-amber)' }}>
-                      4
+                      3
                     </div>
                     <div>
                       <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
@@ -922,63 +988,58 @@ function BookContent() {
                     padding: '1.25rem',
                     transition: 'all var(--transition-fast)'
                   }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isCod ? '1rem' : 0 }}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer', margin: 0 }}>
-                        <input
-                          type="checkbox"
-                          checked={isCod}
-                          onChange={(e) => setIsCod(e.target.checked)}
-                          style={{ width: '18px', height: '18px', accentColor: 'var(--brand-emerald)' }}
-                        />
-                        <div>
-                          <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.95rem' }}>
-                            Enable Cash on Delivery (COD) for this Consignment
+                    <div className="booking-field-row" style={{ alignItems: 'center' }}>
+                      <div className={isCod ? 'booking-field-col-6' : 'booking-field-col-12'}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer', margin: 0 }}>
+                          <input
+                            type="checkbox"
+                            checked={isCod}
+                            onChange={(e) => setIsCod(e.target.checked)}
+                            style={{ width: '18px', height: '18px', accentColor: 'var(--brand-emerald)' }}
+                          />
+                          <div>
+                            <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.95rem' }}>
+                              Enable Cash on Delivery (COD)
+                            </div>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                              Rider collects cash from buyer at doorstep upon OTP confirmation
+                            </div>
                           </div>
-                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                            Courier rider will collect cash from buyer at doorstep upon OTP confirmation
-                          </div>
-                        </div>
-                      </label>
-
-                      <span className={isCod ? 'badge badge-emerald' : 'badge badge-subtle'}>
-                        {isCod ? 'COD ACTIVE' : 'PREPAID'}
-                      </span>
-                    </div>
-
-                    {isCod && (
-                      <div style={{ borderTop: '1px solid rgba(16, 185, 129, 0.2)', paddingTop: '0.85rem' }}>
-                        <div className="input-group">
-                          <label className="input-label" style={{ color: 'var(--brand-emerald)', fontWeight: 700 }}>
-                            COD Cash Amount to Collect from Recipient (Rs. NPR) *
-                          </label>
-                          <div style={{ position: 'relative' }}>
-                            <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontWeight: 900, color: 'var(--brand-emerald)', fontSize: '1.1rem' }}>
-                              Rs.
-                            </span>
-                            <input
-                              type="number"
-                              min="10"
-                              value={codAmountNpr}
-                              onChange={(e) => setCodAmountNpr(parseFloat(e.target.value) || 0)}
-                              className="input-field"
-                              style={{ paddingLeft: '2.8rem', fontFamily: 'var(--font-mono)', fontSize: '1.15rem', fontWeight: 800 }}
-                              required
-                            />
-                          </div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
-                            Remittance: Automatically credited to your registered bank account next business day at 16:00 NPT.
-                          </span>
-                        </div>
+                        </label>
                       </div>
-                    )}
+
+                      {isCod && (
+                        <div className="booking-field-col-6">
+                          <div className="input-group" style={{ margin: 0 }}>
+                            <label className="input-label" style={{ color: 'var(--brand-emerald)', fontWeight: 700 }}>
+                              Amount to Collect (Rs. NPR) *
+                            </label>
+                            <div style={{ position: 'relative' }}>
+                              <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontWeight: 900, color: 'var(--brand-emerald)', fontSize: '1.05rem' }}>
+                                Rs.
+                              </span>
+                              <input
+                                type="number"
+                                min="10"
+                                value={codAmountNpr}
+                                onChange={(e) => setCodAmountNpr(parseFloat(e.target.value) || 0)}
+                                className="input-field"
+                                style={{ paddingLeft: '2.8rem', fontFamily: 'var(--font-mono)', fontSize: '1.1rem', fontWeight: 800 }}
+                                required
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                {/* 5. SERVICE TIER & ONE UNIFIED FARE */}
+                {/* 4. SERVICE TIER & ONE UNIFIED FARE */}
                 <div className="booking-card">
                   <div className="booking-card-header">
                     <div className="booking-step-badge" style={{ background: 'rgba(255, 102, 0, 0.15)', color: 'var(--brand-orange)' }}>
-                      5
+                      4
                     </div>
                     <div>
                       <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
