@@ -563,61 +563,6 @@ function BookContent() {
         ) : (
           /* ================= UNIFIED ALL-IN-ONE DISPATCH FORM ================= */
           <form onSubmit={handleSubmitBooking}>
-            {/* Merchant Status Bar */}
-            <div style={{
-              background: 'rgba(255, 102, 0, 0.08)',
-              border: '1px solid rgba(255, 102, 0, 0.25)',
-              borderRadius: '12px',
-              padding: '0.75rem 1.25rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '2rem',
-              flexWrap: 'wrap',
-              gap: '0.75rem'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                <UserCheck size={18} color="var(--brand-orange)" />
-                <span style={{ fontSize: '0.88rem', color: '#ffffff' }}>
-                  Authenticated Consignor: <strong>{currentUser.name}</strong> &bull; {currentUser.company}
-                </span>
-                <span className={currentUser.role === 'admin' ? 'badge badge-orange' : 'badge badge-cyan'} style={{ fontSize: '0.65rem' }}>
-                  {currentUser.role === 'admin' ? 'SYSTEM ADMIN' : 'VERIFIED MERCHANT'}
-                </span>
-              </div>
-
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <button
-                  type="button"
-                  onClick={handleUseMyProfile}
-                  className="btn btn-outline btn-sm"
-                  style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem' }}
-                >
-                  <UserCheck size={13} />
-                  <span>Autofill My Merchant Info</span>
-                </button>
-
-                {currentUser.role === 'admin' ? (
-                  <Link href="/admin" className="btn btn-secondary btn-sm" style={{ fontSize: '0.75rem', padding: '0.35rem 0.65rem' }}>
-                    <span>Admin Tower</span>
-                  </Link>
-                ) : (
-                  <Link href="/merchant" className="btn btn-secondary btn-sm" style={{ fontSize: '0.75rem', padding: '0.35rem 0.65rem' }}>
-                    <span>Merchant Portal</span>
-                  </Link>
-                )}
-
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="btn btn-secondary btn-sm"
-                  style={{ fontSize: '0.75rem', padding: '0.35rem 0.65rem' }}
-                >
-                  <LogOut size={12} />
-                </button>
-              </div>
-            </div>
-
             {/* Two-Column Booking Grid: Unified Form on Left, Sticky Live One-Fare on Right */}
             <div className="booking-layout-grid">
               {/* Left Column: All Dispatch Modules (Shipper, Consignee, Cargo, COD, Service) */}
