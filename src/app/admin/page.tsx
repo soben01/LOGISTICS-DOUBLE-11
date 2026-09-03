@@ -99,6 +99,21 @@ export default function AdminControlPanel() {
     setWaitlist(getWaitlistSubscribers());
   };
 
+  const getAdminStatusBadge = (status: Shipment['status']) => {
+    switch (status) {
+      case 'Delivered':
+        return 'badge-emerald';
+      case 'Out for Delivery':
+        return 'badge-amber';
+      case 'In Transit':
+        return 'badge-orange';
+      case 'Customs Cleared':
+        return 'badge-cyan';
+      default:
+        return 'badge-subtle';
+    }
+  };
+
   useEffect(() => {
     const user = getCurrentUser();
     setCurrentUser(user);
@@ -324,29 +339,49 @@ export default function AdminControlPanel() {
             </div>
 
             {/* Quick KPI Overview */}
-            <div className="grid grid-cols-4 gap-6" style={{ marginBottom: '2.5rem' }}>
-              <div className="metric-pill">
-                <span className="metric-number" style={{ color: 'var(--brand-orange)' }}>{shipments.length}</span>
-                <span className="metric-label">All Consignments</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Full domestic manifest</span>
+            <div className="grid grid-cols-4 gap-5" style={{ marginBottom: '2.5rem' }}>
+              <div className="card glow-card-orange">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <span className="metric-label">TOTAL CONSIGNMENTS</span>
+                  <Truck size={18} color="var(--brand-orange)" />
+                </div>
+                <span className="metric-number" style={{ color: 'var(--brand-orange)', fontSize: '2.2rem' }}>{shipments.length}</span>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+                  Active nationwide linehauls &bull; 100% SLA
+                </div>
               </div>
 
-              <div className="metric-pill">
-                <span className="metric-number" style={{ color: 'var(--brand-emerald)' }}>{merchants.length}</span>
-                <span className="metric-label">Registered Merchants</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Nepal E-Commerce clients</span>
+              <div className="card glow-card-cyan">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <span className="metric-label">REGISTERED MERCHANTS</span>
+                  <Users size={18} color="var(--brand-cyan)" />
+                </div>
+                <span className="metric-number" style={{ color: 'var(--brand-cyan)', fontSize: '2.2rem' }}>{merchants.length}</span>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+                  Verified e-commerce brands on COD network
+                </div>
               </div>
 
-              <div className="metric-pill">
-                <span className="metric-number" style={{ color: 'var(--brand-amber)' }}>{waitlist.length}</span>
-                <span className="metric-label">International Waitlist</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Export pre-registrations</span>
+              <div className="card glow-card-emerald">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <span className="metric-label">COD BANK REMITTANCE</span>
+                  <Banknote size={18} color="var(--brand-emerald)" />
+                </div>
+                <span className="metric-number" style={{ color: 'var(--brand-emerald)', fontSize: '2.2rem' }}>Rs. 1.2M</span>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+                  Next-day 10:00 AM bank payout SLA
+                </div>
               </div>
 
-              <div className="metric-pill">
-                <span className="metric-number" style={{ color: 'var(--brand-cyan)' }}>77</span>
-                <span className="metric-label">Districts Active</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Nepal 7 Provinces linked</span>
+              <div className="card">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <span className="metric-label">ALL 77 DISTRICTS</span>
+                  <Globe2 size={18} color="var(--brand-amber)" />
+                </div>
+                <span className="metric-number" style={{ color: '#ffffff', fontSize: '2.2rem' }}>77</span>
+                <div style={{ fontSize: '0.78rem', color: 'var(--brand-amber)', marginTop: '0.35rem' }}>
+                  {waitlist.length} International export leads queued
+                </div>
               </div>
             </div>
 
@@ -428,23 +463,23 @@ export default function AdminControlPanel() {
                   </div>
                 </div>
 
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                <div style={{ overflowX: 'auto', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+                  <table className="data-table">
                     <thead>
-                      <tr style={{ borderBottom: '1px solid var(--border-medium)', textAlign: 'left', color: 'var(--text-muted)' }}>
-                        <th style={{ padding: '0.75rem 1rem' }}>Tracking ID / Waybill</th>
-                        <th style={{ padding: '0.75rem 1rem' }}>Service Tier</th>
-                        <th style={{ padding: '0.75rem 1rem' }}>Route (From &rarr; To)</th>
-                        <th style={{ padding: '0.75rem 1rem' }}>Consignor (Merchant)</th>
-                        <th style={{ padding: '0.75rem 1rem' }}>Carrier Unit</th>
-                        <th style={{ padding: '0.75rem 1rem' }}>Live Status</th>
-                        <th style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>Admin Overrides</th>
+                      <tr>
+                        <th>Tracking ID / Waybill</th>
+                        <th>Service Tier</th>
+                        <th>Route (From &rarr; To)</th>
+                        <th>Consignor (Merchant)</th>
+                        <th>Carrier Unit</th>
+                        <th>Live Status</th>
+                        <th style={{ textAlign: 'right' }}>Admin Overrides</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredShipments.map((s) => (
-                        <tr key={s.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                          <td style={{ padding: '1rem' }}>
+                        <tr key={s.id}>
+                          <td>
                             <Link href={`/track?id=${s.id}`} style={{ fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--brand-orange)', textDecoration: 'underline' }}>
                               {s.id}
                             </Link>
@@ -453,28 +488,28 @@ export default function AdminControlPanel() {
                             </div>
                           </td>
 
-                          <td style={{ padding: '1rem' }}>
+                          <td>
                             <span style={{ fontWeight: 600 }}>{s.service}</span>
                           </td>
 
-                          <td style={{ padding: '1rem' }}>
+                          <td>
                             <div style={{ fontWeight: 600 }}>{s.origin.city} &rarr; {s.destination.city}</div>
                             <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>To: {s.recipient.name}</div>
                           </td>
 
-                          <td style={{ padding: '1rem' }}>
+                          <td>
                             <div style={{ fontWeight: 600 }}>{s.sender.company}</div>
                             <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{s.sender.phone}</div>
                           </td>
 
-                          <td style={{ padding: '1rem' }}>
+                          <td>
                             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--brand-cyan)' }}>
                               {s.telemetry.transportVehicle || 'Unassigned'}
                             </span>
                           </td>
 
-                          <td style={{ padding: '1rem' }}>
-                            <span className="badge badge-orange" style={{ fontSize: '0.72rem' }}>
+                          <td>
+                            <span className={`badge ${getAdminStatusBadge(s.status)}`} style={{ fontSize: '0.72rem' }}>
                               {s.status}
                             </span>
                           </td>
@@ -574,21 +609,21 @@ export default function AdminControlPanel() {
                   </Link>
                 </div>
 
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                <div style={{ overflowX: 'auto', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+                  <table className="data-table">
                     <thead>
-                      <tr style={{ borderBottom: '1px solid var(--border-medium)', textAlign: 'left', color: 'var(--text-muted)' }}>
-                        <th style={{ padding: '0.75rem 1rem' }}>Merchant Representative</th>
-                        <th style={{ padding: '0.75rem 1rem' }}>Company / E-Commerce Store</th>
-                        <th style={{ padding: '0.75rem 1rem' }}>Contact Info</th>
-                        <th style={{ padding: '0.75rem 1rem' }}>Account Status</th>
-                        <th style={{ padding: '0.75rem 1rem' }}>Pending COD Balance</th>
-                        <th style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>Admin Actions</th>
+                      <tr>
+                        <th>Merchant Representative</th>
+                        <th>Company / E-Commerce Store</th>
+                        <th>Contact Info</th>
+                        <th>Account Status</th>
+                        <th>Pending COD Balance</th>
+                        <th style={{ textAlign: 'right' }}>Admin Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {merchants.map((m) => (
-                        <tr key={m.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                        <tr key={m.id}>
                           <td style={{ padding: '1rem' }}>
                             <div style={{ fontWeight: 700, color: '#ffffff' }}>{m.name}</div>
                             <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>ID: {m.id}</div>

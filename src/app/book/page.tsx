@@ -1379,6 +1379,32 @@ function BookContent() {
                     </div>
                   </div>
 
+                  {/* Simulated Waybill Barcode Graphic */}
+                  <div style={{
+                    background: '#040711',
+                    borderRadius: '8px',
+                    padding: '0.75rem',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    marginBottom: '1rem',
+                    textAlign: 'center',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      fontFamily: 'monospace',
+                      fontSize: '1.4rem',
+                      letterSpacing: '2px',
+                      color: '#ffffff',
+                      lineHeight: '1',
+                      userSelect: 'none'
+                    }}>
+                      ||||| | ||||| ||| ||||||| | ||||
+                    </div>
+                    <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '0.35rem' }}>
+                      PRE-AUTHORIZED &bull; D11-WAYBILL-2026
+                    </div>
+                  </div>
+
                   {/* The Single Submit Action Button */}
                   <button
                     type="submit"
