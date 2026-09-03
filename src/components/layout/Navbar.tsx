@@ -18,13 +18,16 @@ import {
   LogOut,
   Lock,
   Building,
-  Truck
+  Truck,
+  Boxes
 } from 'lucide-react';
 import { getCurrentUser, logoutUser, User } from '../../lib/auth';
+import ProfilePortalDrawer from './ProfilePortalDrawer';
 
 export default function Navbar() {
   const [quickTrackId, setQuickTrackId] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const router = useRouter();
 
@@ -109,21 +112,27 @@ export default function Navbar() {
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', color: 'var(--brand-orange)', fontWeight: 600, fontSize: '0.72rem' }} className="ticker-hide-sm">
               <Radio size={12} className="animate-pulse" /> 24/7 Dispatch Control
             </span>
-            <Link href={currentUser?.role === 'admin' ? '/admin' : currentUser ? '/merchant' : '/login'} style={{
-              fontSize: '0.7rem',
-              background: 'rgba(255, 102, 0, 0.15)',
-              color: '#ff8533',
-              padding: '0.2rem 0.65rem',
-              borderRadius: '4px',
-              border: '1px solid rgba(255, 102, 0, 0.35)',
-              fontWeight: 700,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.3rem',
-              whiteSpace: 'nowrap'
-            }}>
-              <Cpu size={12} /> {currentUser?.role === 'admin' ? 'Admin Tower' : currentUser ? 'Merchant Portal' : 'Login'}
-            </Link>
+            <button
+              type="button"
+              onClick={() => setProfileDrawerOpen(true)}
+              style={{
+                fontSize: '0.7rem',
+                background: currentUser?.role === 'admin' ? 'rgba(255, 102, 0, 0.15)' : 'rgba(6, 182, 212, 0.15)',
+                color: currentUser?.role === 'admin' ? '#ff8533' : 'var(--brand-cyan)',
+                padding: '0.2rem 0.65rem',
+                borderRadius: '4px',
+                border: currentUser?.role === 'admin' ? '1px solid rgba(255, 102, 0, 0.35)' : '1px solid rgba(6, 182, 212, 0.35)',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                whiteSpace: 'nowrap',
+                cursor: 'pointer'
+              }}
+            >
+              <UserIcon size={12} />
+              <span>{currentUser ? `My Profile (${currentUser.name}) ▾` : 'My Profile / Sub-Login ▾'}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -207,56 +216,24 @@ export default function Navbar() {
           >
             Book Cargo
           </Link>
+          <Link
+            href="/operations"
+            style={{
+              fontSize: '0.9rem',
+              fontWeight: 700,
+              color: 'var(--brand-orange)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <Boxes size={15} />
+            <span>All Bookings</span>
+          </Link>
           <Link href="/rates" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
             Rates &amp; Tariffs
           </Link>
-
-          {/* Conditional Role Links */}
-          {currentUser?.role === 'admin' && (
-            <Link
-              href="/admin"
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: '#ffffff',
-                background: 'linear-gradient(135deg, rgba(255, 102, 0, 0.25), rgba(245, 158, 11, 0.15))',
-                border: '1px solid rgba(255, 102, 0, 0.5)',
-                padding: '0.25rem 0.65rem',
-                borderRadius: '6px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 0 12px rgba(255, 102, 0, 0.25)'
-              }}
-            >
-              <ShieldCheck size={14} color="var(--brand-orange)" />
-              <span>Admin Panel</span>
-            </Link>
-          )}
-
-          {currentUser?.role === 'merchant' && (
-            <Link
-              href="/merchant"
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: '#ffffff',
-                background: 'rgba(6, 182, 212, 0.15)',
-                border: '1px solid rgba(6, 182, 212, 0.4)',
-                padding: '0.25rem 0.65rem',
-                borderRadius: '6px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              <Building size={14} color="var(--brand-cyan)" />
-              <span>Merchant Portal</span>
-            </Link>
-          )}
-
           <Link href="/about" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
             About &amp; Founder
           </Link>
@@ -316,11 +293,13 @@ export default function Navbar() {
             </button>
           </form>
 
-          {/* User Auth Display */}
+          {/* User Auth Display / Profile Section Trigger */}
           {currentUser ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, whiteSpace: 'nowrap' }}>
-              <Link
-                href={currentUser.role === 'admin' ? '/admin' : '/merchant'}
+              <button
+                type="button"
+                onClick={() => setProfileDrawerOpen(true)}
+                title="Open Profile & Portals"
                 style={{
                   background: 'rgba(255, 255, 255, 0.05)',
                   border: currentUser.role === 'admin' ? '1px solid rgba(255, 102, 0, 0.4)' : '1px solid rgba(6, 182, 212, 0.4)',
@@ -331,7 +310,8 @@ export default function Navbar() {
                   gap: '0.5rem',
                   flexShrink: 0,
                   whiteSpace: 'nowrap',
-                  textDecoration: 'none'
+                  cursor: 'pointer',
+                  textAlign: 'left'
                 }}
               >
                 <div style={{
@@ -357,10 +337,10 @@ export default function Navbar() {
                     </span>
                   </div>
                   <div style={{ fontSize: '0.68rem', color: currentUser.role === 'admin' ? 'var(--brand-orange)' : 'var(--brand-cyan)' }}>
-                    {currentUser.company}
+                    My Profile &bull; All Portals ▾
                   </div>
                 </div>
-              </Link>
+              </button>
 
               <button
                 type="button"
@@ -373,14 +353,15 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <Link
-              href="/login"
+            <button
+              type="button"
+              onClick={() => setProfileDrawerOpen(true)}
               className="btn btn-secondary btn-sm"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0, whiteSpace: 'nowrap' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0, whiteSpace: 'nowrap', cursor: 'pointer' }}
             >
               <UserIcon size={14} />
-              <span>Login</span>
-            </Link>
+              <span>My Profile / Login ▾</span>
+            </button>
           )}
 
           <Link
@@ -437,20 +418,31 @@ export default function Navbar() {
               <div>
                 <div style={{ fontWeight: 700, color: '#ffffff' }}>{currentUser.name}</div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{currentUser.email} &bull; {currentUser.company}</div>
+                <div style={{ fontSize: '0.72rem', color: currentUser.role === 'admin' ? 'var(--brand-orange)' : 'var(--brand-cyan)', marginTop: '0.2rem' }}>
+                  Role: {currentUser.subRole || (currentUser.role === 'admin' ? 'Super Admin' : 'Merchant Consignor')}
+                </div>
               </div>
-              <button onClick={handleLogout} className="btn btn-outline btn-sm">
-                Sign Out
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setProfileDrawerOpen(true);
+                }}
+                className="btn btn-primary btn-sm"
+              >
+                My Profile ▾
               </button>
             </div>
           ) : (
-            <Link
-              href="/login"
-              onClick={() => setMobileMenuOpen(false)}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setProfileDrawerOpen(true);
+              }}
               className="btn btn-secondary btn-sm"
-              style={{ justifyContent: 'center' }}
+              style={{ justifyContent: 'center', gap: '0.4rem' }}
             >
-              <UserIcon size={14} /> Login
-            </Link>
+              <UserIcon size={14} /> My Profile / Sub-Login ▾
+            </button>
           )}
 
           <form onSubmit={handleQuickTrack} style={{ display: 'flex', gap: '0.5rem' }}>
@@ -468,26 +460,13 @@ export default function Navbar() {
           </form>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingTop: '0.25rem' }}>
-            {currentUser?.role === 'admin' && (
-              <Link
-                href="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                style={{ padding: '0.6rem 0', color: 'var(--brand-orange)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-              >
-                <ShieldCheck size={16} /> Admin Control Tower
-              </Link>
-            )}
-
-            {currentUser?.role === 'merchant' && (
-              <Link
-                href="/merchant"
-                onClick={() => setMobileMenuOpen(false)}
-                style={{ padding: '0.6rem 0', color: 'var(--brand-cyan)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-              >
-                <Building size={16} /> Merchant Portal (COD Ledger)
-              </Link>
-            )}
-
+            <Link
+              href="/operations"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ padding: '0.6rem 0', color: 'var(--brand-orange)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+              <Boxes size={16} /> All Bookings &amp; Network Console
+            </Link>
             <Link
               href="/track"
               onClick={() => setMobileMenuOpen(false)}
@@ -526,6 +505,13 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Render Profile and Relative Portals Drawer */}
+      <ProfilePortalDrawer
+        isOpen={profileDrawerOpen}
+        onClose={() => setProfileDrawerOpen(false)}
+        currentUser={currentUser}
+      />
 
       {/* Breakpoint Style Rules */}
       <style jsx global>{`

@@ -5,6 +5,7 @@ export interface User {
   company: string;
   phone: string;
   role: 'merchant' | 'admin';
+  subRole?: string;
   status: 'active' | 'suspended';
   codBalanceNpr: number;
   totalShipments?: number;
@@ -22,6 +23,7 @@ const DEFAULT_USERS: User[] = [
     company: 'Double 11 Logistics Command HQ',
     phone: '+977 1 4411000',
     role: 'admin',
+    subRole: 'Command HQ / Super Admin',
     status: 'active',
     codBalanceNpr: 0,
     totalShipments: 0,
@@ -59,7 +61,7 @@ export function getCurrentUser(): User | null {
   }
 }
 
-export function loginUser(email: string, password?: string): { success: boolean; user?: User; error?: string } {
+export function loginUser(email: string, password?: string, subRole?: string): { success: boolean; user?: User; error?: string } {
   if (!email.trim()) {
     return { success: false, error: 'Please enter your registered email address.' };
   }
@@ -82,12 +84,37 @@ export function loginUser(email: string, password?: string): { success: boolean;
     };
   }
 
+  if (subRole) {
+    user.subRole = subRole;
+  } else if (!user.subRole) {
+    user.subRole = user.role === 'admin' ? 'Command HQ / Super Admin' : 'Merchant Consignor / Shipper';
+  }
+
   if (typeof window !== 'undefined') {
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
     window.dispatchEvent(new Event('auth-change'));
   }
 
   return { success: true, user };
+}
+
+export function updateUserSubRole(subRole: string): boolean {
+  if (typeof window === 'undefined') return false;
+  const current = getCurrentUser();
+  if (!current) return false;
+
+  current.subRole = subRole;
+  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(current));
+
+  const users = getUsers();
+  const idx = users.findIndex(u => u.id === current.id);
+  if (idx !== -1) {
+    users[idx].subRole = subRole;
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+  }
+
+  window.dispatchEvent(new Event('auth-change'));
+  return true;
 }
 
 export function signupUser(params: {

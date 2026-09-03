@@ -102,11 +102,11 @@ export default function OperationsPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2.5rem' }}>
           <div>
             <div className="badge badge-amber" style={{ marginBottom: '0.5rem' }}>
-              <Cpu size={13} /> Internal Operations Console
+              <Boxes size={13} /> Nationwide Booking Registry &amp; Dispatch Console
             </div>
-            <h1>Logistics Control Tower</h1>
+            <h1>All Bookings &amp; Network Operations</h1>
             <p style={{ marginTop: '0.25rem' }}>
-              Global dispatch coordination, live fleet tracking, automated hub sorting telemetry, and real-time consignment management.
+              Live booking registry, consignment manifest tracking, automated regional hub sorting telemetry, and real-time status management.
             </p>
           </div>
 
