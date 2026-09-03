@@ -70,13 +70,10 @@ function BookContent() {
   const [recipientPostal, setRecipientPostal] = useState('');
   const [recipientPhone, setRecipientPhone] = useState('');
 
-  // 3. Cargo Specifications
+  // 3. Cargo Specifications (Direct Weight without Dimensions)
   const [cargoDesc, setCargoDesc] = useState('');
   const [pieces, setPieces] = useState<number>(1);
   const [weightKg, setWeightKg] = useState<number>(initialWt || 3.5);
-  const [lengthCm, setLengthCm] = useState<number>(30);
-  const [widthCm, setWidthCm] = useState<number>(20);
-  const [heightCm, setHeightCm] = useState<number>(15);
   const [declaredValueNpr, setDeclaredValueNpr] = useState<number>(8500);
 
   // 4. Cash on Delivery (COD)
@@ -169,12 +166,9 @@ function BookContent() {
   };
 
   // Quick Preset Handlers
-  const applyPreset = (desc: string, wt: number, l: number, w: number, h: number, val: number) => {
+  const applyPreset = (desc: string, wt: number, val: number) => {
     setCargoDesc(desc);
     setWeightKg(wt);
-    setLengthCm(l);
-    setWidthCm(w);
-    setHeightCm(h);
     setDeclaredValueNpr(val);
   };
 
@@ -186,9 +180,8 @@ function BookContent() {
     }
   };
 
-  // Volumetric & Chargeable calculations
-  const volumetricWeight = (lengthCm * widthCm * heightCm) / 5000;
-  const chargeableWeight = Math.max(weightKg, volumetricWeight);
+  // Chargeable calculations based directly on Actual Gross Weight
+  const chargeableWeight = Math.max(0.1, Number(weightKg) || 1.0);
 
   // ONE FARE Calculation: Comprehensive, Transparent, and All-Inclusive
   const getOneFareBreakdown = () => {
@@ -278,7 +271,7 @@ function BookContent() {
       cargo: {
         pieces: Number(pieces),
         weightKg: Number(weightKg),
-        volumeCbm: (lengthCm * widthCm * heightCm) / 1000000,
+        volumeCbm: 0,
         description: cargoDesc,
         declaredValueNpr: Number(declaredValueNpr),
       },
@@ -815,10 +808,10 @@ function BookContent() {
                         <div>
                           <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
                             <Boxes size={18} color="var(--brand-emerald)" />
-                            <span>Cargo Specifications &amp; Dimensions</span>
+                            <span>Cargo Specifications &amp; Weight</span>
                           </h3>
                           <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                            Volumetric (L&times;W&times;H / 5000) vs Gross Actual Weight
+                            Doorstep parcel weighing &amp; barcode labeling at dispatch
                           </div>
                         </div>
                       </div>
@@ -831,35 +824,35 @@ function BookContent() {
                         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                           <button
                             type="button"
-                            onClick={() => applyPreset('Standard E-Commerce Parcel', 2.0, 25, 18, 12, 3500)}
+                            onClick={() => applyPreset('Standard E-Commerce Parcel', 2.0, 3500)}
                             className="preset-chip"
                           >
                             📦 Standard Box (2.0 KG)
                           </button>
                           <button
                             type="button"
-                            onClick={() => applyPreset('Important Legal Documents & Contracts', 0.5, 32, 24, 2, 1000)}
+                            onClick={() => applyPreset('Important Legal Documents & Contracts', 0.5, 1000)}
                             className="preset-chip"
                           >
                             📄 Documents (0.5 KG)
                           </button>
                           <button
                             type="button"
-                            onClick={() => applyPreset('Clothing, Apparel & Knitwear', 3.5, 35, 25, 15, 6000)}
+                            onClick={() => applyPreset('Clothing, Apparel & Knitwear', 3.5, 6000)}
                             className="preset-chip"
                           >
                             👗 Apparel (3.5 KG)
                           </button>
                           <button
                             type="button"
-                            onClick={() => applyPreset('Electronics, Smartphone & Accessories', 1.5, 22, 16, 10, 18000)}
+                            onClick={() => applyPreset('Electronics, Smartphone & Accessories', 1.5, 18000)}
                             className="preset-chip"
                           >
                             💻 Electronics (1.5 KG)
                           </button>
                           <button
                             type="button"
-                            onClick={() => applyPreset('Industrial Bulk Spares & Hardware', 12.0, 50, 40, 30, 25000)}
+                            onClick={() => applyPreset('Industrial Bulk Spares & Hardware', 12.0, 25000)}
                             className="preset-chip"
                           >
                             🏭 Carton (12 KG)
@@ -894,7 +887,7 @@ function BookContent() {
                         </div>
 
                         <div className="input-group booking-field-col-6">
-                          <label className="input-label">Gross Weight (KG) *</label>
+                          <label className="input-label">Gross Actual Weight (KG) *</label>
                           <input
                             type="number"
                             step="0.1"
@@ -916,41 +909,6 @@ function BookContent() {
                             onChange={(e) => setDeclaredValueNpr(parseFloat(e.target.value) || 1000)}
                             className="input-field"
                           />
-                        </div>
-
-                        {/* Dimensions & Computed Volumetric Weight */}
-                        <div className="input-group booking-field-col-12">
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                            <label className="input-label" style={{ margin: 0 }}>Dimensions (L &times; W &times; H cm)</label>
-                            <span style={{ fontSize: '0.72rem', color: 'var(--brand-emerald)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                              Volumetric: {volumetricWeight.toFixed(2)} KG
-                            </span>
-                          </div>
-                          <div className="booking-dimensions-flex">
-                            <input
-                              type="number"
-                              placeholder="L (cm)"
-                              value={lengthCm}
-                              onChange={(e) => setLengthCm(parseInt(e.target.value) || 10)}
-                              className="input-field booking-dimension-box"
-                            />
-                            <span style={{ color: 'var(--text-muted)' }}>&times;</span>
-                            <input
-                              type="number"
-                              placeholder="W (cm)"
-                              value={widthCm}
-                              onChange={(e) => setWidthCm(parseInt(e.target.value) || 10)}
-                              className="input-field booking-dimension-box"
-                            />
-                            <span style={{ color: 'var(--text-muted)' }}>&times;</span>
-                            <input
-                              type="number"
-                              placeholder="H (cm)"
-                              value={heightCm}
-                              onChange={(e) => setHeightCm(parseInt(e.target.value) || 5)}
-                              className="input-field booking-dimension-box"
-                            />
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -1237,10 +1195,6 @@ function BookContent() {
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ color: 'var(--text-muted)' }}>Actual Gross Wt:</span>
                       <span style={{ fontWeight: 600 }}>{weightKg} KG</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: 'var(--text-muted)' }}>Volumetric Wt:</span>
-                      <span style={{ fontWeight: 600 }}>{volumetricWeight.toFixed(2)} KG</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ color: 'var(--text-muted)' }}>Chargeable Wt:</span>

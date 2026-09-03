@@ -41,7 +41,7 @@ export interface Shipment {
   cargo: {
     pieces: number;
     weightKg: number;
-    volumeCbm: number;
+    volumeCbm?: number;
     description: string;
     declaredValueNpr?: number;
     declaredValueUsd?: number;
