@@ -19,3 +19,14 @@ binding = "USERS_DB"
 database_name = "users"
 database_id = "6adbc3b5-ed24-48cc-8be2-8244363b650d"
 
+# Enterprise Edge KV Cache (Sub-10ms Tracking & Rate Caches)
+[[kv_namespaces]]
+binding = "LOGISTICS_CACHE"
+id = "fbe236634e3b4516a768338e81028b55"
+
+# Enterprise Workers AI (Intelligent Routing & Customs Assistant)
+[ai]
+binding = "AI"
+
+
+
