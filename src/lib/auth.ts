@@ -257,26 +257,26 @@ export function getMatchingPortal(userOrRole: User | 'merchant' | 'admin'): Port
 }
 
 export function resolveMatchedRedirect(user: User, redirectParam?: string | null): string {
-  const matched = getMatchingPortal(user);
-  if (!redirectParam || redirectParam.startsWith('/login')) {
-    return matched.portalPath;
+  // Landing page after login is /dashboard by default
+  if (!redirectParam || redirectParam.startsWith('/login') || redirectParam === '/') {
+    return '/dashboard';
   }
 
   // Must be relative root path
   if (!redirectParam.startsWith('/')) {
-    return matched.portalPath;
+    return '/dashboard';
   }
 
   if (user.role === 'admin') {
     // Admins can navigate to any section except falling into raw merchant redirect
     if (redirectParam.startsWith('/merchant')) {
-      return '/admin';
+      return '/dashboard';
     }
     return redirectParam;
   } else {
     // Merchants cannot access /admin
     if (redirectParam.startsWith('/admin')) {
-      return '/merchant';
+      return '/dashboard';
     }
     return redirectParam;
   }

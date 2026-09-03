@@ -134,11 +134,7 @@ export default function ProfilePortalDrawer({
         setLoginError(res.error || 'Login failed. Please check credentials.');
       } else {
         onClose();
-        if (res.user?.role === 'admin') {
-          router.push('/admin');
-        } else {
-          router.push('/merchant');
-        }
+        router.push('/dashboard');
       }
     }, 200);
   };

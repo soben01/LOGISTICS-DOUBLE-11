@@ -207,53 +207,95 @@ export default function Navbar() {
           whiteSpace: 'nowrap',
           flexShrink: 0
         }}>
-          <Link href="/track" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
-            Tracking Center
-          </Link>
+          {/* Priority 1: Dashboard */}
           <Link
-            href={currentUser ? "/book" : "/login?redirect=/book"}
-            style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}
+            href="/dashboard"
+            style={{
+              fontSize: '0.9rem',
+              fontWeight: 700,
+              color: '#ffffff',
+              background: 'rgba(6, 182, 212, 0.12)',
+              border: '1px solid rgba(6, 182, 212, 0.35)',
+              padding: '0.25rem 0.65rem',
+              borderRadius: '6px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              whiteSpace: 'nowrap'
+            }}
           >
-            Book Cargo
+            <Cpu size={14} color="var(--brand-cyan)" />
+            <span>Dashboard</span>
           </Link>
+
+          {/* Priority 2: All Bookings */}
           <Link
             href="/bookings"
             style={{
               fontSize: '0.9rem',
               fontWeight: 700,
-              color: 'var(--brand-orange)',
+              color: '#ffffff',
+              background: 'rgba(255, 102, 0, 0.12)',
+              border: '1px solid rgba(255, 102, 0, 0.35)',
+              padding: '0.25rem 0.65rem',
+              borderRadius: '6px',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.35rem',
               whiteSpace: 'nowrap'
             }}
           >
-            <Boxes size={15} />
+            <Boxes size={14} color="var(--brand-orange)" />
             <span>All Bookings</span>
           </Link>
+
+          {/* Priority 3: Book Cargo */}
           <Link
-            href="/dashboard"
+            href={currentUser ? "/book" : "/login?redirect=/book"}
             style={{
               fontSize: '0.9rem',
               fontWeight: 600,
-              color: 'var(--brand-cyan)',
+              color: 'var(--text-primary)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.35rem',
               whiteSpace: 'nowrap'
             }}
           >
-            <Cpu size={15} />
-            <span>Dashboard</span>
+            <Truck size={14} color="var(--text-muted)" />
+            <span>Book Cargo</span>
           </Link>
+
+          {/* Priority 4: Tracking Center */}
+          <Link
+            href="/track"
+            style={{
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              color: 'var(--text-secondary)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <Search size={14} color="var(--text-muted)" />
+            <span>Tracking Center</span>
+          </Link>
+
+          {/* Priority 5: Rates & Tariffs */}
           <Link href="/rates" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
             Rates &amp; Tariffs
           </Link>
-          <Link href="/about" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
-            About &amp; Founder
-          </Link>
+
+          {/* Priority 6: Support */}
           <Link href="/support" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
             Support
+          </Link>
+
+          {/* Priority 7: About & Founder */}
+          <Link href="/about" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+            About &amp; Founder
           </Link>
         </nav>
 
@@ -475,34 +517,43 @@ export default function Navbar() {
           </form>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingTop: '0.25rem' }}>
-            <Link
-              href="/bookings"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ padding: '0.6rem 0', color: 'var(--brand-orange)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-            >
-              <Boxes size={16} /> All Bookings (Data Records)
-            </Link>
+            {/* Priority 1: Dashboard */}
             <Link
               href="/dashboard"
               onClick={() => setMobileMenuOpen(false)}
-              style={{ padding: '0.6rem 0', color: 'var(--brand-cyan)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+              style={{ padding: '0.6rem 0', color: 'var(--brand-cyan)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
             >
               <Cpu size={16} /> Operations Dashboard
             </Link>
+
+            {/* Priority 2: All Bookings */}
             <Link
-              href="/track"
+              href="/bookings"
               onClick={() => setMobileMenuOpen(false)}
-              style={{ padding: '0.6rem 0', color: 'var(--text-primary)', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+              style={{ padding: '0.6rem 0', color: 'var(--brand-orange)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
             >
-              Tracking Center
+              <Boxes size={16} /> All Bookings (Data Records)
             </Link>
+
+            {/* Priority 3: Book Cargo */}
             <Link
               href={currentUser ? "/book" : "/login?redirect=/book"}
               onClick={() => setMobileMenuOpen(false)}
-              style={{ padding: '0.6rem 0', color: 'var(--text-primary)', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+              style={{ padding: '0.6rem 0', color: 'var(--text-primary)', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
             >
-              Book Cargo
+              <Truck size={16} /> Book Cargo
             </Link>
+
+            {/* Priority 4: Tracking Center */}
+            <Link
+              href="/track"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ padding: '0.6rem 0', color: 'var(--text-primary)', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
+            >
+              <Search size={16} /> Tracking Center
+            </Link>
+
+            {/* Priority 5: Rates & Tariffs */}
             <Link
               href="/rates"
               onClick={() => setMobileMenuOpen(false)}
@@ -510,19 +561,23 @@ export default function Navbar() {
             >
               Rates &amp; Tariffs
             </Link>
-            <Link
-              href="/about"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ padding: '0.6rem 0', color: 'var(--text-primary)', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
-            >
-              About Double 11 &amp; Founder
-            </Link>
+
+            {/* Priority 6: Support */}
             <Link
               href="/support"
               onClick={() => setMobileMenuOpen(false)}
-              style={{ padding: '0.6rem 0', color: 'var(--text-primary)', fontWeight: 600 }}
+              style={{ padding: '0.6rem 0', color: 'var(--text-primary)', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
             >
               Customer Support
+            </Link>
+
+            {/* Priority 7: About */}
+            <Link
+              href="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ padding: '0.6rem 0', color: 'var(--text-primary)', fontWeight: 600 }}
+            >
+              About Double 11 &amp; Founder
             </Link>
           </div>
         </div>

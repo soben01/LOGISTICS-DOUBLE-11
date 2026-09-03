@@ -87,11 +87,11 @@ function LoginContent() {
       const destination = resolveMatchedRedirect(res.user, redirectPath);
 
       setSuccessMsg(
-        `✓ Role Detected: ${res.user.role.toUpperCase()}! Welcome back, ${res.user.name}. Redirecting to ${matched.portalName} (${destination})...`
+        `✓ Authentication Successful (${res.user.role.toUpperCase()})! Welcome back, ${res.user.name}. Landing on Operations Dashboard...`
       );
       setTimeout(() => {
         router.push(destination);
-      }, 600);
+      }, 500);
     }
   };
 
@@ -112,10 +112,10 @@ function LoginContent() {
       setErrorMsg(res.error || 'Failed to create account.');
     } else if (res.user) {
       const destination = resolveMatchedRedirect(res.user, redirectPath);
-      setSuccessMsg(`✓ Merchant account registered for ${res.user.name}! Redirecting to Merchant Portal...`);
+      setSuccessMsg(`✓ Merchant account registered for ${res.user.name}! Landing on Operations Dashboard...`);
       setTimeout(() => {
         router.push(destination);
-      }, 700);
+      }, 500);
     }
   };
 
