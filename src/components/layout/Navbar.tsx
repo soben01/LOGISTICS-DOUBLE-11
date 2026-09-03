@@ -47,6 +47,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logoutUser();
+    setCurrentUser(null);
     router.push('/');
   };
 
@@ -130,8 +131,8 @@ export default function Navbar() {
                 cursor: 'pointer'
               }}
             >
-              <UserIcon size={12} />
-              <span>{currentUser ? `My Profile (${currentUser.name}) ▾` : 'My Profile / Sub-Login ▾'}</span>
+              {currentUser ? <UserIcon size={12} /> : <Lock size={12} />}
+              <span>{currentUser ? `My Profile (${currentUser.name}) ▾` : 'Portal Login ▾'}</span>
             </button>
           </div>
         </div>
@@ -207,47 +208,54 @@ export default function Navbar() {
           whiteSpace: 'nowrap',
           flexShrink: 0
         }}>
-          {/* Priority 1: Dashboard */}
-          <Link
-            href="/dashboard"
-            style={{
-              fontSize: '0.9rem',
-              fontWeight: 700,
-              color: '#ffffff',
-              background: 'rgba(6, 182, 212, 0.12)',
-              border: '1px solid rgba(6, 182, 212, 0.35)',
-              padding: '0.25rem 0.65rem',
-              borderRadius: '6px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            <Cpu size={14} color="var(--brand-cyan)" />
-            <span>Dashboard</span>
-          </Link>
+          {/* Authenticated Internal Operations: Dashboard & My/All Bookings (Only visible when logged in) */}
+          {currentUser && (
+            <>
+              {/* Priority 1: Dashboard */}
+              <Link
+                href="/dashboard"
+                style={{
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  color: '#ffffff',
+                  background: 'rgba(6, 182, 212, 0.12)',
+                  border: '1px solid rgba(6, 182, 212, 0.35)',
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: '6px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  whiteSpace: 'nowrap',
+                  transition: 'all var(--transition-fast)'
+                }}
+              >
+                <Cpu size={14} color="var(--brand-cyan)" />
+                <span>Dashboard</span>
+              </Link>
 
-          {/* Priority 2: All Bookings */}
-          <Link
-            href="/bookings"
-            style={{
-              fontSize: '0.9rem',
-              fontWeight: 700,
-              color: '#ffffff',
-              background: 'rgba(255, 102, 0, 0.12)',
-              border: '1px solid rgba(255, 102, 0, 0.35)',
-              padding: '0.25rem 0.65rem',
-              borderRadius: '6px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            <Boxes size={14} color="var(--brand-orange)" />
-            <span>All Bookings</span>
-          </Link>
+              {/* Priority 2: Bookings Registry (My Bookings for merchant, All Bookings for admin) */}
+              <Link
+                href="/bookings"
+                style={{
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  color: '#ffffff',
+                  background: 'rgba(255, 102, 0, 0.12)',
+                  border: '1px solid rgba(255, 102, 0, 0.35)',
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: '6px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  whiteSpace: 'nowrap',
+                  transition: 'all var(--transition-fast)'
+                }}
+              >
+                <Boxes size={14} color="var(--brand-orange)" />
+                <span>{currentUser.role === 'admin' ? 'All Bookings' : 'My Bookings'}</span>
+              </Link>
+            </>
+          )}
 
           {/* Priority 3: Book Cargo */}
           <Link
@@ -410,15 +418,14 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => setProfileDrawerOpen(true)}
+            <Link
+              href="/login"
               className="btn btn-secondary btn-sm"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0, whiteSpace: 'nowrap', cursor: 'pointer' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
               <UserIcon size={14} />
-              <span>My Profile / Login ▾</span>
-            </button>
+              <span>Login / Sign In</span>
+            </Link>
           )}
 
           <Link
@@ -490,16 +497,14 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setProfileDrawerOpen(true);
-              }}
+            <Link
+              href="/login"
+              onClick={() => setMobileMenuOpen(false)}
               className="btn btn-secondary btn-sm"
               style={{ justifyContent: 'center', gap: '0.4rem' }}
             >
-              <UserIcon size={14} /> My Profile / Sub-Login ▾
-            </button>
+              <UserIcon size={14} /> Sign In / Register
+            </Link>
           )}
 
           <form onSubmit={handleQuickTrack} style={{ display: 'flex', gap: '0.5rem' }}>
@@ -517,23 +522,27 @@ export default function Navbar() {
           </form>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingTop: '0.25rem' }}>
-            {/* Priority 1: Dashboard */}
-            <Link
-              href="/dashboard"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ padding: '0.6rem 0', color: 'var(--brand-cyan)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
-            >
-              <Cpu size={16} /> Operations Dashboard
-            </Link>
+            {currentUser && (
+              <>
+                {/* Priority 1: Dashboard */}
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ padding: '0.6rem 0', color: 'var(--brand-cyan)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
+                >
+                  <Cpu size={16} /> Operations Dashboard
+                </Link>
 
-            {/* Priority 2: All Bookings */}
-            <Link
-              href="/bookings"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ padding: '0.6rem 0', color: 'var(--brand-orange)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
-            >
-              <Boxes size={16} /> All Bookings (Data Records)
-            </Link>
+                {/* Priority 2: All Bookings / My Bookings */}
+                <Link
+                  href="/bookings"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ padding: '0.6rem 0', color: 'var(--brand-orange)', fontWeight: 700, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
+                >
+                  <Boxes size={16} /> {currentUser.role === 'admin' ? 'All Bookings (Registry)' : 'My Bookings (Registry)'}
+                </Link>
+              </>
+            )}
 
             {/* Priority 3: Book Cargo */}
             <Link

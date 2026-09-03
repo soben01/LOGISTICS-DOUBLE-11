@@ -22,8 +22,11 @@ import {
   Activity,
   Layers,
   Search,
-  ExternalLink
+  ExternalLink,
+  Lock
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { getCurrentUser, User } from '../../lib/auth';
 import {
   getAllCombinedBookings,
   fetchD1Status,
@@ -31,10 +34,13 @@ import {
 } from '../../lib/store';
 
 export default function DashboardPage() {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authChecking, setAuthChecking] = useState(true);
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [d1Status, setD1Status] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [lastRefreshed, setLastRefreshed] = useState<string>('');
+  const router = useRouter();
 
   const loadData = async () => {
     setLoading(true);
@@ -49,8 +55,27 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    const user = getCurrentUser();
+    if (!user) {
+      router.push('/login?redirect=/dashboard');
+      return;
+    }
+    setCurrentUser(user);
+    setAuthChecking(false);
     loadData();
-  }, []);
+  }, [router]);
+
+  if (authChecking || !currentUser) {
+    return (
+      <div style={{ minHeight: '65vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', padding: '3rem 1rem', textAlign: 'center' }}>
+        <div style={{ width: 48, height: 48, borderRadius: '12px', background: 'rgba(6, 182, 212, 0.15)', border: '1px solid rgba(6, 182, 212, 0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-cyan)' }}>
+          <Cpu size={24} className="animate-pulse" />
+        </div>
+        <h2 style={{ fontSize: '1.25rem', color: '#ffffff' }}>Authenticating Operational Access...</h2>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Secure dashboard access requires merchant or admin credentials.</p>
+      </div>
+    );
+  }
 
   // ACCURATE METRICS CALCULATION FROM LIVE DATA
   const totalShipments = shipments.length;
@@ -174,7 +199,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 4 Primary Operational Metric Cards (100% Accurate Live Calculations) */}
-        <div className="grid grid-cols-4 gap-6" style={{ marginBottom: '2.5rem' }}>
+        <div className="dashboard-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
           {/* Card 1: Total Consignments */}
           <div className="metric-pill" style={{ position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -416,6 +441,19 @@ export default function DashboardPage() {
         </div>
 
       </div>
+
+      <style jsx global>{`
+        @media (max-width: 1080px) {
+          .dashboard-grid-4 {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .dashboard-grid-4 {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

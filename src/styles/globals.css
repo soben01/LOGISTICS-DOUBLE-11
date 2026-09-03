@@ -1040,13 +1040,15 @@ a {
 }
 
 /* Data Table & Telemetry Helpers */
-.data-table {
+.data-table,
+.table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.88rem;
 }
 
-.data-table th {
+.data-table th,
+.table th {
   padding: 1rem 1.25rem;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border-medium);
@@ -1058,18 +1060,27 @@ a {
   color: var(--text-muted);
 }
 
-.data-table td {
+.data-table td,
+.table td {
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--border-subtle);
   transition: background var(--transition-fast);
 }
 
-.data-table tr:hover td {
+.data-table tr:hover td,
+.table tr:hover td {
   background: rgba(255, 255, 255, 0.02);
 }
 
-.data-table tr:last-child td {
+.data-table tr:last-child td,
+.table tr:last-child td {
   border-bottom: none;
+}
+
+.bookings-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Route Tracking Progression */

@@ -14,7 +14,7 @@ import {
   Check,
   MapPin,
   Calendar,
-  User,
+  User as UserIcon,
   Truck,
   Banknote,
   Download,
@@ -22,8 +22,11 @@ import {
   Clock,
   ArrowRight,
   ShieldCheck,
-  FileText
+  FileText,
+  Lock
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { getCurrentUser, User } from '../../lib/auth';
 import {
   getAllCombinedBookings,
   updateShipmentStatus,
@@ -32,6 +35,8 @@ import {
 import PrintableLabel from '../../components/shipping/PrintableLabel';
 
 export default function AllBookingsPage() {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authChecking, setAuthChecking] = useState(true);
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,6 +44,7 @@ export default function AllBookingsPage() {
   const [hubFilter, setHubFilter] = useState('ALL');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [printingShipment, setPrintingShipment] = useState<Shipment | null>(null);
+  const router = useRouter();
 
   // Quick edit status modal state
   const [editingShipment, setEditingShipment] = useState<Shipment | null>(null);
@@ -55,8 +61,15 @@ export default function AllBookingsPage() {
   };
 
   useEffect(() => {
+    const user = getCurrentUser();
+    if (!user) {
+      router.push('/login?redirect=/bookings');
+      return;
+    }
+    setCurrentUser(user);
+    setAuthChecking(false);
     loadBookings();
-  }, []);
+  }, [router]);
 
   const handleCopy = (id: string) => {
     navigator.clipboard.writeText(id);
@@ -149,6 +162,18 @@ export default function AllBookingsPage() {
     }
   };
 
+  if (authChecking || !currentUser) {
+    return (
+      <div style={{ minHeight: '65vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', padding: '3rem 1rem', textAlign: 'center' }}>
+        <div style={{ width: 48, height: 48, borderRadius: '12px', background: 'rgba(255, 102, 0, 0.15)', border: '1px solid rgba(255, 102, 0, 0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-orange)' }}>
+          <Boxes size={24} className="animate-pulse" />
+        </div>
+        <h2 style={{ fontSize: '1.25rem', color: '#ffffff' }}>Authenticating Consignment Access...</h2>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Access to booking records requires verified merchant or admin credentials.</p>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: '3rem 0 6rem 0' }}>
       <div className="container">
@@ -163,13 +188,15 @@ export default function AllBookingsPage() {
         }}>
           <div>
             <div className="badge badge-orange" style={{ marginBottom: '0.4rem', fontSize: '0.72rem' }}>
-              <Boxes size={13} /> Nationwide Consignment Records
+              <Boxes size={13} /> {currentUser.role === 'admin' ? 'Nationwide Consignment Records' : 'Merchant Consignment Ledger'}
             </div>
             <h1 style={{ margin: 0, fontSize: '2.1rem', letterSpacing: '-0.02em', color: '#ffffff' }}>
-              All Bookings Registry
+              {currentUser.role === 'admin' ? 'All Bookings Registry' : 'My Bookings Registry'}
             </h1>
             <p style={{ marginTop: '0.35rem', color: 'var(--text-secondary)', fontSize: '0.92rem' }}>
-              Complete centralized booking records from Cloudflare D1 &amp; merchant dispatches across all 77 districts.
+              {currentUser.role === 'admin'
+                ? 'Complete centralized booking records from Cloudflare D1 & merchant dispatches across all 77 districts.'
+                : `Active booking manifests, delivery dispatches, and AWB labels for ${currentUser.company}.`}
             </p>
           </div>
 
