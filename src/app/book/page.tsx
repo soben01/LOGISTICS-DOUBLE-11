@@ -563,41 +563,30 @@ function BookContent() {
         ) : (
           /* ================= UNIFIED ALL-IN-ONE DISPATCH FORM ================= */
           <form onSubmit={handleSubmitBooking}>
-            {/* Two-Column Booking Grid: Unified Form on Left, Sticky Live One-Fare on Right */}
-            <div className="booking-layout-grid">
+            {/* Modern Flex Booking Layout: Dispatch Modules on Left, Sticky Live Manifest on Right */}
+            <div className="booking-layout-flex">
               {/* Left Column: All Dispatch Modules (Shipper, Consignee, Cargo, COD, Service) */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+              <div className="booking-form-col">
 
                 {/* 1. SHIPPER (FROM) */}
-                <div className="glass-panel" style={{ padding: '1.75rem 2rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '8px',
-                      background: 'rgba(255, 102, 0, 0.15)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--brand-orange)',
-                      fontWeight: 800,
-                      fontSize: '0.9rem'
-                    }}>
+                <div className="booking-card">
+                  <div className="booking-card-header">
+                    <div className="booking-step-badge" style={{ background: 'rgba(255, 102, 0, 0.15)', color: 'var(--brand-orange)' }}>
                       1
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
                         <Package size={18} color="var(--brand-orange)" />
                         <span>Shipper Details (Origin Hub)</span>
                       </h3>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
                         Free merchant doorstep pickup across Kathmandu Valley, Pokhara &amp; Birgunj
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="input-group">
+                  <div className="booking-field-row">
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Origin Nepal Hub *</label>
                       <select
                         value={originCity}
@@ -615,7 +604,7 @@ function BookContent() {
                       </select>
                     </div>
 
-                    <div className="input-group">
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Shipper Contact Name *</label>
                       <input
                         type="text"
@@ -627,7 +616,7 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group">
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Company / Brand Name</label>
                       <input
                         type="text"
@@ -638,7 +627,7 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group">
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Consignor Telephone *</label>
                       <input
                         type="tel"
@@ -653,36 +642,25 @@ function BookContent() {
                 </div>
 
                 {/* 2. CONSIGNEE (TO) */}
-                <div className="glass-panel" style={{ padding: '1.75rem 2rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '8px',
-                      background: 'rgba(6, 182, 212, 0.15)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--brand-cyan)',
-                      fontWeight: 800,
-                      fontSize: '0.9rem'
-                    }}>
+                <div className="booking-card">
+                  <div className="booking-card-header">
+                    <div className="booking-step-badge" style={{ background: 'rgba(6, 182, 212, 0.15)', color: 'var(--brand-cyan)' }}>
                       2
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
                         <MapPin size={18} color="var(--brand-cyan)" />
                         <span>Consignee Details (Destination &amp; Doorstep Delivery)</span>
                       </h3>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
                         Recipient receives live SMS arrival link and OTP security code
                       </div>
                     </div>
                   </div>
 
                   {/* 1-Click Popular Cities */}
-                  <div style={{ marginBottom: '1rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>
                       POPULAR DESTINATIONS (1-CLICK SELECT):
                     </div>
                     <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
@@ -704,8 +682,8 @@ function BookContent() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="input-group">
+                  <div className="booking-field-row">
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Destination City / Hub *</label>
                       <select
                         value={recipientCity}
@@ -727,7 +705,7 @@ function BookContent() {
                       </select>
                     </div>
 
-                    <div className="input-group">
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Recipient Full Name *</label>
                       <input
                         type="text"
@@ -739,7 +717,7 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group">
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Recipient Mobile Phone (For OTP &amp; Delivery) *</label>
                       <input
                         type="tel"
@@ -751,7 +729,7 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group">
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Company / Store Name (Optional)</label>
                       <input
                         type="text"
@@ -762,7 +740,7 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group" style={{ gridColumn: 'span 2' }}>
+                    <div className="input-group booking-field-col-12">
                       <label className="input-label">Doorstep Delivery Address &amp; Landmark *</label>
                       <input
                         type="text"
@@ -777,36 +755,25 @@ function BookContent() {
                 </div>
 
                 {/* 3. CARGO SPECIFICATIONS */}
-                <div className="glass-panel" style={{ padding: '1.75rem 2rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '8px',
-                      background: 'rgba(16, 185, 129, 0.15)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--brand-emerald)',
-                      fontWeight: 800,
-                      fontSize: '0.9rem'
-                    }}>
+                <div className="booking-card">
+                  <div className="booking-card-header">
+                    <div className="booking-step-badge" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--brand-emerald)' }}>
                       3
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
                         <Boxes size={18} color="var(--brand-emerald)" />
                         <span>Cargo Specifications &amp; Dimensions</span>
                       </h3>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
                         Dimensional formula: Volumetric (L&times;W&times;H / 5000) vs Gross Weight
                       </div>
                     </div>
                   </div>
 
                   {/* Category Presets */}
-                  <div style={{ marginBottom: '1rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>
                       QUICK CARGO PRESETS:
                     </div>
                     <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
@@ -848,8 +815,8 @@ function BookContent() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="input-group" style={{ gridColumn: 'span 2' }}>
+                  <div className="booking-field-row">
+                    <div className="input-group booking-field-col-12">
                       <label className="input-label">Commodity / Package Contents *</label>
                       <input
                         type="text"
@@ -861,7 +828,7 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group">
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Pieces (Colli Count) *</label>
                       <input
                         type="number"
@@ -874,7 +841,7 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group">
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Gross Actual Weight (KG) *</label>
                       <input
                         type="number"
@@ -888,37 +855,37 @@ function BookContent() {
                       />
                     </div>
 
-                    <div className="input-group" style={{ gridColumn: 'span 2' }}>
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Package Dimensions (L &times; W &times; H cm)</label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <input
                           type="number"
-                          placeholder="Length"
+                          placeholder="L"
                           value={lengthCm}
                           onChange={(e) => setLengthCm(parseInt(e.target.value) || 10)}
                           className="input-field"
-                          style={{ textAlign: 'center' }}
+                          style={{ textAlign: 'center', flex: '1 1 0' }}
                         />
                         <input
                           type="number"
-                          placeholder="Width"
+                          placeholder="W"
                           value={widthCm}
                           onChange={(e) => setWidthCm(parseInt(e.target.value) || 10)}
                           className="input-field"
-                          style={{ textAlign: 'center' }}
+                          style={{ textAlign: 'center', flex: '1 1 0' }}
                         />
                         <input
                           type="number"
-                          placeholder="Height"
+                          placeholder="H"
                           value={heightCm}
                           onChange={(e) => setHeightCm(parseInt(e.target.value) || 5)}
                           className="input-field"
-                          style={{ textAlign: 'center' }}
+                          style={{ textAlign: 'center', flex: '1 1 0' }}
                         />
                       </div>
                     </div>
 
-                    <div className="input-group" style={{ gridColumn: 'span 2' }}>
+                    <div className="input-group booking-field-col-6">
                       <label className="input-label">Declared Cargo Value (Rs. NPR)</label>
                       <input
                         type="number"
@@ -932,28 +899,17 @@ function BookContent() {
                 </div>
 
                 {/* 4. CASH ON DELIVERY (COD) */}
-                <div className="glass-panel" style={{ padding: '1.75rem 2rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '8px',
-                      background: 'rgba(245, 158, 11, 0.15)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--brand-amber)',
-                      fontWeight: 800,
-                      fontSize: '0.9rem'
-                    }}>
+                <div className="booking-card">
+                  <div className="booking-card-header">
+                    <div className="booking-step-badge" style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--brand-amber)' }}>
                       4
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
                         <Banknote size={18} color="var(--brand-amber)" />
                         <span>Cash on Delivery (COD) Settings</span>
                       </h3>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
                         Automated cash collection and next-business-day direct bank transfer
                       </div>
                     </div>
@@ -1019,38 +975,27 @@ function BookContent() {
                 </div>
 
                 {/* 5. SERVICE TIER & ONE UNIFIED FARE */}
-                <div className="glass-panel" style={{ padding: '1.75rem 2rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '8px',
-                      background: 'rgba(255, 102, 0, 0.15)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--brand-orange)',
-                      fontWeight: 800,
-                      fontSize: '0.9rem'
-                    }}>
+                <div className="booking-card">
+                  <div className="booking-card-header">
+                    <div className="booking-step-badge" style={{ background: 'rgba(255, 102, 0, 0.15)', color: 'var(--brand-orange)' }}>
                       5
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
                         <Truck size={18} color="var(--brand-orange)" />
                         <span>Choose Service Speed &amp; One All-Inclusive Fare</span>
                       </h3>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
                         Select transit corridor speed for automatic route allocation
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4" style={{ marginBottom: '1.25rem' }}>
+                  <div className="booking-service-cards" style={{ marginBottom: '1.25rem' }}>
                     {/* Tier 1: Double 11 Nepal Express */}
                     <div
                       onClick={() => setSelectedService('EXP')}
-                      className={`service-card-select ${selectedService === 'EXP' ? 'selected' : ''}`}
+                      className={`service-card-select booking-service-item ${selectedService === 'EXP' ? 'selected' : ''}`}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                         <div style={{ fontWeight: 800, color: 'var(--brand-orange)', fontSize: '0.92rem' }}>
@@ -1069,7 +1014,7 @@ function BookContent() {
                     {/* Tier 2: Nationwide Hub Cargo */}
                     <div
                       onClick={() => setSelectedService('CARGO')}
-                      className={`service-card-select ${selectedService === 'CARGO' ? 'selected' : ''}`}
+                      className={`service-card-select booking-service-item ${selectedService === 'CARGO' ? 'selected' : ''}`}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                         <div style={{ fontWeight: 800, color: 'var(--brand-cyan)', fontSize: '0.92rem' }}>
@@ -1088,7 +1033,7 @@ function BookContent() {
                     {/* Tier 3: Same-Day Valley Rush */}
                     <div
                       onClick={() => setSelectedService('RUSH')}
-                      className={`service-card-select ${selectedService === 'RUSH' ? 'selected' : ''}`}
+                      className={`service-card-select booking-service-item ${selectedService === 'RUSH' ? 'selected' : ''}`}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                         <div style={{ fontWeight: 800, color: 'var(--brand-emerald)', fontSize: '0.92rem' }}>
@@ -1110,12 +1055,12 @@ function BookContent() {
                     background: 'rgba(255, 255, 255, 0.02)',
                     border: '1px solid var(--border-subtle)',
                     borderRadius: 'var(--radius-md)',
-                    padding: '1rem',
+                    padding: '1.1rem',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.6rem'
+                    gap: '0.75rem'
                   }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.85rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer', fontSize: '0.85rem' }}>
                       <input
                         type="checkbox"
                         checked={addInsurance}
@@ -1127,7 +1072,7 @@ function BookContent() {
                       </span>
                     </label>
 
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.85rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer', fontSize: '0.85rem' }}>
                       <input
                         type="checkbox"
                         checked={addCarbonOffset}
@@ -1143,8 +1088,8 @@ function BookContent() {
               </div>
 
               {/* Right Column: Sticky Live Manifest & ONE FARE Total */}
-              <div style={{ position: 'sticky', top: '90px', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div className="glass-panel" style={{ padding: '1.75rem', border: '1px solid rgba(255, 102, 0, 0.35)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+              <div className="booking-manifest-col">
+                <div className="booking-card" style={{ border: '1px solid rgba(255, 102, 0, 0.35)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
                     <div style={{ fontWeight: 900, fontSize: '0.95rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Navigation size={16} color="var(--brand-orange)" />

@@ -760,19 +760,120 @@ a {
 }
 
 /* =========================================================
-   BOOKING WIZARD DESIGN SYSTEM & PROPER CSS
+   BOOKING WIZARD DESIGN SYSTEM & MODERN FLEX DISPLAY
    ========================================================= */
+.booking-layout-flex,
 .booking-layout-grid {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 2rem;
-  align-items: start;
+  display: flex;
+  gap: 2.25rem;
+  align-items: flex-start;
+  width: 100%;
 }
 
-@media (max-width: 1040px) {
+.booking-form-col {
+  flex: 1 1 640px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.booking-manifest-col {
+  flex: 0 0 380px;
+  width: 380px;
+  position: sticky;
+  top: 90px;
+}
+
+@media (max-width: 1080px) {
+  .booking-layout-flex,
   .booking-layout-grid {
-    grid-template-columns: 1fr !important;
+    flex-direction: column;
   }
+  .booking-manifest-col {
+    flex: 1 1 100%;
+    width: 100%;
+    position: static;
+  }
+}
+
+.booking-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.booking-field-col-6 {
+  flex: 1 1 calc(50% - 0.65rem);
+  min-width: 250px;
+}
+
+.booking-field-col-12 {
+  flex: 1 1 100%;
+  width: 100%;
+}
+
+.booking-field-col-4 {
+  flex: 1 1 calc(33.333% - 0.85rem);
+  min-width: 180px;
+}
+
+.booking-service-cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.booking-service-item {
+  flex: 1 1 calc(33.333% - 0.7rem);
+  min-width: 200px;
+}
+
+@media (max-width: 768px) {
+  .booking-field-col-6,
+  .booking-field-col-4,
+  .booking-service-item {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+}
+
+.booking-card {
+  background: rgba(14, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transition: all var(--transition-normal);
+}
+
+.booking-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+}
+
+.booking-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.35rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.booking-step-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  flex-shrink: 0;
 }
 
 .stepper-nav {
