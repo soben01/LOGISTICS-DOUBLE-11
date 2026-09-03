@@ -63,14 +63,14 @@ function BookContent() {
 
   // 2. Consignee (Destination / Recipient)
   const [recipientCity, setRecipientCity] = useState(initialDest);
-  const [recipientName, setRecipientName] = useState('Pradeep Gurung');
-  const [recipientCompany, setRecipientCompany] = useState('Annapurna IT Solutions');
-  const [recipientAddress, setRecipientAddress] = useState('Lakeside Ward No. 6, Near Barahi Chowk');
-  const [recipientPostal, setRecipientPostal] = useState('33700');
-  const [recipientPhone, setRecipientPhone] = useState('+977 98460 11223');
+  const [recipientName, setRecipientName] = useState('');
+  const [recipientCompany, setRecipientCompany] = useState('');
+  const [recipientAddress, setRecipientAddress] = useState('');
+  const [recipientPostal, setRecipientPostal] = useState('');
+  const [recipientPhone, setRecipientPhone] = useState('');
 
   // 3. Cargo Specifications
-  const [cargoDesc, setCargoDesc] = useState('Consumer Electronics & Apparel Order');
+  const [cargoDesc, setCargoDesc] = useState('');
   const [pieces, setPieces] = useState<number>(1);
   const [weightKg, setWeightKg] = useState<number>(initialWt || 3.5);
   const [lengthCm, setLengthCm] = useState<number>(30);
@@ -161,15 +161,6 @@ function BookContent() {
     }
   };
 
-  const handleDemoSignIn = (email: string) => {
-    const res = loginUser(email);
-    if (res.success && res.user) {
-      setCurrentUser(res.user);
-      setSenderName(res.user.name);
-      setSenderCompany(res.user.company);
-      setSenderPhone(res.user.phone);
-    }
-  };
 
   const handleLogout = () => {
     logoutUser();
@@ -415,30 +406,6 @@ function BookContent() {
                   <span>Sign In &amp; Dispatch Cargo</span>
                   <ArrowRight size={16} />
                 </button>
-
-                <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1.25rem', marginTop: '0.75rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
-                    FAST 1-CLICK DEMO ACCOUNTS:
-                  </div>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button
-                      type="button"
-                      onClick={() => handleDemoSignIn('soben@double11.com')}
-                      className="btn btn-secondary btn-sm"
-                      style={{ flex: 1, fontSize: '0.78rem' }}
-                    >
-                      Soben (Admin)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDemoSignIn('pradeep@himalayantech.np')}
-                      className="btn btn-secondary btn-sm"
-                      style={{ flex: 1, fontSize: '0.78rem' }}
-                    >
-                      Pradeep (Merchant)
-                    </button>
-                  </div>
-                </div>
               </form>
             ) : (
               <form onSubmit={handleInlineSignup} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'left' }}>

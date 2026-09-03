@@ -1,4 +1,5 @@
 name = "logistics-double-11"
+main = "src/worker.ts"
 compatibility_date = "2024-09-02"
 
 [build]
@@ -6,3 +7,14 @@ command = "npm run build"
 
 [assets]
 directory = "out"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tracking_db"
+database_id = "165e3eb4-9323-413f-be55-cc7846857cd3"
+
+[[d1_databases]]
+binding = "USERS_DB"
+database_name = "users"
+database_id = "6adbc3b5-ed24-48cc-8be2-8244363b650d"
+

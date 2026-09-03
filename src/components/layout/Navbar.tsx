@@ -282,7 +282,7 @@ export default function Navbar() {
           }}>
             <input
               type="text"
-              placeholder="Track AWB # (e.g. D11-8892)"
+              placeholder="Track AWB # (e.g. CP002994035NP)"
               value={quickTrackId}
               onChange={(e) => setQuickTrackId(e.target.value)}
               style={{
@@ -456,7 +456,7 @@ export default function Navbar() {
           <form onSubmit={handleQuickTrack} style={{ display: 'flex', gap: '0.5rem' }}>
             <input
               type="text"
-              placeholder="Track AWB # (e.g. D11-8892)"
+              placeholder="Track AWB # (e.g. CP002994035NP)"
               value={quickTrackId}
               onChange={(e) => setQuickTrackId(e.target.value)}
               className="input-field"

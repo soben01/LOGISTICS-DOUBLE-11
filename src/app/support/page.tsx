@@ -82,8 +82,8 @@ export default function SupportPage() {
       let reply = 'Thank you for reaching out. Our dispatch command has logged your inquiry. For immediate urgent flight manifests, you can also view the Operations Tower.';
       const lower = userText.toLowerCase();
 
-      if (lower.includes('track') || lower.includes('where') || lower.includes('d11')) {
-        reply = 'You can track any live consignment by clicking "Tracking Center" in the top bar, or entering demo ID D11-8892-EXP to see live flight telemetry!';
+      if (lower.includes('track') || lower.includes('where') || lower.includes('d11') || lower.includes('awb')) {
+        reply = 'You can track any consignment in real-time by clicking "Tracking Center" in the top navigation or entering your tracking or Airway Bill (AWB) number!';
       } else if (lower.includes('rate') || lower.includes('cost') || lower.includes('price')) {
         reply = 'Our dynamic rate estimator calculates exact volumetric pricing based on origin, destination, and dimensions. Check out the "Rates & Tariffs" page for instant quotes.';
       } else if (lower.includes('customs') || lower.includes('duty') || lower.includes('tax')) {
@@ -236,12 +236,12 @@ export default function SupportPage() {
 
                 <div className="input-group">
                   <label className="input-label">Business Email</label>
-                  <input type="email" defaultValue="elena@pacificrobotics.com" className="input-field" required />
+                  <input type="email" placeholder="you@company.com" className="input-field" required />
                 </div>
 
                 <div className="input-group">
                   <label className="input-label">AWB or Consignment ID (Optional)</label>
-                  <input type="text" placeholder="e.g. D11-8892-EXP" className="input-field" />
+                  <input type="text" placeholder="e.g. CP002994035NP" className="input-field" />
                 </div>
 
                 <div className="input-group">

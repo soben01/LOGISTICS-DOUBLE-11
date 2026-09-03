@@ -133,14 +133,6 @@ export default function AdminControlPanel() {
     setTimeout(() => setActionNotice(''), 3000);
   };
 
-  const handleAdminQuickLogin = () => {
-    const res = loginUser('soben@double11.com');
-    if (res.success && res.user) {
-      setCurrentUser(res.user);
-      loadAllData();
-      triggerNotice('Authenticated as Soben (System Administrator)');
-    }
-  };
 
   // Shipment handlers
   const handleUpdateStatusSubmit = (e: React.FormEvent) => {
@@ -276,19 +268,10 @@ export default function AdminControlPanel() {
               The Double 11 Central Admin Control Panel allows complete authority over national logistics corridors, dispatching drivers, merchant account approval, and shipment override. You must be signed in as an authorized Administrator.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '380px', margin: '0 auto' }}>
-              <button
-                type="button"
-                onClick={handleAdminQuickLogin}
-                className="btn btn-primary btn-lg"
-                style={{ justifyContent: 'center' }}
-              >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '320px', margin: '0 auto' }}>
+              <Link href="/login" className="btn btn-primary btn-lg" style={{ justifyContent: 'center' }}>
                 <ShieldCheck size={18} />
-                <span>Sign In as Admin (Soben)</span>
-              </button>
-
-              <Link href="/login" className="btn btn-secondary btn-sm" style={{ justifyContent: 'center' }}>
-                Login &rarr;
+                <span>Admin Login &rarr;</span>
               </Link>
             </div>
           </div>

@@ -33,7 +33,7 @@ import {
   Copy,
   ExternalLink
 } from 'lucide-react';
-import { getShipmentById, getShipments, Shipment, Checkpoint } from '../../lib/store';
+import { getShipmentById, getShipments, fetchD1Tracking, Shipment, Checkpoint } from '../../lib/store';
 import PrintableLabel from '../../components/shipping/PrintableLabel';
 import EmailSummaryModal from '../../components/notifications/EmailSummaryModal';
 
@@ -51,35 +51,90 @@ function TrackContent() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     if (queryId) {
       setSearchInput(queryId);
-      const found = getShipmentById(queryId);
-      if (found) {
-        setCurrentShipment(found);
+      const local = getShipmentById(queryId);
+      if (local) {
+        setCurrentShipment(local);
         setNotFound(false);
       } else {
-        setCurrentShipment(null);
-        setNotFound(true);
+        // Query Cloudflare D1 tracking_db in real-time
+        fetchD1Tracking(queryId).then((d1Record) => {
+          if (!isMounted) return;
+          if (d1Record) {
+            const adapted: Shipment = {
+              id: d1Record.tracking_number,
+              service: d1Record.carrier ? `Carrier: ${d1Record.carrier}` : 'Double 11 Express (Cloudflare D1)',
+              serviceCode: 'EXP',
+              status: (d1Record.status === 'Delivered' ? 'Delivered' : 'In Transit') as any,
+              origin: {
+                city: 'Central Dispatch Hub',
+                hub: 'National Logistics Hub',
+              },
+              destination: {
+                city: d1Record.consignee_name ? d1Record.consignee_name.split(' ').slice(-1)[0] : 'Destination Terminal',
+                hub: 'Local Destination Delivery Center',
+              },
+              sender: {
+                name: 'Double 11 Logistics Command',
+                company: 'Double 11 Dispatch Terminal',
+                phone: '+977 1 4411000',
+              },
+              recipient: {
+                name: d1Record.consignee_name || 'Consignee Recipient',
+                company: d1Record.consignee_name || 'Consignee Recipient',
+                address: d1Record.consignee_name || 'Delivery Address on File',
+                phone: d1Record.consignee_contact || 'Registered on File',
+              },
+              cargo: {
+                pieces: 1,
+                weightKg: 2.0,
+                volumeCbm: 0.015,
+                description: d1Record.latest_event || 'Verified Consignment Cargo',
+              },
+              telemetry: {
+                waybillNumber: d1Record.tracking_number,
+                estimatedArrival: d1Record.status === 'Delivered' ? 'Delivered' : 'In Transit via Corridor',
+              },
+              checkpoints: [
+                {
+                  id: `chk-d1-${d1Record.id}`,
+                  timestamp: d1Record.created_at || 'Recorded in Cloudflare D1',
+                  status: (d1Record.status === 'Delivered' ? 'Delivered' : 'In Transit') as any,
+                  location: 'Cloudflare D1 Network Telemetry Gateway',
+                  description: d1Record.latest_event || `Current Status: ${d1Record.status}`,
+                  isCompleted: true,
+                },
+              ],
+            };
+            setCurrentShipment(adapted);
+            setNotFound(false);
+          } else {
+            setCurrentShipment(null);
+            setNotFound(true);
+          }
+        });
       }
     } else {
-      // Default to sample shipment
-      const defaultShipment = getShipmentById('D11-8892-EXP') || getShipments()[0];
-      if (defaultShipment) {
-        setCurrentShipment(defaultShipment);
-        setSearchInput(defaultShipment.id);
+      const all = getShipments();
+      if (all.length > 0) {
+        setCurrentShipment(all[0]);
+        setSearchInput(all[0].id);
+      } else {
+        setCurrentShipment(null);
+        setNotFound(false);
       }
     }
+    return () => {
+      isMounted = false;
+    };
   }, [queryId]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchInput.trim()) return;
     router.push(`/track?id=${encodeURIComponent(searchInput.trim())}`);
-  };
-
-  const handleSelectSample = (id: string) => {
-    setSearchInput(id);
-    router.push(`/track?id=${id}`);
   };
 
   const copyTrackingLink = () => {
@@ -183,7 +238,7 @@ function TrackContent() {
               />
               <input
                 type="text"
-                placeholder="Enter Consignment or AWB # (e.g. D11-8892-EXP or D11-4410-SEA)"
+                placeholder="Enter Consignment or AWB # (e.g. CP002994035NP or D11-XXXXXXXX)"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 className="input-field"
@@ -196,42 +251,6 @@ function TrackContent() {
             </button>
           </form>
 
-          {/* Quick Click Live Demo Chips */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1.25rem', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>Try Live Consignments:</span>
-            <button
-              type="button"
-              onClick={() => handleSelectSample('D11-8892-EXP')}
-              className={`badge ${currentShipment?.id === 'D11-8892-EXP' ? 'badge-orange' : 'badge-subtle'}`}
-              style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '0.72rem' }}
-            >
-              D11-8892-EXP (KTM &rarr; Pokhara Express)
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSelectSample('D11-4410-SEA')}
-              className={`badge ${currentShipment?.id === 'D11-4410-SEA' ? 'badge-cyan' : 'badge-subtle'}`}
-              style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '0.72rem' }}
-            >
-              D11-4410-SEA (Birgunj &rarr; Biratnagar Cargo)
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSelectSample('D11-9921-AIR')}
-              className={`badge ${currentShipment?.id === 'D11-9921-AIR' ? 'badge-amber' : 'badge-subtle'}`}
-              style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '0.72rem' }}
-            >
-              D11-9921-AIR (Out for Delivery)
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSelectSample('D11-2041-LOC')}
-              className={`badge ${currentShipment?.id === 'D11-2041-LOC' ? 'badge-emerald' : 'badge-subtle'}`}
-              style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '0.72rem' }}
-            >
-              D11-2041-LOC (Delivered &bull; Signed POD)
-            </button>
-          </div>
         </div>
 
         {/* Consignment Not Found Alert */}
@@ -256,9 +275,6 @@ function TrackContent() {
               No active shipment matches tracking ID <strong style={{ color: '#ffffff', fontFamily: 'var(--font-mono)' }}>{searchInput}</strong> in our dispatch database. Verify the Airway Bill number or dispatch a new consignment.
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-              <button onClick={() => handleSelectSample('D11-8892-EXP')} className="btn btn-secondary btn-sm">
-                Load Active Sample
-              </button>
               <Link href="/book" className="btn btn-primary btn-sm">
                 Book New Consignment &rarr;
               </Link>

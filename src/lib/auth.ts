@@ -11,8 +11,8 @@ export interface User {
   createdAt: string;
 }
 
-const USERS_STORAGE_KEY = 'double11_users_v2';
-const CURRENT_USER_KEY = 'double11_current_user_v2';
+const USERS_STORAGE_KEY = 'double11_users_v3';
+const CURRENT_USER_KEY = 'double11_current_user_v3';
 
 const DEFAULT_USERS: User[] = [
   {
@@ -24,50 +24,17 @@ const DEFAULT_USERS: User[] = [
     role: 'admin',
     status: 'active',
     codBalanceNpr: 0,
-    totalShipments: 128,
+    totalShipments: 0,
     createdAt: '2026-01-01',
-  },
-  {
-    id: 'usr-merch-1',
-    name: 'Pradeep Gurung',
-    email: 'pradeep@himalayantech.np',
-    company: 'Himalayan Tech Nepal Pvt Ltd',
-    phone: '+977 98012 34567',
-    role: 'merchant',
-    status: 'active',
-    codBalanceNpr: 45200,
-    totalShipments: 14,
-    createdAt: '2026-03-15',
-  },
-  {
-    id: 'usr-merch-2',
-    name: 'Elena Rostova',
-    email: 'elena@pacificrobotics.com',
-    company: 'Pacific Robotics Nepal',
-    phone: '+977 98460 11223',
-    role: 'merchant',
-    status: 'active',
-    codBalanceNpr: 18500,
-    totalShipments: 8,
-    createdAt: '2026-04-10',
-  },
-  {
-    id: 'usr-merch-3',
-    name: 'Sunita Sharma',
-    email: 'sunita@koshitrade.np',
-    company: 'Koshi Agro-Industrial Trade',
-    phone: '+977 98112 88990',
-    role: 'merchant',
-    status: 'active',
-    codBalanceNpr: 68400,
-    totalShipments: 22,
-    createdAt: '2026-05-20',
   },
 ];
 
 export function getUsers(): User[] {
   if (typeof window === 'undefined') return DEFAULT_USERS;
   try {
+    // Purge legacy storage versions
+    localStorage.removeItem('double11_users_v2');
+    localStorage.removeItem('double11_users');
     const raw = localStorage.getItem(USERS_STORAGE_KEY);
     if (!raw) {
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(DEFAULT_USERS));
@@ -82,6 +49,8 @@ export function getUsers(): User[] {
 export function getCurrentUser(): User | null {
   if (typeof window === 'undefined') return null;
   try {
+    localStorage.removeItem('double11_current_user_v2');
+    localStorage.removeItem('double11_current_user');
     const raw = localStorage.getItem(CURRENT_USER_KEY);
     if (!raw) return null;
     return JSON.parse(raw);
@@ -102,7 +71,7 @@ export function loginUser(email: string, password?: string): { success: boolean;
   if (!user) {
     return {
       success: false,
-      error: 'No account found with this email. Please register as a Merchant or use demo credentials.',
+      error: 'No account found with this email. Please check your spelling or register a new Merchant account.',
     };
   }
 

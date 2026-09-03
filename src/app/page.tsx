@@ -45,9 +45,6 @@ export default function HomePage() {
     router.push(`/track?id=${encodeURIComponent(trackingId.trim())}`);
   };
 
-  const handleSampleClick = (id: string) => {
-    router.push(`/track?id=${id}`);
-  };
 
   const handleWaitlistSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,7 +108,7 @@ export default function HomePage() {
                   <input
                     type="text"
                     className="input-field"
-                    placeholder="Enter Tracking # (e.g. D11-8892-KTM)"
+                    placeholder="Enter Tracking # (e.g. CP002994035NP)"
                     value={trackingId}
                     onChange={(e) => setTrackingId(e.target.value)}
                     style={{ flex: 1, minWidth: '220px', fontFamily: 'var(--font-mono)', fontSize: '1rem', padding: '0.85rem 1.1rem' }}
@@ -122,41 +119,11 @@ export default function HomePage() {
                   </button>
                 </form>
 
-                {/* 1-Click Demo Samples */}
-                <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Try Live Samples:</span>
-                  <button
-                    type="button"
-                    onClick={() => handleSampleClick('D11-8892-KTM')}
-                    className="badge badge-subtle"
-                    style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)' }}
-                  >
-                    D11-8892-KTM (KTM &rarr; Pokhara)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSampleClick('D11-4410-BIRT')}
-                    className="badge badge-subtle"
-                    style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)' }}
-                  >
-                    D11-4410-BIRT (Birgunj &rarr; Biratnagar)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSampleClick('D11-9921-CHIT')}
-                    className="badge badge-subtle"
-                    style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)' }}
-                  >
-                    D11-9921-CHIT (Chitwan Delivered)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSampleClick('D11-INTL-11')}
-                    className="badge badge-orange"
-                    style={{ cursor: 'pointer', fontFamily: 'var(--font-mono)' }}
-                  >
-                    D11-INTL-11 (Global - Coming Soon)
-                  </button>
+                {/* D1 Database Tracking Telemetry Indicator */}
+                <div style={{ marginTop: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Instant Telemetry Tracking connected to Cloudflare D1 Database
+                  </span>
                 </div>
               </div>
 

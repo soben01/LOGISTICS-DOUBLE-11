@@ -66,299 +66,16 @@ export interface Shipment {
   };
 }
 
-export const INITIAL_SHIPMENTS: Shipment[] = [
-  {
-    id: 'D11-8892-KTM',
-    service: 'Double 11 Nepal Express',
-    serviceCode: 'EXP',
-    status: 'In Transit',
-    origin: {
-      city: 'Kathmandu',
-      province: 'Bagmati Province',
-      hub: 'Kathmandu Central Mega-Hub (TIA Cargo Gate)',
-    },
-    destination: {
-      city: 'Pokhara',
-      province: 'Gandaki Province',
-      hub: 'Pokhara Lake City Distribution Hub',
-      areaCode: '33700',
-    },
-    sender: {
-      name: 'Himalayan Electronics Nepal',
-      company: 'Apex Tech Nepal Pvt Ltd',
-      phone: '+977 98012 34567',
-    },
-    recipient: {
-      name: 'Pradeep Gurung',
-      company: 'Annapurna IT Solutions',
-      address: 'Lakeside Ward No. 6, Pokhara, Gandaki, Nepal',
-      phone: '+977 98460 11223',
-    },
-    cargo: {
-      pieces: 3,
-      weightKg: 8.5,
-      volumeCbm: 0.045,
-      description: 'Smart Handheld Scanners & 5G Modem Routers',
-      declaredValueNpr: 145000,
-    },
-    telemetry: {
-      transportVehicle: 'D11 Express Electric Van #BA-2-PA-8892',
-      waybillNumber: 'AWB-D11-NP-8892',
-      trackingRoute: 'Prithvi Highway High-Speed Route',
-      estimatedArrival: 'Today at 16:30 NPT',
-      temperatureCelsius: 22.1,
-      currentSpeedKmh: 68,
-    },
-    checkpoints: [
-      {
-        id: 'cp-ktm-4',
-        timestamp: 'Sep 02, 2026 - 11:30 NPT',
-        status: 'In Transit',
-        location: 'Mugling Transit Gateway',
-        description: 'En route along Prithvi Corridor with GPS telemetry & thermal monitoring active.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-ktm-3',
-        timestamp: 'Sep 02, 2026 - 08:45 NPT',
-        status: 'Hub Received',
-        location: 'Kathmandu Central Mega-Hub',
-        description: 'Automated barcode sorting and weight audit complete. Loaded to Express Courier Van.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-ktm-2',
-        timestamp: 'Sep 02, 2026 - 07:15 NPT',
-        status: 'Picked Up',
-        location: 'New Road Commercial Hub, Kathmandu',
-        description: 'Double 11 Rider collected parcel directly from merchant warehouse.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-ktm-1',
-        timestamp: 'Sep 01, 2026 - 21:00 NPT',
-        status: 'Order Placed',
-        location: 'Double 11 Digital Portal',
-        description: 'Consignment booked online. Digital waybill issued.',
-        isCompleted: true,
-      },
-    ],
-  },
-  {
-    id: 'D11-4410-BIRT',
-    service: 'Nationwide Hub Cargo',
-    serviceCode: 'CARGO',
-    status: 'Out for Delivery',
-    origin: {
-      city: 'Birgunj',
-      province: 'Madhesh Province',
-      hub: 'Birgunj Inland Dry Port Terminal',
-    },
-    destination: {
-      city: 'Biratnagar',
-      province: 'Koshi Province',
-      hub: 'Biratnagar Eastern Industrial Hub',
-      areaCode: '56613',
-    },
-    sender: {
-      name: 'Terai Supply Chain Logistics',
-      company: 'Double 11 South Corridor Branch',
-      phone: '+977 98112 88990',
-    },
-    recipient: {
-      name: 'Sunita Sharma',
-      company: 'Koshi Agro-Industrial Trade',
-      address: 'Main Road Ward No. 4, Biratnagar, Koshi, Nepal',
-      phone: '+977 98020 99881',
-    },
-    cargo: {
-      pieces: 12,
-      weightKg: 240,
-      volumeCbm: 1.2,
-      description: 'Industrial Precision Hardware, Pumps & Fittings',
-      declaredValueNpr: 480000,
-    },
-    telemetry: {
-      transportVehicle: 'D11 Heavy Freight Carrier #NA-5-KHA-4410',
-      waybillNumber: 'AWB-D11-NP-4410',
-      trackingRoute: 'East-West Highway (Mahendra Highway)',
-      estimatedArrival: 'Today at 14:00 NPT',
-      currentSpeedKmh: 55,
-    },
-    checkpoints: [
-      {
-        id: 'cp-brt-3',
-        timestamp: 'Sep 02, 2026 - 10:15 NPT',
-        status: 'Out for Delivery',
-        location: 'Biratnagar Hub Distribution Line',
-        description: 'Assigned to delivery pilot Ramesh Karki. Out for final delivery to recipient premises.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-brt-2',
-        timestamp: 'Sep 02, 2026 - 05:30 NPT',
-        status: 'Hub Received',
-        location: 'Itahari Regional Transit Center',
-        description: 'Cross-docking completed. Transferred to Biratnagar delivery unit.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-brt-1',
-        timestamp: 'Sep 01, 2026 - 16:00 NPT',
-        status: 'Picked Up',
-        location: 'Birgunj Dry Port Customs Zone',
-        description: 'Bulk consignment secured with GPS tamper-proof e-seal.',
-        isCompleted: true,
-      },
-    ],
-  },
-  {
-    id: 'D11-9921-CHIT',
-    service: 'Same-Day Valley Rush',
-    serviceCode: 'RUSH',
-    status: 'Delivered',
-    origin: {
-      city: 'Lalitpur',
-      province: 'Bagmati Province',
-      hub: 'Patan High-Tech Fulfillment Hub',
-    },
-    destination: {
-      city: 'Bharatpur',
-      province: 'Bagmati Province',
-      hub: 'Chitwan Narayangarh Gateway',
-      areaCode: '44200',
-    },
-    sender: {
-      name: 'Double 11 Central Fulfillment',
-      company: 'Double 11 Express Nepal',
-      phone: '+977 1 5522001',
-    },
-    recipient: {
-      name: 'Bibek Adhikari',
-      company: 'Chitwan Medical Supplies',
-      address: 'Lions Chowk, Narayangarh, Bharatpur, Chitwan',
-      phone: '+977 98550 12345',
-    },
-    cargo: {
-      pieces: 2,
-      weightKg: 4.2,
-      volumeCbm: 0.02,
-      description: 'Emergency Medical Diagnostic Kits & Optics',
-      declaredValueNpr: 85000,
-    },
-    telemetry: {
-      transportVehicle: 'D11 Swift Electric Van #BA-1-JHA-9921',
-      waybillNumber: 'AWB-D11-NP-9921',
-      trackingRoute: 'Kathmandu-Mugling-Narayangarh Express Lane',
-      estimatedArrival: 'Delivered Successfully',
-    },
-    proofOfDelivery: {
-      deliveredAt: 'Sep 02, 2026 - 10:45 NPT',
-      receivedBy: 'Bibek Adhikari (Verified via Handheld App)',
-      signatureText: 'Bibek Adhikari - Narayangarh Clinic',
-    },
-    checkpoints: [
-      {
-        id: 'cp-chit-4',
-        timestamp: 'Sep 02, 2026 - 10:45 NPT',
-        status: 'Delivered',
-        location: 'Lions Chowk, Narayangarh, Chitwan',
-        description: 'Consignment handed over successfully. Digital proof of delivery verified.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-chit-3',
-        timestamp: 'Sep 02, 2026 - 08:30 NPT',
-        status: 'Out for Delivery',
-        location: 'Bharatpur Central Station',
-        description: 'Out for priority doorstep delivery with driver Manoj Shrestha.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-chit-2',
-        timestamp: 'Sep 02, 2026 - 05:00 NPT',
-        status: 'In Transit',
-        location: 'Nagdhunga - Naubise Corridor',
-        description: 'Departed Kathmandu Valley on early morning express run.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-chit-1',
-        timestamp: 'Sep 01, 2026 - 20:00 NPT',
-        status: 'Hub Received',
-        location: 'Lalitpur Patan Hub',
-        description: 'Package packaged and cleared for Same-Day priority dispatch.',
-        isCompleted: true,
-      },
-    ],
-  },
-  {
-    id: 'D11-INTL-11',
-    service: 'International Cross-Border (Coming Soon)',
-    serviceCode: 'INTL',
-    isInternational: true,
-    status: 'Customs Cleared',
-    origin: {
-      city: 'Kathmandu (TIA)',
-      province: 'Nepal',
-      hub: 'Tribhuvan International Airport Cargo Terminal',
-    },
-    destination: {
-      city: 'Dubai / Global Gateways',
-      province: 'UAE / Worldwide',
-      hub: 'Dubai International Air Cargo Terminal',
-      areaCode: 'DXB-01',
-    },
-    sender: {
-      name: 'Soben (Double 11 Global)',
-      company: 'Double 11 Logistics Nepal',
-      phone: '+977 1 4411000',
-    },
-    recipient: {
-      name: 'Global Enterprise Partner',
-      company: 'International Cargo Network',
-      address: 'Dubai South Aviation District, UAE',
-      phone: '+971 4 800 1111',
-    },
-    cargo: {
-      pieces: 1,
-      weightKg: 10.0,
-      volumeCbm: 0.05,
-      description: 'International Air Freight Corridor Pilot Test Kit',
-      declaredValueNpr: 250000,
-    },
-    telemetry: {
-      transportVehicle: 'International Boeing 777F Charter Corridor',
-      waybillNumber: 'AWB-D11-INTL-001',
-      trackingRoute: 'TIA (KTM) to DXB / HKG Corridor',
-      estimatedArrival: 'Official International Launch: Coming Soon (Q4 2026)',
-    },
-    checkpoints: [
-      {
-        id: 'cp-intl-2',
-        timestamp: 'Sep 02, 2026 - 12:00 NPT',
-        status: 'Customs Cleared',
-        location: 'Kathmandu TIA Air Cargo Complex',
-        description: 'Nepal Customs pre-clearance validation successful for international flight lanes.',
-        isCompleted: true,
-      },
-      {
-        id: 'cp-intl-1',
-        timestamp: 'Sep 01, 2026 - 15:00 NPT',
-        status: 'Order Placed',
-        location: 'Double 11 Global Expansion Division',
-        description: 'Corridor pilot initiated. International services launching soon for all Nepal businesses.',
-        isCompleted: true,
-      },
-    ],
-  },
-];
+export const INITIAL_SHIPMENTS: Shipment[] = [];
 
-const STORAGE_KEY = 'double11_shipments_nepal_v1';
+const STORAGE_KEY = 'double11_shipments_v3';
 
 export function getShipments(): Shipment[] {
   if (typeof window === 'undefined') return INITIAL_SHIPMENTS;
   try {
+    // Purge legacy storage versions
+    localStorage.removeItem('double11_shipments_nepal_v1');
+    localStorage.removeItem('double11_shipments_v2');
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_SHIPMENTS));
@@ -367,6 +84,35 @@ export function getShipments(): Shipment[] {
     return JSON.parse(saved);
   } catch {
     return INITIAL_SHIPMENTS;
+  }
+}
+
+export async function fetchD1Tracking(trackingNumber: string): Promise<any | null> {
+  if (typeof window === 'undefined') return null;
+  try {
+    const res = await fetch(`/api/track?id=${encodeURIComponent(trackingNumber.trim())}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.found && data.consignment) {
+        return data.consignment;
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchD1Status(): Promise<any | null> {
+  if (typeof window === 'undefined') return null;
+  try {
+    const res = await fetch('/api/db-status');
+    if (res.ok) {
+      return await res.json();
+    }
+    return null;
+  } catch {
+    return null;
   }
 }
 

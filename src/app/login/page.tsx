@@ -39,14 +39,14 @@ function LoginContent() {
 
   // Sign In fields
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('password123');
+  const [password, setPassword] = useState('');
 
   // Sign Up fields
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupCompany, setSignupCompany] = useState('');
   const [signupPhone, setSignupPhone] = useState('');
-  const [signupPassword, setSignupPassword] = useState('password123');
+  const [signupPassword, setSignupPassword] = useState('');
 
   // Live account & role detection
   const [detectedUser, setDetectedUser] = useState<User | undefined>(undefined);
@@ -116,21 +116,6 @@ function LoginContent() {
       setTimeout(() => {
         router.push(destination);
       }, 700);
-    }
-  };
-
-  const handle1ClickDemo = (demoEmail: string) => {
-    setEmail(demoEmail);
-    const res = loginUser(demoEmail);
-    if (res.success && res.user) {
-      const matched = getMatchingPortal(res.user);
-      const destination = resolveMatchedRedirect(res.user, redirectPath);
-      setSuccessMsg(
-        `✓ Role Detected: ${res.user.role.toUpperCase()}! Signed in as ${res.user.name}. Redirecting to ${matched.portalName} (${destination})...`
-      );
-      setTimeout(() => {
-        router.push(destination);
-      }, 500);
     }
   };
 
@@ -370,77 +355,6 @@ function LoginContent() {
               </button>
             </form>
           )}
-
-          {/* Quick 1-Click Demo Accounts with Role Detection */}
-          <div style={{ marginTop: '2.5rem', paddingTop: '1.75rem', borderTop: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '0.75rem', textAlign: 'center' }}>
-              FAST 1-CLICK DEMO (ROLE AUTO-DETECT)
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              {/* Admin Demo */}
-              <button
-                type="button"
-                onClick={() => handle1ClickDemo('soben@double11.com')}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  background: 'rgba(255, 102, 0, 0.08)',
-                  border: '1px solid rgba(255, 102, 0, 0.3)',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '8px',
-                  color: '#ffffff',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  fontSize: '0.85rem',
-                  transition: 'all 0.2s'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <ShieldCheck size={16} color="var(--brand-orange)" />
-                  <div>
-                    <strong style={{ color: 'var(--brand-orange)' }}>Soben</strong>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>soben@double11.com</div>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <span className="badge badge-orange" style={{ fontSize: '0.68rem' }}>Admin Role &rarr; /admin</span>
-                </div>
-              </button>
-
-              {/* Merchant Demo */}
-              <button
-                type="button"
-                onClick={() => handle1ClickDemo('pradeep@himalayantech.np')}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  background: 'rgba(6, 182, 212, 0.08)',
-                  border: '1px solid rgba(6, 182, 212, 0.3)',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '8px',
-                  color: '#ffffff',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  fontSize: '0.85rem',
-                  transition: 'all 0.2s'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <Truck size={16} color="var(--brand-cyan)" />
-                  <div>
-                    <strong style={{ color: 'var(--brand-cyan)' }}>Pradeep Gurung</strong>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>pradeep@himalayantech.np &bull; Himalayan Tech</div>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <span className="badge badge-cyan" style={{ fontSize: '0.68rem' }}>Merchant Role &rarr; /merchant</span>
-                </div>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
