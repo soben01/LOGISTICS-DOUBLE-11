@@ -288,7 +288,7 @@ export default function AdminControlPanel() {
               </button>
 
               <Link href="/login" className="btn btn-secondary btn-sm" style={{ justifyContent: 'center' }}>
-                Merchant Login &rarr;
+                Login &rarr;
               </Link>
             </div>
           </div>
@@ -603,7 +603,7 @@ export default function AdminControlPanel() {
                     </p>
                   </div>
 
-                  <Link href="/login" className="btn btn-secondary btn-sm">
+                  <Link href="/login?portal=merchant" className="btn btn-secondary btn-sm">
                     <Plus size={14} />
                     <span>Register New Merchant</span>
                   </Link>

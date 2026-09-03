@@ -578,11 +578,11 @@ export default function RatesPage() {
               </div>
 
               <Link
-                href={currentUser ? "/merchant" : "/login?redirect=/merchant"}
+                href={currentUser ? "/merchant" : "/login"}
                 className="btn btn-primary btn-sm"
                 style={{ width: '100%', marginTop: '1.25rem', textAlign: 'center' }}
               >
-                <span>{currentUser ? "Open Merchant COD Ledger \u2192" : "Merchant Sign In for COD \u2192"}</span>
+                <span>{currentUser ? "Open Merchant COD Ledger \u2192" : "Login for COD \u2192"}</span>
               </Link>
             </div>
           </div>

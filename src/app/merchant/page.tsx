@@ -38,7 +38,7 @@ export default function MerchantPortal() {
   useEffect(() => {
     const user = getCurrentUser();
     if (!user) {
-      router.push('/login?redirect=/merchant');
+      router.push('/login?portal=merchant&redirect=/merchant');
       return;
     }
     setCurrentUser(user);

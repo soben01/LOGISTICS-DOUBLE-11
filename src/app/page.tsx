@@ -397,11 +397,11 @@ export default function HomePage() {
                 </li>
               </ul>
               <Link
-                href={currentUser ? "/merchant" : "/login?redirect=/merchant"}
+                href={currentUser ? "/merchant" : "/login"}
                 className="btn btn-secondary btn-sm"
                 style={{ marginTop: 'auto' }}
               >
-                {currentUser ? "Merchant COD Portal \u2192" : "Merchant Sign In \u2192"}
+                {currentUser ? "Merchant COD Portal \u2192" : "Login \u2192"}
               </Link>
             </div>
 

@@ -15,22 +15,27 @@ import {
   AlertCircle,
   Sparkles,
   KeyRound,
-  ShieldAlert,
   Truck,
-  Users
+  Users,
+  LogIn
 } from 'lucide-react';
-import { getCurrentUser, loginUser, signupUser, User } from '../../lib/auth';
+import {
+  getCurrentUser,
+  loginUser,
+  signupUser,
+  findUserByEmail,
+  getMatchingPortal,
+  resolveMatchedRedirect,
+  User
+} from '../../lib/auth';
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get('redirect');
 
-  // Top role mode: 'merchant' or 'admin'
-  const [roleMode, setRoleMode] = useState<'merchant' | 'admin'>('merchant');
-
-  // Sub-tabs for merchant
-  const [merchantTab, setMerchantTab] = useState<'signin' | 'signup'>('signin');
+  // Sub-tabs: 'signin' | 'signup'
+  const [authTab, setAuthTab] = useState<'signin' | 'signup'>('signin');
 
   // Sign In fields
   const [email, setEmail] = useState('');
@@ -43,22 +48,31 @@ function LoginContent() {
   const [signupPhone, setSignupPhone] = useState('');
   const [signupPassword, setSignupPassword] = useState('password123');
 
+  // Live account & role detection
+  const [detectedUser, setDetectedUser] = useState<User | undefined>(undefined);
+
   // Status messages
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  // 1. Auto-redirect already authenticated users based on role
   useEffect(() => {
     const user = getCurrentUser();
     if (user) {
-      if (redirectPath) {
-        router.push(redirectPath);
-      } else if (user.role === 'admin') {
-        router.push('/admin');
-      } else {
-        router.push('/merchant');
-      }
+      const destination = resolveMatchedRedirect(user, redirectPath);
+      router.push(destination);
     }
   }, [redirectPath, router]);
+
+  // 2. Real-time role detection as user enters their email
+  useEffect(() => {
+    if (email.trim().length >= 3) {
+      const found = findUserByEmail(email);
+      setDetectedUser(found);
+    } else {
+      setDetectedUser(undefined);
+    }
+  }, [email]);
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,11 +83,15 @@ function LoginContent() {
     if (!res.success) {
       setErrorMsg(res.error || 'Authentication failed. Please check your credentials.');
     } else if (res.user) {
-      const destination = redirectPath || (res.user.role === 'admin' ? '/admin' : '/merchant');
-      setSuccessMsg(`Welcome back, ${res.user.name} (${res.user.role.toUpperCase()})! Opening console...`);
+      const matched = getMatchingPortal(res.user);
+      const destination = resolveMatchedRedirect(res.user, redirectPath);
+
+      setSuccessMsg(
+        `✓ Role Detected: ${res.user.role.toUpperCase()}! Welcome back, ${res.user.name}. Redirecting to ${matched.portalName} (${destination})...`
+      );
       setTimeout(() => {
         router.push(destination);
-      }, 700);
+      }, 600);
     }
   };
 
@@ -91,12 +109,13 @@ function LoginContent() {
     });
 
     if (!res.success) {
-      setErrorMsg(res.error || 'Failed to create merchant account.');
+      setErrorMsg(res.error || 'Failed to create account.');
     } else if (res.user) {
-      setSuccessMsg(`Merchant account registered for ${res.user.name}! Access granted.`);
+      const destination = resolveMatchedRedirect(res.user, redirectPath);
+      setSuccessMsg(`✓ Merchant account registered for ${res.user.name}! Redirecting to Merchant Portal...`);
       setTimeout(() => {
-        router.push(redirectPath || '/merchant');
-      }, 900);
+        router.push(destination);
+      }, 700);
     }
   };
 
@@ -104,11 +123,14 @@ function LoginContent() {
     setEmail(demoEmail);
     const res = loginUser(demoEmail);
     if (res.success && res.user) {
-      const target = redirectPath || (res.user.role === 'admin' ? '/admin' : '/merchant');
-      setSuccessMsg(`Signed in as ${res.user.name} [${res.user.role.toUpperCase()}]. Redirecting...`);
+      const matched = getMatchingPortal(res.user);
+      const destination = resolveMatchedRedirect(res.user, redirectPath);
+      setSuccessMsg(
+        `✓ Role Detected: ${res.user.role.toUpperCase()}! Signed in as ${res.user.name}. Redirecting to ${matched.portalName} (${destination})...`
+      );
       setTimeout(() => {
-        router.push(target);
-      }, 600);
+        router.push(destination);
+      }, 500);
     }
   };
 
@@ -120,79 +142,77 @@ function LoginContent() {
           <div className="badge badge-orange" style={{ marginBottom: '0.75rem' }}>
             <Sparkles size={13} /> DOUBLE 11 AUTHENTICATION
           </div>
-          <h1 style={{ fontSize: '2.4rem' }}>Unified Portal Access</h1>
+          <h1 style={{ fontSize: '2.4rem' }}>Login</h1>
           <p style={{ maxWidth: '520px', margin: '0.5rem auto 0 auto', color: 'var(--text-secondary)' }}>
-            Choose whether you are signing in as a verified Nepal Merchant or entering the Central Admin Control Tower.
+            Enter your credentials. Your account role (Merchant or Admin) is automatically detected to direct you to your portal.
           </p>
         </div>
 
-        {/* Role Selector Tabs (Merchant vs Admin) */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '1rem',
-          maxWidth: '560px',
-          margin: '0 auto 2rem auto',
-          background: 'rgba(255, 255, 255, 0.03)',
-          padding: '0.5rem',
-          borderRadius: '14px',
-          border: '1px solid var(--border-medium)'
-        }}>
-          <button
-            type="button"
-            onClick={() => {
-              setRoleMode('merchant');
-              setErrorMsg('');
-              setSuccessMsg('');
-            }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.6rem',
-              padding: '0.85rem 1.25rem',
-              borderRadius: '10px',
-              border: roleMode === 'merchant' ? '1px solid var(--brand-cyan)' : '1px solid transparent',
-              background: roleMode === 'merchant' ? 'rgba(6, 182, 212, 0.12)' : 'transparent',
-              color: roleMode === 'merchant' ? '#ffffff' : 'var(--text-secondary)',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-          >
-            <Truck size={18} color={roleMode === 'merchant' ? 'var(--brand-cyan)' : undefined} />
-            <span>Merchant Portal</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setRoleMode('admin');
-              setErrorMsg('');
-              setSuccessMsg('');
-            }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.6rem',
-              padding: '0.85rem 1.25rem',
-              borderRadius: '10px',
-              border: roleMode === 'admin' ? '1px solid var(--brand-orange)' : '1px solid transparent',
-              background: roleMode === 'admin' ? 'rgba(255, 102, 0, 0.12)' : 'transparent',
-              color: roleMode === 'admin' ? '#ffffff' : 'var(--text-secondary)',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-          >
-            <ShieldCheck size={18} color={roleMode === 'admin' ? 'var(--brand-orange)' : undefined} />
-            <span>Admin Console</span>
-          </button>
-        </div>
-
         {/* Main Form Glass Panel */}
-        <div className="glass-panel" style={{ maxWidth: '560px', margin: '0 auto', padding: '2.5rem' }}>
+        <div className="glass-panel" style={{ maxWidth: '540px', margin: '0 auto', padding: '2.5rem' }}>
+          {/* Sub-tabs: Login vs Register */}
+          <div className="tab-list" style={{ marginBottom: '1.75rem' }}>
+            <button
+              type="button"
+              onClick={() => { setAuthTab('signin'); setErrorMsg(''); setSuccessMsg(''); }}
+              className={`tab-btn ${authTab === 'signin' ? 'active' : ''}`}
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              onClick={() => { setAuthTab('signup'); setErrorMsg(''); setSuccessMsg(''); }}
+              className={`tab-btn ${authTab === 'signup' ? 'active' : ''}`}
+            >
+              Register Merchant
+            </button>
+          </div>
+
+          {/* Real-time Dynamic Role Detection Badge */}
+          {authTab === 'signin' && detectedUser && (
+            <div style={{
+              background: detectedUser.role === 'admin'
+                ? 'rgba(255, 102, 0, 0.12)'
+                : 'rgba(6, 182, 212, 0.12)',
+              border: detectedUser.role === 'admin'
+                ? '1px solid rgba(255, 102, 0, 0.4)'
+                : '1px solid rgba(6, 182, 212, 0.4)',
+              borderRadius: '10px',
+              padding: '0.75rem 1rem',
+              marginBottom: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '0.5rem',
+              animation: 'fadeIn 0.25s ease'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                {detectedUser.role === 'admin' ? (
+                  <ShieldCheck size={18} color="var(--brand-orange)" />
+                ) : (
+                  <Truck size={18} color="var(--brand-cyan)" />
+                )}
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: detectedUser.role === 'admin' ? 'var(--brand-orange)' : 'var(--brand-cyan)' }}>
+                    ROLE DETECTED: {detectedUser.role.toUpperCase()}
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: '#ffffff' }}>
+                    {detectedUser.name} &bull; <span style={{ color: 'var(--text-secondary)' }}>{detectedUser.company}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: '#ffffff', background: 'rgba(255,255,255,0.08)', padding: '0.25rem 0.6rem', borderRadius: '6px' }}>
+                <span>Routes to:</span>
+                <strong style={{ color: detectedUser.role === 'admin' ? 'var(--brand-orange)' : 'var(--brand-cyan)' }}>
+                  {detectedUser.role === 'admin' ? '/admin' : '/merchant'}
+                </strong>
+                <ArrowRight size={12} />
+              </div>
+            </div>
+          )}
+
           {/* Feedback alerts */}
           {errorMsg && (
             <div style={{
@@ -230,218 +250,135 @@ function LoginContent() {
             </div>
           )}
 
-          {/* ================= MODE 1: MERCHANT PORTAL ================= */}
-          {roleMode === 'merchant' && (
-            <div>
-              {/* Sub-tabs: Sign In vs Sign Up */}
-              <div className="tab-list" style={{ marginBottom: '1.5rem' }}>
-                <button
-                  type="button"
-                  onClick={() => { setMerchantTab('signin'); setErrorMsg(''); }}
-                  className={`tab-btn ${merchantTab === 'signin' ? 'active' : ''}`}
-                >
-                  Merchant Sign In
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setMerchantTab('signup'); setErrorMsg(''); }}
-                  className={`tab-btn ${merchantTab === 'signup' ? 'active' : ''}`}
-                >
-                  Create Merchant Account
-                </button>
+          {/* ================= TAB 1: LOGIN ================= */}
+          {authTab === 'signin' ? (
+            <form onSubmit={handleSignIn} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div className="input-group">
+                <label className="input-label">Email Address</label>
+                <div style={{ position: 'relative' }}>
+                  <Mail size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your registered email address"
+                    className="input-field"
+                    style={{ paddingLeft: '2.5rem' }}
+                    required
+                  />
+                </div>
               </div>
 
-              {merchantTab === 'signin' ? (
-                <form onSubmit={handleSignIn} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                  <div className="input-group">
-                    <label className="input-label">Merchant Business Email</label>
-                    <div style={{ position: 'relative' }}>
-                      <Mail size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="e.g. pradeep@himalayantech.np"
-                        className="input-field"
-                        style={{ paddingLeft: '2.5rem' }}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="input-group">
-                    <label className="input-label">Password</label>
-                    <div style={{ position: 'relative' }}>
-                      <KeyRound size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                      <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="input-field"
-                        style={{ paddingLeft: '2.5rem' }}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <button type="submit" className="btn btn-primary btn-lg" style={{ marginTop: '0.5rem', width: '100%', justifyContent: 'center' }}>
-                    <span>Enter Merchant Portal</span>
-                    <ArrowRight size={16} />
-                  </button>
-                </form>
-              ) : (
-                <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div className="input-group">
-                    <label className="input-label">Company / Shop Name</label>
-                    <div style={{ position: 'relative' }}>
-                      <Building size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                      <input
-                        type="text"
-                        value={signupCompany}
-                        onChange={(e) => setSignupCompany(e.target.value)}
-                        placeholder="e.g. Pokhara Electronics Hub"
-                        className="input-field"
-                        style={{ paddingLeft: '2.5rem' }}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="input-group">
-                    <label className="input-label">Authorized Representative Full Name</label>
-                    <input
-                      type="text"
-                      value={signupName}
-                      onChange={(e) => setSignupName(e.target.value)}
-                      placeholder="e.g. Pradeep Gurung"
-                      className="input-field"
-                      required
-                    />
-                  </div>
-
-                  <div className="input-group">
-                    <label className="input-label">Business Email</label>
-                    <div style={{ position: 'relative' }}>
-                      <Mail size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                      <input
-                        type="email"
-                        value={signupEmail}
-                        onChange={(e) => setSignupEmail(e.target.value)}
-                        placeholder="pradeep@business.np"
-                        className="input-field"
-                        style={{ paddingLeft: '2.5rem' }}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="input-group">
-                    <label className="input-label">Nepal Mobile Number (SMS Telemetry)</label>
-                    <div style={{ position: 'relative' }}>
-                      <Phone size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                      <input
-                        type="tel"
-                        value={signupPhone}
-                        onChange={(e) => setSignupPhone(e.target.value)}
-                        placeholder="+977 98000 00000"
-                        className="input-field"
-                        style={{ paddingLeft: '2.5rem' }}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="input-group">
-                    <label className="input-label">Password</label>
-                    <input
-                      type="password"
-                      value={signupPassword}
-                      onChange={(e) => setSignupPassword(e.target.value)}
-                      className="input-field"
-                      required
-                    />
-                  </div>
-
-                  <button type="submit" className="btn btn-primary btn-lg" style={{ marginTop: '0.5rem', width: '100%', justifyContent: 'center' }}>
-                    <span>Register Merchant &amp; Get COD Ready</span>
-                    <ArrowRight size={16} />
-                  </button>
-                </form>
-              )}
-            </div>
-          )}
-
-          {/* ================= MODE 2: ADMIN CONSOLE ================= */}
-          {roleMode === 'admin' && (
-            <div>
-              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                <div style={{
-                  width: '50px',
-                  height: '50px',
-                  borderRadius: '12px',
-                  background: 'rgba(255, 102, 0, 0.15)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1rem auto',
-                  color: 'var(--brand-orange)'
-                }}>
-                  <ShieldCheck size={26} />
+              <div className="input-group">
+                <label className="input-label">Password</label>
+                <div style={{ position: 'relative' }}>
+                  <KeyRound size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="input-field"
+                    style={{ paddingLeft: '2.5rem' }}
+                    required
+                  />
                 </div>
-                <h3 style={{ fontSize: '1.3rem' }}>Central Control Tower Login</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                  Administrative access for Founder Soben and regional dispatch supervisors.
-                </p>
               </div>
 
-              <form onSubmit={handleSignIn} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div className="input-group">
-                  <label className="input-label">Administrator Email</label>
-                  <div style={{ position: 'relative' }}>
-                    <Mail size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="soben@double11.com"
-                      className="input-field"
-                      style={{ paddingLeft: '2.5rem' }}
-                      required
-                    />
-                  </div>
+              <button type="submit" className="btn btn-primary btn-lg" style={{ marginTop: '0.5rem', width: '100%', justifyContent: 'center' }}>
+                <LogIn size={16} />
+                <span>Login</span>
+                <ArrowRight size={16} />
+              </button>
+            </form>
+          ) : (
+            /* ================= TAB 2: REGISTER MERCHANT ================= */
+            <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="input-group">
+                <label className="input-label">Company / Shop Name</label>
+                <div style={{ position: 'relative' }}>
+                  <Building size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type="text"
+                    value={signupCompany}
+                    onChange={(e) => setSignupCompany(e.target.value)}
+                    placeholder="e.g. Pokhara Electronics Hub"
+                    className="input-field"
+                    style={{ paddingLeft: '2.5rem' }}
+                    required
+                  />
                 </div>
+              </div>
 
-                <div className="input-group">
-                  <label className="input-label">Master Passkey</label>
-                  <div style={{ position: 'relative' }}>
-                    <KeyRound size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="input-field"
-                      style={{ paddingLeft: '2.5rem' }}
-                      required
-                    />
-                  </div>
+              <div className="input-group">
+                <label className="input-label">Authorized Representative Full Name</label>
+                <input
+                  type="text"
+                  value={signupName}
+                  onChange={(e) => setSignupName(e.target.value)}
+                  placeholder="e.g. Pradeep Gurung"
+                  className="input-field"
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label className="input-label">Business Email</label>
+                <div style={{ position: 'relative' }}>
+                  <Mail size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type="email"
+                    value={signupEmail}
+                    onChange={(e) => setSignupEmail(e.target.value)}
+                    placeholder="pradeep@business.np"
+                    className="input-field"
+                    style={{ paddingLeft: '2.5rem' }}
+                    required
+                  />
                 </div>
+              </div>
 
-                <button type="submit" className="btn btn-primary btn-lg" style={{ marginTop: '0.5rem', width: '100%', justifyContent: 'center' }}>
-                  <ShieldCheck size={18} />
-                  <span>Authenticate &amp; Open Control Tower</span>
-                </button>
-              </form>
-            </div>
+              <div className="input-group">
+                <label className="input-label">Nepal Mobile Number</label>
+                <div style={{ position: 'relative' }}>
+                  <Phone size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type="tel"
+                    value={signupPhone}
+                    onChange={(e) => setSignupPhone(e.target.value)}
+                    placeholder="+977 98000 00000"
+                    className="input-field"
+                    style={{ paddingLeft: '2.5rem' }}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="input-group">
+                <label className="input-label">Password</label>
+                <input
+                  type="password"
+                  value={signupPassword}
+                  onChange={(e) => setSignupPassword(e.target.value)}
+                  className="input-field"
+                  required
+                />
+              </div>
+
+              <button type="submit" className="btn btn-primary btn-lg" style={{ marginTop: '0.5rem', width: '100%', justifyContent: 'center' }}>
+                <span>Register Merchant &amp; Login</span>
+                <ArrowRight size={16} />
+              </button>
+            </form>
           )}
 
-          {/* Quick 1-Click Demo Accounts */}
+          {/* Quick 1-Click Demo Accounts with Role Detection */}
           <div style={{ marginTop: '2.5rem', paddingTop: '1.75rem', borderTop: '1px solid var(--border-subtle)' }}>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '0.75rem', textAlign: 'center' }}>
-              FAST 1-CLICK DEMO ACCESS
+              FAST 1-CLICK DEMO (ROLE AUTO-DETECT)
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              {/* Admin 1-Click */}
+              {/* Admin Demo */}
               <button
                 type="button"
                 onClick={() => handle1ClickDemo('soben@double11.com')}
@@ -456,20 +393,23 @@ function LoginContent() {
                   color: '#ffffff',
                   cursor: 'pointer',
                   textAlign: 'left',
-                  fontSize: '0.85rem'
+                  fontSize: '0.85rem',
+                  transition: 'all 0.2s'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                   <ShieldCheck size={16} color="var(--brand-orange)" />
                   <div>
-                    <strong style={{ color: 'var(--brand-orange)' }}>Admin Console: Soben</strong>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>soben@double11.com &bull; Master Control Tower</div>
+                    <strong style={{ color: 'var(--brand-orange)' }}>Soben</strong>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>soben@double11.com</div>
                   </div>
                 </div>
-                <span className="badge badge-orange" style={{ fontSize: '0.68rem' }}>Admin Role</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span className="badge badge-orange" style={{ fontSize: '0.68rem' }}>Admin Role &rarr; /admin</span>
+                </div>
               </button>
 
-              {/* Merchant 1-Click */}
+              {/* Merchant Demo */}
               <button
                 type="button"
                 onClick={() => handle1ClickDemo('pradeep@himalayantech.np')}
@@ -484,17 +424,20 @@ function LoginContent() {
                   color: '#ffffff',
                   cursor: 'pointer',
                   textAlign: 'left',
-                  fontSize: '0.85rem'
+                  fontSize: '0.85rem',
+                  transition: 'all 0.2s'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <Building size={16} color="var(--brand-cyan)" />
+                  <Truck size={16} color="var(--brand-cyan)" />
                   <div>
-                    <strong style={{ color: 'var(--brand-cyan)' }}>Merchant: Pradeep Gurung</strong>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Himalayan Tech Nepal Pvt Ltd &bull; COD Portal</div>
+                    <strong style={{ color: 'var(--brand-cyan)' }}>Pradeep Gurung</strong>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>pradeep@himalayantech.np &bull; Himalayan Tech</div>
                   </div>
                 </div>
-                <span className="badge badge-cyan" style={{ fontSize: '0.68rem' }}>Merchant Role</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span className="badge badge-cyan" style={{ fontSize: '0.68rem' }}>Merchant Role &rarr; /merchant</span>
+                </div>
               </button>
             </div>
           </div>
@@ -506,8 +449,9 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div style={{ padding: '6rem 0', textAlign: 'center' }}>Loading authentication portal...</div>}>
+    <Suspense fallback={<div style={{ padding: '6rem 0', textAlign: 'center' }}>Loading login...</div>}>
       <LoginContent />
     </Suspense>
   );
 }
+

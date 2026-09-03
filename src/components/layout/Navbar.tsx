@@ -17,7 +17,8 @@ import {
   User as UserIcon,
   LogOut,
   Lock,
-  Building
+  Building,
+  Truck
 } from 'lucide-react';
 import { getCurrentUser, logoutUser, User } from '../../lib/auth';
 
@@ -121,7 +122,7 @@ export default function Navbar() {
               gap: '0.3rem',
               whiteSpace: 'nowrap'
             }}>
-              <Cpu size={12} /> {currentUser?.role === 'admin' ? 'Admin Tower' : currentUser ? 'Merchant Portal' : 'Portal Sign In'}
+              <Cpu size={12} /> {currentUser?.role === 'admin' ? 'Admin Tower' : currentUser ? 'Merchant Portal' : 'Login'}
             </Link>
           </div>
         </div>
@@ -378,7 +379,7 @@ export default function Navbar() {
               style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
               <UserIcon size={14} />
-              <span>Sign In</span>
+              <span>Login</span>
             </Link>
           )}
 
@@ -448,7 +449,7 @@ export default function Navbar() {
               className="btn btn-secondary btn-sm"
               style={{ justifyContent: 'center' }}
             >
-              <UserIcon size={14} /> Sign In / Register
+              <UserIcon size={14} /> Login
             </Link>
           )}
 

@@ -224,3 +224,65 @@ export function logoutUser(): void {
     window.dispatchEvent(new Event('auth-change'));
   }
 }
+
+export function findUserByEmail(email: string): User | undefined {
+  if (!email || !email.trim()) return undefined;
+  const normalized = email.trim().toLowerCase();
+  const users = getUsers();
+  return users.find(u => u.email.toLowerCase() === normalized);
+}
+
+export interface PortalConfig {
+  role: 'admin' | 'merchant';
+  portalPath: '/admin' | '/merchant';
+  portalName: string;
+  badgeLabel: string;
+  description: string;
+}
+
+export function getMatchingPortal(userOrRole: User | 'merchant' | 'admin'): PortalConfig {
+  const role = typeof userOrRole === 'string' ? userOrRole : userOrRole.role;
+  if (role === 'admin') {
+    return {
+      role: 'admin',
+      portalPath: '/admin',
+      portalName: 'Admin Control Tower',
+      badgeLabel: 'ADMIN CONSOLE',
+      description: 'Central operations, telemetry, hub management & fleet dispatch control',
+    };
+  }
+  return {
+    role: 'merchant',
+    portalPath: '/merchant',
+    portalName: 'Merchant Portal',
+    badgeLabel: 'MERCHANT HUB',
+    description: 'COD remittance ledger, tracking, cargo manifest & consignment dispatch',
+  };
+}
+
+export function resolveMatchedRedirect(user: User, redirectParam?: string | null): string {
+  const matched = getMatchingPortal(user);
+  if (!redirectParam || redirectParam.startsWith('/login')) {
+    return matched.portalPath;
+  }
+
+  // Must be relative root path
+  if (!redirectParam.startsWith('/')) {
+    return matched.portalPath;
+  }
+
+  if (user.role === 'admin') {
+    // Admins can navigate to any section except falling into raw merchant redirect
+    if (redirectParam.startsWith('/merchant')) {
+      return '/admin';
+    }
+    return redirectParam;
+  } else {
+    // Merchants cannot access /admin
+    if (redirectParam.startsWith('/admin')) {
+      return '/merchant';
+    }
+    return redirectParam;
+  }
+}
+
