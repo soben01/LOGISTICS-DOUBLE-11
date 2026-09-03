@@ -47,7 +47,9 @@ export default function EmailSummaryModal({
   const activeCount = shipments.filter(s => s.status !== 'Delivered').length;
   const deliveredCount = shipments.filter(s => s.status === 'Delivered').length;
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -57,6 +59,7 @@ export default function EmailSummaryModal({
     }
 
     try {
+      setIsSending(true);
       subscribeTo24hSummary({
         email,
         role,
@@ -66,6 +69,26 @@ export default function EmailSummaryModal({
         includeExceptions,
         associatedTrackingId,
       });
+
+      // Dispatch real summary email immediately
+      try {
+        await fetch('/api/send-summary', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email.trim(),
+            role,
+            trackingId: associatedTrackingId,
+            type: '24h_summary',
+            subject: associatedTrackingId
+              ? `[Double 11] Waybill & Dispatch Notice: ${associatedTrackingId}`
+              : `[Double 11] 24-Hour Logistics & COD Operations Digest Activated (${email.trim()})`,
+          }),
+        });
+      } catch {
+        // Non-blocking network catch
+      }
+
       setIsSaved(true);
       setTimeout(() => {
         setIsSaved(false);
@@ -73,16 +96,43 @@ export default function EmailSummaryModal({
       }, 2200);
     } catch (err: any) {
       setErrorMessage(err?.message || 'Failed to save subscription.');
+    } finally {
+      setIsSending(false);
     }
   };
 
-  const handleSendTest = () => {
+  const handleSendTest = async () => {
     if (!email || !email.includes('@')) {
-      setErrorMessage('Please enter your Gmail address first.');
+      setErrorMessage('Please enter your Gmail / email address first.');
       return;
     }
-    setTestSent(true);
-    setTimeout(() => setTestSent(false), 3000);
+    setErrorMessage('');
+    setIsSending(true);
+    try {
+      const res = await fetch('/api/send-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          role,
+          trackingId: associatedTrackingId,
+          type: 'sample_summary',
+          subject: associatedTrackingId
+            ? `[Double 11] Consignment Tracking Summary: ${associatedTrackingId}`
+            : `[Double 11] Sample 24-Hour Logistics & COD Digest (${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})`,
+        }),
+      });
+      const data = await res.json() as any;
+      if (!res.ok || !data.success) {
+        throw new Error(data?.error || 'Failed to dispatch email.');
+      }
+      setTestSent(true);
+      setTimeout(() => setTestSent(false), 4000);
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Unable to connect to email gateway.');
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -349,11 +399,12 @@ export default function EmailSummaryModal({
               <button
                 type="button"
                 onClick={handleSendTest}
+                disabled={isSending}
                 className="btn btn-outline btn-sm"
                 style={{ fontSize: '0.8rem' }}
               >
-                <Send size={13} />
-                <span>Send Sample 24h Summary</span>
+                <Send size={13} className={isSending ? 'animate-spin' : ''} />
+                <span>{isSending ? 'Dispatching...' : testSent ? 'Sample Sent to Gmail!' : 'Send Sample 24h Summary'}</span>
               </button>
 
               <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -366,11 +417,12 @@ export default function EmailSummaryModal({
                 </button>
                 <button
                   type="submit"
+                  disabled={isSending}
                   className="btn btn-primary btn-sm"
                   style={{ fontWeight: 700 }}
                 >
                   <CheckCircle2 size={14} />
-                  <span>Activate 24-Hour Gmail Digest</span>
+                  <span>{isSending ? 'Activating & Sending...' : 'Activate 24-Hour Gmail Digest'}</span>
                 </button>
               </div>
             </div>

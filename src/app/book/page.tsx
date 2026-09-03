@@ -88,6 +88,7 @@ function BookContent() {
   // Submission & Confirmed Shipment
   const [createdShipment, setCreatedShipment] = useState<Shipment | null>(null);
   const [copiedTracking, setCopiedTracking] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Sync authentication
@@ -276,6 +277,21 @@ function BookContent() {
         declaredValueNpr: Number(declaredValueNpr),
       },
     });
+
+    // Automatic email dispatch notice
+    if (currentUser?.email) {
+      fetch('/api/send-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: currentUser.email,
+          role: currentUser.role,
+          trackingId: shipment.id,
+          type: 'booking_confirmation',
+          subject: `[Double 11] Waybill Issued: ${shipment.id} (${shipment.origin.city} → ${shipment.destination.city})`,
+        }),
+      }).catch(() => {});
+    }
 
     setTimeout(() => {
       setCreatedShipment(shipment);
@@ -528,6 +544,32 @@ function BookContent() {
                   <span>Track Consignment Live</span>
                   <ArrowRight size={16} />
                 </Link>
+
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (currentUser?.email) {
+                      await fetch('/api/send-summary', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          email: currentUser.email,
+                          role: currentUser.role,
+                          trackingId: createdShipment.id,
+                          type: 'booking_confirmation',
+                          subject: `[Double 11] Consignment Summary: ${createdShipment.id}`,
+                        }),
+                      });
+                      setEmailSent(true);
+                      setTimeout(() => setEmailSent(false), 4000);
+                    }
+                  }}
+                  className="btn btn-outline"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                >
+                  <Mail size={14} color="var(--brand-orange)" />
+                  <span>{emailSent ? 'Summary Sent to Email!' : 'Email Waybill Summary'}</span>
+                </button>
 
                 {currentUser?.role === 'admin' ? (
                   <Link href="/admin" className="btn btn-secondary">
